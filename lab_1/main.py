@@ -179,8 +179,6 @@ def main() -> None:
             ThirdGenerator(2 ** 31, 5 ** 13),
             ThirdGenerator(3 ** 4, 6 ** 13),
             ThirdGenerator(4 ** 7, 7 ** 9),
-
-
     ]
 
     for gen in generators:
