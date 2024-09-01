@@ -130,6 +130,9 @@ def calc_variance(numbers: list[float]) -> float:
     avg = calc_average(numbers)
     return sum([math.pow(x - avg, 2) for x in numbers]) / len(numbers)
 
+def write_to_legend(message: str) -> None:
+    plt.plot([], [], ' ', label=message) # type: ignore
+
 def analyze_generator(
     generator: GeneratorProtocol,
     number_count: np.uint32,
@@ -142,34 +145,46 @@ def analyze_generator(
     var = calc_variance(numbers)
     chi_res = check_chi_value(generator.calculate_distribution, numbers, interval_count, significance_level)
     
-    plt.figure(figsize=(10, 6)) #type: ignore
-    plt.hist(numbers, bins=30, edgecolor='black') #type: ignore
-    plt.title(f'Histogram of {generator.__class__.__name__} (n={number_count})') #type: ignore
+    plt.figure(figsize=(10, 6)) # type: ignore
+    plt.hist(numbers, bins=30, edgecolor='black') # type: ignore
+    plt.title(f'Histogram of {generator.__class__.__name__} (n={number_count})') # type: ignore
     plt.xlabel('Value') #type: ignore
     plt.ylabel('Frequency') #type: ignore
 
-    plt.plot([], [], ' ', label=f'{avg=}')
-    plt.plot([], [], ' ', label=f'{var=}')
-    plt.plot([], [], ' ', label=f'{chi_res.x2=}')
-    plt.plot([], [], ' ', label=f'{chi_res.x2_table=}')
-    plt.plot([], [], ' ', label=f'{chi_res.is_hypothesis_ok=}')
-    plt.legend(loc='upper right')
-
+    write_to_legend(f'{avg=}')
+    write_to_legend(f'{var=}')
+    write_to_legend(f'{chi_res.x2=}')
+    write_to_legend(f'{chi_res.x2_table=}')
+    write_to_legend(f'{chi_res.is_hypothesis_ok=}')
+    plt.legend(loc='upper right') # type: ignore
     
-    print(f"{avg=}")
-    print(f"{var=}")
-    print(f"{chi_res=}")
-
     plt.show() #type: ignore
 
 def main() -> None:
     number_count = np.uint32(10000)
     interval_count = np.uint32(20)
     significance_level = 0.05
-    analyze_generator(
-        FirstGenerator(9), number_count,
-        interval_count, significance_level
-    )
+
+    generators: list[GeneratorProtocol] = [
+            FirstGenerator(10),
+            FirstGenerator(20),
+            FirstGenerator(30),
+            
+            SecondGenerator(0, 2),
+            SecondGenerator(128, -6),
+            SecondGenerator(11, 10),
+            SecondGenerator(674, 1478),
+
+            ThirdGenerator(5 ** 13, 2 ** 31),
+            ThirdGenerator(2 ** 31, 5 ** 13),
+            ThirdGenerator(3 ** 4, 6 ** 13),
+            ThirdGenerator(4 ** 7, 7 ** 9),
+
+
+    ]
+
+    for gen in generators:
+        analyze_generator(gen, number_count, interval_count, significance_level)
 
 if __name__ == '__main__':
     main()
