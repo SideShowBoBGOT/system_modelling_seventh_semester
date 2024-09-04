@@ -1,0 +1,44 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'lab_2'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=lab_2",
+                    "--package=lab_2"
+                ],
+                "filter": {
+                    "name": "lab_2",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/target/debug/lab_2"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'lab_2'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=lab_2",
+                    "--package=lab_2"
+                ],
+                "filter": {
+                    "name": "lab_2",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/target/debug/deps/lab_2-hash"
+        }
+    ]
+}
