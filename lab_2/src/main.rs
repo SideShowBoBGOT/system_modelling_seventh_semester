@@ -1,14 +1,14 @@
 use crate::delay_gen::DelayGen;
+use crate::device::Device;
+use crate::element_process::ElementProcess;
+use crate::prob_el_map::ProbabilityElementsMap;
 use rand::Rng;
 use rand_distr::Distribution;
-use std::cell::{RefCell, RefMut};
+use std::cell::RefCell;
 use std::fmt::{Debug, Formatter};
 use std::hash::Hash;
 use std::ops::Deref;
 use std::rc::Rc;
-use crate::device::Device;
-use crate::element_process::ElementProcess;
-use crate::prob_el_map::ProbabilityElementsMap;
 
 type TimeUnit = u64;
 
@@ -40,7 +40,6 @@ pub mod prob_el_map {
     use crate::Element;
     use rand::random;
     use std::cell::{RefCell, RefMut};
-    use std::collections::HashMap;
     use std::fmt::{Debug, Formatter};
     use std::rc::Rc;
 
@@ -262,7 +261,7 @@ mod element_process {
             self.base.in_act();
             if let Some(free_device) = find_free_device(&mut self.devices) {
                 free_device.in_act(self.base.current_t);
-            } else if(self.queue < self.max_queue) {
+            } else if self.queue < self.max_queue {
                 self.queue += 1;
             } else {
                 self.count_rejected += 1;
@@ -271,7 +270,6 @@ mod element_process {
         }
 
         fn out_act(&mut self) {
-
             for device in &mut self.devices {
                 device.out_act();
                 self.base.out_act();
@@ -325,7 +323,7 @@ fn simulate_model(mut elements: Vec<Rc<RefCell<dyn Element>>>, max_time: TimeUni
 fn main() {
     let delay_gen = DelayGen::Uniform(rand_distr::Uniform::<f64>::new(0., 10.));
     let mut element_process_3 = Rc::new(RefCell::new(ElementProcess::new(
-        ElementBase::new("Process 3", delay_gen, Default::default()), 4,
+        ElementBase::new("Process 3", delay_gen, Default::default()), 3,
         vec![Device::new("Device 1", delay_gen)]
     )));
     let mut element_process_2 = Rc::new(RefCell::new(ElementProcess::new(
@@ -337,23 +335,19 @@ fn main() {
         ), 3,
         vec![
             Device::new("Device 1", delay_gen),
-            Device::new("Device 2", delay_gen),
-            Device::new("Device 3", delay_gen),
+            // Device::new("Device 2", delay_gen),
+            // Device::new("Device 3", delay_gen),
         ]
     )));
     let mut element_process_1 = Rc::new(RefCell::new(ElementProcess::new(
         ElementBase::new("Process 1", delay_gen,
-            ProbabilityElementsMap::new(
-                vec![
-                    (element_process_2.clone(), 1.0),
-                ]
-            )
+            ProbabilityElementsMap::new(vec![(element_process_2.clone(), 1.0)])
         ),
         3,
         vec![
-            Device::new("Device 4", delay_gen),
-            Device::new("Device 5", delay_gen),
-            Device::new("Device 6", delay_gen),
+            Device::new("Device 1", delay_gen),
+            // Device::new("Device 5", delay_gen),
+            // Device::new("Device 6", delay_gen),
         ]
     )));
 
@@ -368,12 +362,12 @@ fn main() {
         )
     );
 
-    let mut elements: Vec<Rc<RefCell<dyn Element>>> = vec![
+    let elements: Vec<Rc<RefCell<dyn Element>>> = vec![
         element_create,
         element_process_1,
         element_process_2,
         element_process_3,
     ];
 
-    simulate_model(elements, 1000);
+    simulate_model(elements, 500);
 }
