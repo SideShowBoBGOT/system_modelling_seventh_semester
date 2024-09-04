@@ -9,8 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="c4e6b80c-5518-4994-ae22-1dfb200121e6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/launch.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.~lock.Панченко_Сергій_ІП_11_4.odt#" beforeDir="false" afterPath="$PROJECT_DIR$/.~lock.Панченко_Сергій_ІП_11_4.odt#" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Панченко_Сергій_ІП_11_4.odt" beforeDir="false" afterPath="$PROJECT_DIR$/Панченко_Сергій_ІП_11_4.odt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +36,9 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Cargo.Run lab_2.executor": "Run",
+    "Cargo.Test tests::test_general.executor": "Run",
+    "Cargo.Test tests::test_infinite_queue.executor": "Run",
+    "Cargo.Test tests::test_probability_transition.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.rust.reset.selective.auto.import": "true",
     "git-widget-placeholder": "lab__2",
@@ -46,7 +50,7 @@
     "settings.editor.selected.configurable": "project.propDebugger"
   }
 }]]></component>
-  <component name="RunManager" selected="Cargo.Run lab_2">
+  <component name="RunManager" selected="Cargo.Test tests::test_probability_transition">
     <configuration name="Run lab_2" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="command" value="run --package lab_2 --bin lab_2" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -81,6 +85,64 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Test tests::test_general" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package lab_2 --bin lab_2 tests::test_general -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test tests::test_infinite_queue" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package lab_2 --bin lab_2 tests::test_infinite_queue -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test tests::test_probability_transition" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package lab_2 --bin lab_2 tests::test_probability_transition -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Cargo.Test tests::test_probability_transition" />
+        <item itemvalue="Cargo.Test tests::test_infinite_queue" />
+        <item itemvalue="Cargo.Test tests::test_general" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="RustProjectSettings">
     <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
@@ -94,7 +156,7 @@
       <option name="presentableId" value="Default" />
       <updated>1725402046849</updated>
       <workItem from="1725402048632" duration="6899000" />
-      <workItem from="1725432829360" duration="10618000" />
+      <workItem from="1725432829360" duration="16006000" />
     </task>
     <servers />
   </component>

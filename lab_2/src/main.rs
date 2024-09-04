@@ -302,7 +302,6 @@ mod element_process {
             println!("\twork_time = {}", self.base.work_time);
             println!("\tmean_queue = {}", self.mean_queue);
             println!("\tcount_rejected = {}", self.count_rejected);
-            println!("\tqueue = {}", self.queue);
             println!("\tmax_queue = {}", self.max_queue);
             println!("\tfailure_probability = {}", self.count_rejected as f64 / self.base.quantity as f64);
         }
@@ -328,9 +327,9 @@ fn simulate_model(mut elements: Vec<Rc<RefCell<dyn Element>>>, max_time: TimeUni
                 el.borrow_mut().out_act();
             }
         }
-        for el in &mut *elements {
-            println!("{:?}", &*el.borrow_mut());
-        }
+        // for el in &mut *elements {
+        //     println!("{:?}", &*el.borrow_mut());
+        // }
     }
     for el in &elements {
         el.borrow().print_stats();
@@ -338,54 +337,135 @@ fn simulate_model(mut elements: Vec<Rc<RefCell<dyn Element>>>, max_time: TimeUni
 }
 
 
-fn main() {
-    let delay_gen = DelayGen::Uniform(rand_distr::Uniform::<f64>::new(0., 10.));
-    let element_process_3 = Rc::new(RefCell::new(ElementProcess::new(
-        ElementBase::new("Process 3", delay_gen, Default::default()), 3,
-        vec![Device::new("Device 1", delay_gen)]
-    )));
-    let element_process_2 = Rc::new(RefCell::new(ElementProcess::new(
-        ElementBase::new(
-            "Process 2", delay_gen,
-            ProbabilityElementsMap::new(
-                vec![(element_process_3.clone(), 1.0)]
-            )
-        ), 3,
-        vec![
-            Device::new("Device 1", delay_gen),
-            // Device::new("Device 2", delay_gen),
-            // Device::new("Device 3", delay_gen),
-        ]
-    )));
-    let element_process_1 = Rc::new(RefCell::new(ElementProcess::new(
-        ElementBase::new("Process 1", delay_gen,
-            ProbabilityElementsMap::new(vec![(element_process_2.clone(), 1.0)])
-        ),
-        3,
-        vec![
-            Device::new("Device 1", delay_gen),
-            // Device::new("Device 5", delay_gen),
-            // Device::new("Device 6", delay_gen),
-        ]
-    )));
+fn main() {}
 
-    let element_create = Rc::new(
-        RefCell::new(
-            ElementCreate(
-                ElementBase::new(
-                    "Create", delay_gen,
-                    ProbabilityElementsMap::new(vec![(element_process_1.clone(), 1.0)])
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_general() {
+        let delay_gen = DelayGen::Uniform(rand_distr::Uniform::<f64>::new(0., 10.));
+        let element_process_3 = Rc::new(RefCell::new(ElementProcess::new(
+            ElementBase::new("Process 3", delay_gen, Default::default()), 3,
+            vec![Device::new("Device 1", delay_gen)]
+        )));
+        let element_process_2 = Rc::new(RefCell::new(ElementProcess::new(
+            ElementBase::new(
+                "Process 2", delay_gen,
+                ProbabilityElementsMap::new(vec![(element_process_3.clone(), 1.0)])
+            ),
+            3,
+            vec![Device::new("Device 1", delay_gen), ]
+        )));
+        let element_process_1 = Rc::new(RefCell::new(ElementProcess::new(
+            ElementBase::new(
+                "Process 1", delay_gen,
+                ProbabilityElementsMap::new(vec![(element_process_2.clone(), 1.0)])
+            ),
+            3,
+            vec![Device::new("Device 1", delay_gen)]
+        )));
+
+        let element_create = Rc::new(
+            RefCell::new(ElementCreate(ElementBase::new(
+                "Create", delay_gen,
+                ProbabilityElementsMap::new(vec![(element_process_1.clone(), 1.0)])
+            )))
+        );
+
+        let elements: Vec<Rc<RefCell<dyn Element>>> = vec![
+            element_create,
+            element_process_1,
+            element_process_2,
+            element_process_3,
+        ];
+
+        simulate_model(elements, 1000);
+    }
+
+    #[test]
+    fn test_infinite_queue() {
+        let delay_gen = DelayGen::Uniform(rand_distr::Uniform::<f64>::new(0., 10.));
+        let element_process_3 = Rc::new(RefCell::new(ElementProcess::new(
+            ElementBase::new("Process 3", delay_gen, Default::default()), usize::MAX,
+            vec![Device::new("Device 1", delay_gen)]
+        )));
+        let element_process_2 = Rc::new(RefCell::new(ElementProcess::new(
+            ElementBase::new(
+                "Process 2", delay_gen,
+                ProbabilityElementsMap::new(vec![(element_process_3.clone(), 1.0)])
+            ),
+            usize::MAX,
+            vec![Device::new("Device 1", delay_gen), ]
+        )));
+        let element_process_1 = Rc::new(RefCell::new(ElementProcess::new(
+            ElementBase::new(
+                "Process 1", delay_gen,
+                ProbabilityElementsMap::new(vec![(element_process_2.clone(), 1.0)])
+            ),
+            usize::MAX,
+            vec![Device::new("Device 1", delay_gen)]
+        )));
+
+        let element_create = Rc::new(
+            RefCell::new(ElementCreate(ElementBase::new(
+                "Create", delay_gen,
+                ProbabilityElementsMap::new(vec![(element_process_1.clone(), 1.0)])
+            )))
+        );
+
+        let elements: Vec<Rc<RefCell<dyn Element>>> = vec![
+            element_create,
+            element_process_1,
+            element_process_2,
+            element_process_3,
+        ];
+
+        simulate_model(elements, 1000);
+    }
+
+    #[test]
+    fn test_probability_transition() {
+        let queue_size: usize = 8;
+        let delay_gen = DelayGen::Uniform(rand_distr::Uniform::<f64>::new(0., 10.));
+        let element_process_3 = Rc::new(RefCell::new(ElementProcess::new(
+            ElementBase::new("Process 3", delay_gen, Default::default()),queue_size,
+            vec![Device::new("Device 1", delay_gen)]
+        )));
+        let element_process_2 = Rc::new(RefCell::new(ElementProcess::new(
+            ElementBase::new("Process 2", delay_gen, Default::default()),
+            queue_size,
+            vec![Device::new("Device 1", delay_gen), ]
+        )));
+        let element_process_1 = Rc::new(RefCell::new(ElementProcess::new(
+            ElementBase::new(
+                "Process 1", delay_gen,
+                ProbabilityElementsMap::new(
+                    vec![
+                        (element_process_3.clone(), 0.25),
+                        (element_process_2.clone(), 0.75),
+                    ]
                 )
-            )
-        )
-    );
+            ),
+            queue_size,
+            vec![Device::new("Device 1", delay_gen)]
+        )));
 
-    let elements: Vec<Rc<RefCell<dyn Element>>> = vec![
-        element_create,
-        element_process_1,
-        element_process_2,
-        element_process_3,
-    ];
+        let element_create = Rc::new(
+            RefCell::new(ElementCreate(ElementBase::new(
+                "Create", delay_gen,
+                ProbabilityElementsMap::new(vec![(element_process_1.clone(), 1.0)])
+            )))
+        );
 
-    simulate_model(elements, 500);
+        let elements: Vec<Rc<RefCell<dyn Element>>> = vec![
+            element_create,
+            element_process_1,
+            element_process_2,
+            element_process_3,
+        ];
+
+        simulate_model(elements, 1000);
+    }
 }
