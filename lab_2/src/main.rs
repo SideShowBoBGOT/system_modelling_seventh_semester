@@ -200,8 +200,8 @@ pub mod device {
             Self{name, next_t: 0, delay_gen, is_working: false}
         }
 
-        pub fn in_act(&mut self, next_t: TimeUnit) {
-            self.next_t = next_t + self.delay_gen.sample();
+        pub fn in_act(&mut self, current_t: TimeUnit) {
+            self.next_t = current_t + self.delay_gen.sample();
             self.is_working = true;
         }
 
@@ -214,7 +214,7 @@ pub mod device {
             self.next_t
         }
 
-        pub fn get_is_active(&self) -> bool {
+        pub fn get_is_working(&self) -> bool {
             self.is_working
         }
     }
@@ -251,7 +251,7 @@ mod element_process {
     }
 
     fn find_free_device(devices: &mut [Device]) -> Option<&mut Device> {
-        devices.iter_mut().find(|d| (*d).get_is_active())
+        devices.iter_mut().find(|d| !(*d).get_is_working())
     }
 
     impl Element for ElementProcess {
@@ -261,7 +261,7 @@ mod element_process {
         fn in_act(&mut self) {
             self.base.in_act();
             if let Some(free_device) = find_free_device(&mut self.devices) {
-                free_device.in_act(self.base.next_t);
+                free_device.in_act(self.base.current_t);
             } else if(self.queue < self.max_queue) {
                 self.queue += 1;
             } else {
@@ -277,7 +277,7 @@ mod element_process {
                 self.base.out_act();
                 if self.queue > 0 {
                     self.queue -= 1;
-                    device.in_act(self.base.next_t);
+                    device.in_act(self.base.current_t);
                 }
             }
             self.update_next_t();
@@ -303,7 +303,6 @@ fn simulate_model(mut elements: Vec<Rc<RefCell<dyn Element>>>, max_time: TimeUni
         let next_t = elements.iter()
             .map(|d| d.borrow().get_next_t()).min()
             .expect("elements can not be empty");
-
         for el in &mut elements {
             el.borrow_mut().update_statistic(next_t, current_t);
         }
@@ -312,13 +311,12 @@ fn simulate_model(mut elements: Vec<Rc<RefCell<dyn Element>>>, max_time: TimeUni
             el.borrow_mut().set_current_t(current_t)
         }
         for el in &mut elements {
-            println!("{:?}", el);
             if el.borrow().get_next_t() == current_t {
                 el.borrow_mut().out_act();
             }
         }
         for el in &mut *elements {
-            println!("{:?}", el);
+            println!("{:?}", &*el.borrow_mut());
         }
     }
 }
