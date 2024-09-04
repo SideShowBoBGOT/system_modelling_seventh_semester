@@ -2,12 +2,8 @@ use crate::delay_gen::DelayGen;
 use crate::device::Device;
 use crate::element_process::ElementProcess;
 use crate::prob_el_map::ProbabilityElementsMap;
-use rand::Rng;
-use rand_distr::Distribution;
 use std::cell::RefCell;
 use std::fmt::{Debug, Formatter};
-use std::hash::Hash;
-use std::ops::Deref;
 use std::rc::Rc;
 
 type TimeUnit = u64;
@@ -93,6 +89,7 @@ pub trait Element : Debug {
     fn get_next_t(&self) -> TimeUnit;
     fn update_statistic(&mut self, next_t: TimeUnit, current_t: TimeUnit);
     fn update_next_t(&mut self);
+    fn print_stats(&self);
 }
 
 pub struct ElementBase {
@@ -150,6 +147,11 @@ impl ElementBase {
     fn update_statistic(&mut self, next_t: TimeUnit, current_t: TimeUnit) {
         self.work_time += if self.is_working { next_t - current_t } else { 0 };
     }
+
+    fn print_stats(&self) {
+        println!("name = {}", self.name);
+        println!("\tquantity_processed = {}", self.quantity_processed);
+    }
 }
 
 #[derive(Debug)]
@@ -179,6 +181,10 @@ impl Element for ElementCreate {
 
     fn update_next_t(&mut self) {
         self.0.next_t = self.0.current_t + self.0.delay_gen.sample();
+    }
+
+    fn print_stats(&self) {
+        self.0.print_stats()
     }
 }
 
@@ -254,9 +260,6 @@ mod element_process {
     }
 
     impl Element for ElementProcess {
-        fn update_next_t(&mut self) {
-            self.base.next_t = self.devices.iter().map(|d| d.get_next_t()).min().unwrap()
-        }
         fn in_act(&mut self) {
             self.base.in_act();
             if let Some(free_device) = find_free_device(&mut self.devices) {
@@ -268,7 +271,6 @@ mod element_process {
             }
             self.update_next_t();
         }
-
         fn out_act(&mut self) {
             for device in &mut self.devices {
                 device.out_act();
@@ -284,12 +286,25 @@ mod element_process {
         fn set_current_t(&mut self, current_t: TimeUnit) {
             self.base.set_current_t(current_t);
         }
+
         fn get_next_t(&self) -> TimeUnit {
             self.base.get_next_t()
         }
         fn update_statistic(&mut self, next_t: TimeUnit, current_t: TimeUnit) {
             self.base.update_statistic(next_t, current_t);
             self.mean_queue += (self.queue as u64 * (next_t - current_t)) as f64;
+        }
+        fn update_next_t(&mut self) {
+            self.base.next_t = self.devices.iter().map(|d| d.get_next_t()).min().unwrap()
+        }
+        fn print_stats(&self) {
+            self.base.print_stats();
+            println!("\twork_time = {}", self.base.work_time);
+            println!("\tmean_queue = {}", self.mean_queue);
+            println!("\tcount_rejected = {}", self.count_rejected);
+            println!("\tqueue = {}", self.queue);
+            println!("\tmax_queue = {}", self.max_queue);
+            println!("\tfailure_probability = {}", self.count_rejected as f64 / self.base.quantity as f64);
         }
     }
 }
@@ -317,16 +332,19 @@ fn simulate_model(mut elements: Vec<Rc<RefCell<dyn Element>>>, max_time: TimeUni
             println!("{:?}", &*el.borrow_mut());
         }
     }
+    for el in &elements {
+        el.borrow().print_stats();
+    }
 }
 
 
 fn main() {
     let delay_gen = DelayGen::Uniform(rand_distr::Uniform::<f64>::new(0., 10.));
-    let mut element_process_3 = Rc::new(RefCell::new(ElementProcess::new(
+    let element_process_3 = Rc::new(RefCell::new(ElementProcess::new(
         ElementBase::new("Process 3", delay_gen, Default::default()), 3,
         vec![Device::new("Device 1", delay_gen)]
     )));
-    let mut element_process_2 = Rc::new(RefCell::new(ElementProcess::new(
+    let element_process_2 = Rc::new(RefCell::new(ElementProcess::new(
         ElementBase::new(
             "Process 2", delay_gen,
             ProbabilityElementsMap::new(
@@ -339,7 +357,7 @@ fn main() {
             // Device::new("Device 3", delay_gen),
         ]
     )));
-    let mut element_process_1 = Rc::new(RefCell::new(ElementProcess::new(
+    let element_process_1 = Rc::new(RefCell::new(ElementProcess::new(
         ElementBase::new("Process 1", delay_gen,
             ProbabilityElementsMap::new(vec![(element_process_2.clone(), 1.0)])
         ),
@@ -351,7 +369,7 @@ fn main() {
         ]
     )));
 
-    let mut element_create = Rc::new(
+    let element_create = Rc::new(
         RefCell::new(
             ElementCreate(
                 ElementBase::new(
