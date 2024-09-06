@@ -185,6 +185,10 @@ impl Drop for UpdateStatsAfterSimulation<'_> {
     }
 }
 
+// bad name, but self-explanatory
+#[derive(Debug)]
+struct PayloadVecWithPossiblySomeConsumeElements(PayloadVec);
+
 impl ElementProcessor {
     fn catch_up_with_time(&mut self, current_time: TimePoint) -> UpdateStatsAfterSimulation {
         let _ = &self.delay_gen;
@@ -229,16 +233,29 @@ impl ElementProcessor {
 
     fn simulate_with_payload(
         &mut self, current_time: TimePoint, mut payload_vec: PayloadVec,
-    ) -> PayloadProcessingResult {
+    ) -> PayloadVecWithPossiblySomeConsumeElements {
         let _ = self.catch_up_with_time(current_time);
         loop {
-
+            if self.current_payload_stats.is_none() {
+                if payload_vec.pop().is_none() {
+                    break;
+                }
+                let delay = self.delay_gen.sample();
+                self.current_payload_stats = Some(PayloadStats{
+                    finish_time: current_time + delay, work_time: delay
+                });
+                continue;
+            }
+            if self.queue_size < self.max_queue_size {
+                if payload_vec.pop().is_none() {
+                    break;
+                }
+                self.queue_size.increment();
+                continue;
+            }
+            break;
         }
-
-        if self.current_payload_stats.is_some() {
-
-        }
-
+        PayloadVecWithPossiblySomeConsumeElements(payload_vec)
     }
 }
 
