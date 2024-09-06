@@ -1,14 +1,17 @@
 use std::cell::RefCell;
 use std::fmt::Debug;
-use std::ops::{Add, AddAssign, Div, Mul};
+use std::ops::{Add, AddAssign, Div, Mul, Sub};
 use std::rc::Rc;
-use std::time::{Duration, Instant};
 use crate::delay_gen::DelayGen;
-use crate::simulation_delay::SimulationDelay;
+use crate::payload_vec::PayloadVec;
+
+#[macro_use(defer)]
+extern crate scopeguard;
+
 
 pub mod delay_gen {
     use rand::distributions::Distribution;
-    use crate::TimeDur;
+    use crate::TimeSpan;
     use rand::thread_rng;
     use rand_distr::{Exp, Normal, Uniform};
 
@@ -20,8 +23,8 @@ pub mod delay_gen {
     }
 
     impl DelayGen {
-        pub fn sample(&self) -> TimeDur {
-            TimeDur(
+        pub fn sample(&self) -> TimeSpan {
+            TimeSpan(
                 match self {
                     Self::Normal(dist) => dist.sample(&mut thread_rng()).round() as u64,
                     Self::Uniform(dist) => dist.sample(&mut thread_rng()).round() as u64,
@@ -32,16 +35,33 @@ pub mod delay_gen {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
-struct TimeDur(u64);
+#[derive(Debug, Copy, Clone, Default, Ord, PartialOrd, Eq, PartialEq)]
+struct TimePoint(u64);
 
-impl AddAssign for TimeDur {
+impl Sub for TimePoint {
+    type Output = TimeSpan;
+    fn sub(self, rhs: TimePoint) -> TimeSpan {
+        TimeSpan(self.0 - rhs.0)
+    }
+}
+
+impl Add<TimeSpan> for TimePoint {
+    type Output = TimePoint;
+    fn add(self, rhs: TimeSpan) -> TimePoint {
+        TimePoint(self.0 + rhs.0)
+    }
+}
+
+#[derive(Debug, Copy, Clone, Default)]
+struct TimeSpan(u64);
+
+impl AddAssign for TimeSpan {
     fn add_assign(&mut self, rhs: Self) {
         self.0 += rhs.0;
     }
 }
 
-#[derive(Debug, Copy, Clone, Ord, PartialOrd, Eq, PartialEq)]
+#[derive(Debug, Copy, Clone, Default, Ord, PartialOrd, Eq, PartialEq)]
 struct QueueSize(u64);
 impl QueueSize {
     fn increment(&mut self) {
@@ -52,15 +72,15 @@ impl QueueSize {
     }
 }
 
-impl Mul<TimeDur> for QueueSize {
+impl Mul<TimeSpan> for QueueSize {
     type Output = QueueTimeDur;
 
-    fn mul(self, rhs: TimeDur) -> Self::Output {
+    fn mul(self, rhs: TimeSpan) -> Self::Output {
         QueueTimeDur(self.0 * rhs.0)
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 struct QueueTimeDur(u64);
 
 impl Add for QueueTimeDur {
@@ -71,227 +91,236 @@ impl Add for QueueTimeDur {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+impl AddAssign for QueueTimeDur {
+    fn add_assign(&mut self, rhs: Self) {
+        self.0 += rhs.0;
+    }
+}
+
+#[derive(Debug, Copy, Clone, Default)]
 struct MeanQueueSize(f64);
 
-impl Div<TimeDur> for QueueTimeDur {
+impl Div<TimeSpan> for QueueTimeDur {
     type Output = MeanQueueSize;
 
-    fn div(self, rhs: TimeDur) -> Self::Output {
+    fn div(self, rhs: TimeSpan) -> Self::Output {
         MeanQueueSize(self.0 as f64 / rhs.0 as f64)
     }
 }
 
-mod simulation_delay {
-    use crate::{QueueSize, QueueTimeDur, TimeDur};
-    use crate::delay_gen::DelayGen;
-
-    #[derive(Debug, Clone, Copy)]
-    pub struct SimulationDelay {
-        work_dur: TimeDur,
+#[derive(Debug, Clone, Copy, Default)]
+enum SimulationDelay {
+    #[default]
+    Failed,
+    Processed {
+        work_dur: TimeSpan,
         items_processed: u64,
+        failures_count: u64,
         queue_time_dur: QueueTimeDur
     }
-
-    impl SimulationDelay {
-        pub fn new(delay_gen: DelayGen, queue_size: QueueSize) -> Self {
-            let work_dur = delay_gen.sample();
-            Self{work_dur, items_processed: 1, queue_time_dur: queue_size * work_dur}
-        }
-
-        pub fn combine(&mut self, simulation_delay: SimulationDelay) {
-            self.work_dur += simulation_delay.work_dur;
-            self.items_processed += simulation_delay.items_processed;
-        }
-    }
 }
 
-#[derive(Debug, Clone, Copy)]
-struct SimulationStats(SimulationDelay);
+impl Add<TimeSpan> for TimeSpan {
+    type Output = TimeSpan;
 
-impl SimulationStats {
-    fn combine(&mut self, simulation_delay: SimulationDelay) {
-        self.0.combine(simulation_delay);
-    }
-}
-
-pub trait Element : Debug {
-    fn simulate(&mut self) -> SimulationDelay;
-}
-
-type ElementNode = Rc<RefCell<dyn Element>>;
-
-fn simulate_model(root: &mut dyn Element, dur: Duration) {
-    let stop_time_point = Instant::now() + dur;
-    while Instant::now() < stop_time_point {
-        let _ = root.simulate();
+    fn add(self, rhs: Self) -> Self::Output {
+        Self(self.0 + rhs.0)
     }
 }
 
 #[derive(Debug)]
-struct ElementBase {
+struct Payload();
+
+enum PayloadProcessingResult {
+    Rejected(PayloadVec),
+    Accepted(PayloadVec)
+}
+
+// type ElementNode = Rc<RefCell<dyn Element>>;
+//
+// fn simulate_model(root: &mut dyn Element, dur: TimeSpan) {
+//     let mut current_time = TimePoint::default();
+//     let mut stop_time = current_time + dur;
+//     while current_time < stop_time {
+//         let simulation_delay = root.simulate(Some(Payload{}), current_time);
+//     }
+// }
+
+#[derive(Debug)]
+struct PayloadStats {
+    finish_time: TimePoint,
+    work_time: TimeSpan
+}
+
+#[derive(Debug)]
+struct ElementProcessor {
     name: &'static str,
-    queue_size: QueueSize,
     max_queue_size: QueueSize,
-    stats: SimulationStats,
-    delay_gen: DelayGen
+    delay_gen: DelayGen,
+
+    current_payload_stats: Option<PayloadStats>,
+    finished_payloads_count: usize,
+    interval_between_finished_payloads_sum: TimeSpan,
+    last_payload_finished_time: TimePoint,
+    work_dur: TimeSpan,
+
+    rejected_count: usize,
+    queue_size: QueueSize,
+    queue_time_dur: QueueTimeDur,
+    last_simulate_time_point: TimePoint,
 }
 
-mod simulation_probability {
-    use std::ops::Deref;
-    use crate::{Element, ElementBase, SimulationStats, SimulationDelay};
-    use crate::simulation_probability::probability_elements::ProbabilityElements;
+struct UpdateStatsAfterSimulation<'a> {
+    current_time: TimePoint,
+    queue_size: QueueSize,
+    queue_time_dur: &'a mut QueueTimeDur,
+    last_simulate_time_point: &'a mut TimePoint
+}
 
-    pub mod probability {
-        use std::time::Instant;
-
-        #[derive(Copy, Clone, Debug)]
-        pub struct Probability(f64);
-
-        impl Probability {
-            pub fn new(value: f64) -> Self {
-                if value < 0.0 || value > 1.0 {
-                    panic!("Probability can not be < 0.0 or > 1.0");
-                }
-                Self(value)
-            }
-
-            pub fn get_value(self) -> f64 {
-                self.0
-            }
-        }
-    }
-
-    pub mod probability_elements {
-        use std::cell::{RefCell};
-        use std::rc::Rc;
-        use rand::random;
-        use crate::{Element, ElementNode};
-        use super::probability::Probability;
-
-        type InnerType = Vec<(ElementNode, Probability)>;
-
-        #[derive(Default, Debug)]
-        pub struct ProbabilityElements(InnerType);
-
-        fn calc_prob_sum(probs: &InnerType) -> f64 {
-            probs.iter().map(|e| (*e).1.get_value()).sum::<f64>()
-        }
-
-        impl ProbabilityElements {
-            pub fn new(probs: InnerType) -> Self {
-                assert!((calc_prob_sum(&probs) - 1.0).abs() < f64::EPSILON, "Sum of the probabilities must be 1");
-                Self(probs)
-            }
-
-            pub fn sample(&self) -> Option<Rc<RefCell<dyn Element>>> {
-                if self.0.is_empty() {
-                    return None;
-                }
-
-                let rand_value = random::<f64>() * calc_prob_sum(&self.0);
-                let mut current_sum = 0.0;
-
-                let mut target_index = self.0.len() - 1;
-                for (index, (_, prob)) in self.0.iter().enumerate() {
-                    current_sum += prob.get_value();
-                    if rand_value < current_sum {
-                        target_index = index;
-                        break;
-                    }
-                }
-                Some(self.0.iter().nth(target_index)?.0.clone())
-            }
-        }
-    }
-
-    #[derive(Debug)]
-    pub struct ElementProbabilityBase {
-        base: ElementBase,
-        children: ProbabilityElements,
-    }
-
-    impl Element for ElementProbabilityBase {
-        fn simulate(&mut self) -> SimulationDelay {
-            let mut delay = SimulationDelay::new(self.base.delay_gen, self.base.queue_size);
-            if let Some(child) = self.children.sample() {
-                delay.combine(child.borrow_mut().simulate());
-            }
-            self.base.stats.combine(delay);
-            println!("{:?}", self);
-            delay
-        }
+impl Drop for UpdateStatsAfterSimulation<'_> {
+    fn drop(&mut self) {
+        let delay = self.current_time - *self.last_simulate_time_point;
+        *self.queue_time_dur = self.queue_size * delay;
+        *self.last_simulate_time_point = self.current_time;
     }
 }
 
-mod simulation_priority {
-    use crate::{Element, ElementBase, SimulationDelay};
-    use crate::simulation_priority::priority_elements::PriorityElements;
+impl ElementProcessor {
+    fn catch_up_with_time(&mut self, current_time: TimePoint) -> UpdateStatsAfterSimulation {
+        let _ = &self.delay_gen;
+        loop {
+            if let Some(current_payload_stats) = &mut self.current_payload_stats {
+                if current_payload_stats.finish_time > current_time {
+                    self.last_simulate_time_point = current_time;
+                    break;
+                }
+                self.finished_payloads_count += 1;
+                {
+                    let interval = current_payload_stats.finish_time - self.last_payload_finished_time;
+                    self.interval_between_finished_payloads_sum += interval;
+                    self.queue_time_dur += self.queue_size * interval;
+                }
+                self.last_simulate_time_point = current_payload_stats.finish_time;
+                self.last_payload_finished_time = current_payload_stats.finish_time;
+                self.work_dur += current_payload_stats.work_time;
 
-    mod priority_elements {
-        use std::slice::Iter;
-        use crate::ElementNode;
-
-        #[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
-        struct Priority(u64);
-
-        type InnerType = Vec<(ElementNode, Priority)>;
-
-        #[derive(Default, Debug)]
-        pub struct PriorityElements(InnerType);
-
-        impl PriorityElements {
-            pub fn new(mut priors: Vec<(ElementNode, Priority)>) -> Self {
-                priors.sort_by(|a, b| (*a).1.cmp(&(*b).1));
-                Self(priors)
-            }
-
-            pub fn iter(&self) -> PriorityElementsIterator {
-                PriorityElementsIterator(self.0.iter())
+                if self.queue_size > QueueSize(0) {
+                    self.queue_size.decrement();
+                    current_payload_stats.work_time = self.delay_gen.sample();
+                    current_payload_stats.finish_time = current_time + current_payload_stats.work_time;
+                } else {
+                    self.current_payload_stats = None;
+                }
+            } else {
+                break;
             }
         }
-
-        pub struct PriorityElementsIterator<'a>(Iter<'a, (ElementNode, Priority)>);
-
-        impl<'a> Iterator for PriorityElementsIterator<'a> {
-            type Item = ElementNode;
-
-            fn next(&mut self) -> Option<Self::Item> {
-                Some((*self.0.next()?).0.clone())
-            }
+        UpdateStatsAfterSimulation{
+            current_time,
+            queue_size: self.queue_size,
+            queue_time_dur: &mut self.queue_time_dur,
+            last_simulate_time_point: &mut self.last_simulate_time_point
         }
     }
 
-    #[derive(Debug)]
-    pub struct ElementPriorityBase {
-        base: ElementBase,
-        children: PriorityElements,
+    fn simulate_without_payload(&mut self, current_time: TimePoint) {
+        let _ = self.catch_up_with_time(current_time);
     }
 
-    impl Element for ElementPriorityBase {
-        fn simulate(&mut self) -> SimulationDelay {
-            let mut delay = SimulationDelay::new(self.base.delay_gen, self.base.queue_size);
-            for child in self.children.iter() {
-                delay.combine(child.borrow_mut().simulate());
+    fn simulate_with_payload(
+        &mut self, current_time: TimePoint, mut payload_vec: PayloadVec,
+    ) -> PayloadProcessingResult {
+        let _ = self.catch_up_with_time(current_time);
+        loop {
+
+        }
+
+        if self.current_payload_stats.is_some() {
+
+        }
+
+    }
+}
+
+
+mod payload_vec {
+    use crate::Payload;
+
+    #[derive(Debug, Default)]
+    pub struct PayloadVec {
+        count: usize,
+    }
+
+    impl PayloadVec {
+        pub fn pop(&mut self) -> Option<Payload> {
+            if self.count == 0 {
+                None
+            } else {
+                self.count -= 1;
+                Some(Payload())
             }
-            self.base.stats.combine(delay);
-            println!("{:?}", self);
-            delay
+        }
+
+        pub fn push(&mut self) {
+            self.count += 1;
         }
     }
 }
 
+mod element_create {
+    use crate::delay_gen::DelayGen;
+    use crate::payload_vec::PayloadVec;
+    use crate::TimePoint;
+
+    pub struct ElementCreate {
+        delay_gen: DelayGen,
+        next_t: TimePoint,
+    }
+
+    impl ElementCreate {
+        pub fn simulate(&mut self, current_t: TimePoint) -> PayloadVec {
+            let mut payload_vec = PayloadVec::default();
+            while self.next_t < current_t {
+                self.next_t = self.next_t + self.delay_gen.sample();
+                payload_vec.push();
+            }
+            payload_vec
+        }
+    }
+}
+
+struct A {}
+
+impl Drop for A {
+    fn drop(&mut self) {
+        println!("Drop A");
+    }
+}
+
+fn bar() -> A {
+    println!("bar");
+    A{}
+}
+
+fn boo(a: A) -> A {
+    println!("boo");
+    a
+}
+
+fn baz(a: A) {
+    println!("baz");
+}
 
 fn main() {
-    println!("Hello, world!");
+    let a = bar();
+    let b = boo(a);
+    baz(b);
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
-    fn test_general() {
+    fn test_bank() {
 
     }
 }
