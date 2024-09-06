@@ -235,15 +235,15 @@ mod element_process {
         queue: usize,
         max_queue: usize,
         count_rejected: usize,
-        mean_queue: f64,
+        queue_delta: f64,
         devices: Vec<Device>
     }
 
     impl Debug for ElementProcess {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             write!(
-                f, "{:?}, queue: {:?}, max_queue: {:?}, count_rejected: {:?}, mean_queue: {:?}",
-                self.base, self.queue, self.max_queue, self.count_rejected, self.mean_queue
+                f, "{:?}, queue: {:?}, max_queue: {:?}, count_rejected: {:?}, queue_delta: {:?}",
+                self.base, self.queue, self.max_queue, self.count_rejected, self.queue_delta
             )
         }
     }
@@ -251,7 +251,7 @@ mod element_process {
     impl ElementProcess {
         pub fn new(mut base: ElementBase, max_queue: usize, devices: Vec<Device>) -> Self {
             base.next_t = TimeUnit::MAX;
-            Self{base, queue: 0, max_queue, count_rejected: 0, mean_queue: 0.0, devices}
+            Self{base, queue: 0, max_queue, count_rejected: 0, queue_delta: 0.0, devices}
         }
     }
 
@@ -292,7 +292,7 @@ mod element_process {
         }
         fn update_statistic(&mut self, next_t: TimeUnit, current_t: TimeUnit) {
             self.base.update_statistic(next_t, current_t);
-            self.mean_queue += (self.queue as u64 * (next_t - current_t)) as f64;
+            self.queue_delta += (self.queue as u64 * (next_t - current_t)) as f64;
         }
         fn update_next_t(&mut self) {
             self.base.next_t = self.devices.iter().map(|d| d.get_next_t()).min().unwrap()
@@ -300,7 +300,8 @@ mod element_process {
         fn print_stats(&self) {
             self.base.print_stats();
             println!("\twork_time = {}", self.base.work_time);
-            println!("\tmean_queue = {}", self.mean_queue);
+            println!("\twork_part = {}", self.base.work_time as f64 / self.base.current_t as f64);
+            println!("\tmean_queue = {}", self.queue_delta / self.base.current_t as f64);
             println!("\tcount_rejected = {}", self.count_rejected);
             println!("\tmax_queue = {}", self.max_queue);
             println!("\tfailure_probability = {}", self.count_rejected as f64 / self.base.quantity as f64);
