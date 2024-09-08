@@ -5,7 +5,9 @@ use std::ops::{Div, Mul };
 use std::rc::Rc;
 use derive_more::{Sub, Add, AddAssign, SubAssign};
 use rand::distributions::Uniform;
+use scopeguard::defer;
 use crate::delay_gen::DelayGen;
+extern crate scopeguard;
 
 pub mod delay_gen {
     use rand::distributions::Distribution;
@@ -96,7 +98,45 @@ struct Payload();
 #[derive(Debug, Default)]
 struct Cashier {
     queue_size: QueueSize,
-    is_busy: bool,
+    is_busy: CashierBusy,
+
+    processed_clients: ClientsCount,
+    work_time: TimeSpan,
+
+    queue_time_dur: QueueTimeDur,
+    queue_time_dur_delays: TimeSpan,
+    last_update_time: TimePoint
+}
+
+fn update_queue_time_dur(
+    queue_time_dur: &mut QueueTimeDur,
+    queue_time_dur_delays: &mut TimeSpan,
+    last_update_time: &mut TimePoint,
+    queue_size: QueueSize,
+    current_t: TimePoint
+) {
+    let delay = current_t - *last_update_time;
+    *queue_time_dur_delays += delay;
+    *queue_time_dur += queue_size * delay;
+    *last_update_time = current_t;
+}
+
+fn update_cashiers_queue_time_dur(cashiers: &mut [Cashier; 2], current_t: TimePoint) {
+    for c in &mut cashiers.iter_mut() {
+        update_queue_time_dur(
+            &mut c.queue_time_dur,
+            &mut c.queue_time_dur_delays,
+            &mut c.last_update_time,
+            c.queue_size,
+            current_t
+        )
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+enum CashierIndex {
+    First,
+    Second,
 }
 
 #[derive(Debug)]
@@ -107,13 +147,8 @@ struct Bank {
     clients_count: ClientsCount
 }
 
-#[derive(Debug, Clone, Copy)]
-enum CashierIndex {
-    First,
-    Second,
-}
-
 impl Bank {
+
     fn get_cashier_mut(&mut self, index: CashierIndex) -> &mut Cashier {
         match index {
             CashierIndex::First => &mut self.cashiers[0],
@@ -156,8 +191,15 @@ fn balance_queues(
     (first_queue_size, second_queue_size, rebalanced_count)
 }
 
-#[derive(Debug, Clone, Copy, AddAssign)]
+#[derive(Debug, Clone, Copy, AddAssign, Default)]
 struct ClientsCount(usize);
+
+#[derive(Debug, Clone, Copy, Default)]
+enum CashierBusy {
+    #[default]
+    NotBusy,
+    Busy,
+}
 
 #[derive(Debug)]
 struct EventCreate {
@@ -177,6 +219,10 @@ struct EventProcess {
 
 impl EventCreate {
     fn iterate(self) -> (EventCreate, Option<EventProcess>) {
+        defer! {
+            update_cashiers_queue_time_dur(&mut self.bank.borrow_mut().cashiers, self.current_t);
+        }
+
         self.bank.borrow_mut().clients_count += ClientsCount(1);
         let event_finish_process_time = self.current_t + self.process_delay_gen.sample();
         let bank_clone = self.bank.clone();
@@ -195,11 +241,11 @@ impl EventCreate {
                 is_first_queue_busy,
                 is_second_queue_busy
             ) {
-                (false, false) => {
+                (CashierBusy::NotBusy, CashierBusy::NotBusy) => {
                     let mut bank = self.bank.borrow_mut();
                     assert_eq!(bank.get_cashier(CashierIndex::First).queue_size, QueueSize(0));
                     assert_eq!(bank.get_cashier(CashierIndex::Second).queue_size, QueueSize(0));
-                    bank.get_cashier_mut(CashierIndex::First).is_busy = true;
+                    bank.get_cashier_mut(CashierIndex::First).is_busy = CashierBusy::Busy;
                     Some(EventProcess {
                         delay_gen: self.process_delay_gen,
                         current_t: event_finish_process_time,
@@ -207,10 +253,10 @@ impl EventCreate {
                         cashier_index: CashierIndex::First
                     })
                 },
-                (true, false) => {
+                (CashierBusy::Busy, CashierBusy::NotBusy) => {
                     let mut bank = self.bank.borrow_mut();
                     assert_eq!(bank.get_cashier(CashierIndex::Second).queue_size, QueueSize(0));
-                    bank.get_cashier_mut(CashierIndex::Second).is_busy = true;
+                    bank.get_cashier_mut(CashierIndex::Second).is_busy = CashierBusy::Busy;
                     Some(EventProcess {
                         delay_gen: self.process_delay_gen,
                         current_t: event_finish_process_time,
@@ -218,10 +264,10 @@ impl EventCreate {
                         cashier_index: CashierIndex::Second
                     })
                 },
-                (false, true) => {
+                (CashierBusy::NotBusy, CashierBusy::Busy) => {
                     let mut bank = self.bank.borrow_mut();
                     assert_eq!(bank.get_cashier(CashierIndex::First).queue_size, QueueSize(0));
-                    bank.get_cashier_mut(CashierIndex::First).is_busy = true;
+                    bank.get_cashier_mut(CashierIndex::First).is_busy = CashierBusy::Busy;
                     Some(EventProcess {
                         delay_gen: self.process_delay_gen,
                         current_t: event_finish_process_time,
@@ -229,7 +275,7 @@ impl EventCreate {
                         cashier_index: CashierIndex::First
                     })
                 }
-                (true, true) => {
+                (CashierBusy::Busy, CashierBusy::Busy) => {
                     let cashier_index = {
                         let mut bank = self.bank.borrow_mut();
                         let first_queue_size = bank.get_cashier(CashierIndex::First).queue_size;
@@ -242,7 +288,6 @@ impl EventCreate {
                     };
                     if self.bank.borrow().get_cashier(cashier_index).queue_size >= QUEUE_MAX_SIZE {
                         self.bank.borrow_mut().refused_count += RefusedCount(1);
-                        None
                     } else {
                         let mut bank = self.bank.borrow_mut();
                         bank.get_cashier_mut(cashier_index).queue_size += QueueSize(1);
@@ -253,14 +298,8 @@ impl EventCreate {
                         bank.get_cashier_mut(CashierIndex::First).queue_size = res.0;
                         bank.get_cashier_mut(CashierIndex::Second).queue_size = res.1;
                         bank.balance_count += res.2;
-
-                        Some(EventProcess {
-                            delay_gen: self.process_delay_gen,
-                            current_t: event_finish_process_time,
-                            bank: bank_clone,
-                            cashier_index
-                        })
                     }
+                    None
                 }
             }
         )
@@ -269,9 +308,13 @@ impl EventCreate {
 
 impl EventProcess {
     fn iterate(self) -> Option<EventProcess> {
+        defer! {
+            update_cashiers_queue_time_dur(&mut self.bank.borrow_mut().cashiers, self.current_t);
+        }
+
         let mut bank = self.bank.borrow_mut();
         let queue_size = bank.get_cashier(self.cashier_index).queue_size;
-        bank.get_cashier_mut(self.cashier_index).is_busy = false;
+        bank.get_cashier_mut(self.cashier_index).is_busy = CashierBusy::NotBusy;
         if queue_size > QueueSize(0) {
             bank.get_cashier_mut(self.cashier_index).queue_size -= QueueSize(1);
 
@@ -283,7 +326,7 @@ impl EventProcess {
             bank.get_cashier_mut(CashierIndex::Second).queue_size = res.1;
             bank.balance_count += res.2;
 
-            bank.get_cashier_mut(self.cashier_index).is_busy = true;
+            bank.get_cashier_mut(self.cashier_index).is_busy = CashierBusy::Busy;
             Some(EventProcess {
                 delay_gen: self.delay_gen,
                 current_t: self.current_t + self.delay_gen.sample(),
@@ -312,6 +355,8 @@ impl Event {
 }
 
 fn main() {
+    let start_time = TimePoint::default();
+    let end_time = TimePoint(1000);
     let bank = Rc::new(RefCell::new(
         Bank {
             cashiers: Default::default(),
@@ -322,19 +367,18 @@ fn main() {
     ));
     let mut nodes = vec![
         Event::EventCreate(EventCreate {
-            current_t: Default::default(),
-            create_delay_gen: DelayGen::Uniform(Uniform::new(0.0, 10.0)),
-            process_delay_gen: DelayGen::Uniform(Uniform::new(40.0, 50.0)),
+            current_t: start_time,
+            create_delay_gen: DelayGen::Uniform(Uniform::new(5.0, 10.0)),
+            process_delay_gen: DelayGen::Uniform(Uniform::new(13.0, 17.0)),
             bank,
         })
     ];
-    let total_time = loop {
+    let last_event = loop {
         nodes.sort_by(|a, b| b.get_current_t().cmp(&a.get_current_t()));
         let next_event = nodes.pop().unwrap();
-        if next_event.get_current_t() > TimePoint(1000) {
-            break next_event.get_current_t();
+        if next_event.get_current_t() > end_time {
+            break next_event;
         }
-        // dbg!(&next_event);
         match next_event {
             Event::EventCreate(event) => {
                 let (event_create, event_process) = event.iterate();
@@ -350,15 +394,17 @@ fn main() {
             }
         }
     };
-    let node = nodes.pop().unwrap();
-    let bank = match node {
+    let bank = match last_event {
         Event::EventCreate(event) => event.bank,
         Event::EventProcess(event) => event.bank
     };
     let bank = bank.borrow();
-
-    println!("refused_count: {:?}", bank.refused_count.0 as f64 / bank.clients_count.0 as f64);
-    println!("balance_count: {:?}", bank.balance_count);
+    let cashier_first = bank.get_cashier(CashierIndex::First);
+    let cashier_second = bank.get_cashier(CashierIndex::Second);
+    println!("5) first_mean_clients_in_queue: {:?}", cashier_first.queue_time_dur / cashier_first.queue_time_dur_delays);
+    println!("5) second_mean_clients_in_queue: {:?}", cashier_second.queue_time_dur / cashier_second.queue_time_dur_delays);
+    println!("6) refused_count: {:?}", bank.refused_count.0 as f64 / bank.clients_count.0 as f64);
+    println!("7) balance_count: {:?}", bank.balance_count);
 }
 
 #[cfg(test)]
