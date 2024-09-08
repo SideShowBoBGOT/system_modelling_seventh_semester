@@ -1,6 +1,11 @@
+use std::cell::RefCell;
 use std::fmt::Debug;
+use std::io::Read;
 use std::ops::{Div, Mul };
-use derive_more::{Sub, Add, AddAssign};
+use std::rc::Rc;
+use derive_more::{Sub, Add, AddAssign, SubAssign};
+use rand::distributions::Uniform;
+use crate::delay_gen::DelayGen;
 
 pub mod delay_gen {
     use rand::distributions::Distribution;
@@ -48,16 +53,12 @@ impl Add<TimeSpan> for TimePoint {
 #[derive(Debug, Copy, Clone, Default, AddAssign)]
 struct TimeSpan(u64);
 
-#[derive(Debug, Copy, Clone, Default, Ord, PartialOrd, Eq, PartialEq, Sub)]
+#[derive(
+    Debug, Copy, Clone, Default,
+    Ord, PartialOrd, Eq, PartialEq,
+    AddAssign, SubAssign, Sub
+)]
 struct QueueSize(u64);
-impl QueueSize {
-    fn increment(&mut self) {
-        self.0 += 1;
-    }
-    fn decrement(&mut self) {
-        self.0 -= 1;
-    }
-}
 
 impl Mul<TimeSpan> for QueueSize {
     type Output = QueueTimeDur;
@@ -81,18 +82,6 @@ impl Div<TimeSpan> for QueueTimeDur {
     }
 }
 
-#[derive(Debug, Clone, Copy, Default)]
-enum SimulationDelay {
-    #[default]
-    Failed,
-    Processed {
-        work_dur: TimeSpan,
-        items_processed: u64,
-        failures_count: u64,
-        queue_time_dur: QueueTimeDur
-    }
-}
-
 impl Add<TimeSpan> for TimeSpan {
     type Output = TimeSpan;
 
@@ -104,262 +93,272 @@ impl Add<TimeSpan> for TimeSpan {
 #[derive(Debug)]
 struct Payload();
 
-// type ElementNode = Rc<RefCell<dyn Element>>;
-//
-// fn simulate_model(root: &mut dyn Element, dur: TimeSpan) {
-//     let mut current_time = TimePoint::default();
-//     let mut stop_time = current_time + dur;
-//     while current_time < stop_time {
-//         let simulation_delay = root.simulate(Some(Payload{}), current_time);
-//     }
-// }
+#[derive(Debug, Default)]
+struct Cashier {
+    queue_size: QueueSize,
+    is_busy: bool,
+}
 
-mod payload_vec {
-    use crate::Payload;
+#[derive(Debug)]
+struct Bank {
+    cashiers: [Cashier; 2],
+    balance_count: BalancedCount,
+    refused_count: RefusedCount,
+    clients_count: ClientsCount
+}
 
-    #[derive(Debug, Default)]
-    pub struct PayloadVec {
-        count: usize,
+#[derive(Debug, Clone, Copy)]
+enum CashierIndex {
+    First,
+    Second,
+}
+
+impl Bank {
+    fn get_cashier_mut(&mut self, index: CashierIndex) -> &mut Cashier {
+        match index {
+            CashierIndex::First => &mut self.cashiers[0],
+            CashierIndex::Second => &mut self.cashiers[1],
+        }
     }
 
-    impl PayloadVec {
-        pub fn pop(&mut self) -> Option<Payload> {
-            if self.count == 0 {
-                None
-            } else {
-                self.count -= 1;
-                Some(Payload())
-            }
-        }
-
-        pub fn push(&mut self) {
-            self.count += 1;
-        }
-
-        pub fn is_empty(&self) -> bool {
-            self.count == 0
+    fn get_cashier(&self, index: CashierIndex) -> &Cashier {
+        match index {
+            CashierIndex::First => &self.cashiers[0],
+            CashierIndex::Second => &self.cashiers[1],
         }
     }
 }
 
-mod element_processor {
-    use crate::{QueueSize, QueueTimeDur, TimePoint, TimeSpan};
-    use crate::delay_gen::DelayGen;
-    use crate::payload_vec::PayloadVec;
+#[derive(Debug, Copy, Clone, AddAssign)]
+struct RefusedCount(usize);
 
-    #[derive(Debug)]
-    struct PayloadStats {
-        finish_time: TimePoint,
-        work_time: TimeSpan
+#[derive(Debug, Copy, Clone, AddAssign)]
+struct BalancedCount(usize);
+
+const QUEUE_CHANGE_SIZE: QueueSize = QueueSize(2);
+const QUEUE_MAX_SIZE: QueueSize = QueueSize(3);
+
+fn balance_queues(
+    mut first_queue_size: QueueSize,
+    mut second_queue_size: QueueSize,
+) -> (QueueSize, QueueSize, BalancedCount) {
+    let (mmin, mmax) = if first_queue_size < second_queue_size {
+        (&mut first_queue_size, &mut second_queue_size)
+    } else {
+        (&mut second_queue_size, &mut first_queue_size)
+    };
+    let mut rebalanced_count = BalancedCount(0);
+    while *mmax - *mmin >= QUEUE_CHANGE_SIZE {
+        *mmin += QueueSize(1);
+        *mmax -= QueueSize(1);
+        rebalanced_count += BalancedCount(1);
     }
+    (first_queue_size, second_queue_size, rebalanced_count)
+}
 
-    #[derive(Debug)]
-    pub struct BankWindow {
-        name: &'static str,
-        max_queue_size: QueueSize,
-        delay_gen: DelayGen,
+#[derive(Debug, Clone, Copy, AddAssign)]
+struct ClientsCount(usize);
 
-        current_payload_stats: Option<PayloadStats>,
-        finished_payloads_count: usize,
-        interval_between_finished_payloads_sum: TimeSpan,
-        last_payload_finished_time: TimePoint,
-        work_dur: TimeSpan,
+#[derive(Debug)]
+struct EventCreate {
+    current_t: TimePoint,
+    create_delay_gen: DelayGen,
+    process_delay_gen: DelayGen,
+    bank: Rc<RefCell<Bank>>,
+}
 
-        queue_size: QueueSize,
-        queue_time_dur: QueueTimeDur,
-        last_simulate_time_point: TimePoint,
-    }
+#[derive(Debug)]
+struct EventProcess {
+    delay_gen: DelayGen,
+    current_t: TimePoint,
+    bank: Rc<RefCell<Bank>>,
+    cashier_index: CashierIndex
+}
 
-    struct UpdateStatsAfterSimulation<'a> {
-        current_time: TimePoint,
-        queue_size: QueueSize,
-        queue_time_dur: &'a mut QueueTimeDur,
-        last_simulate_time_point: &'a mut TimePoint
-    }
-
-    impl Drop for UpdateStatsAfterSimulation<'_> {
-        fn drop(&mut self) {
-            let delay = self.current_time - *self.last_simulate_time_point;
-            *self.queue_time_dur = self.queue_size * delay;
-            *self.last_simulate_time_point = self.current_time;
-        }
-    }
-
-    // bad name, but self-explanatory
-    #[derive(Debug)]
-    pub struct PayloadVecWithPossiblySomeConsumeElements(PayloadVec);
-
-    impl BankWindow {
-        fn catch_up_with_time(&mut self, current_time: TimePoint) -> UpdateStatsAfterSimulation {
-            let _ = &self.delay_gen;
-            loop {
-                if let Some(current_payload_stats) = &mut self.current_payload_stats {
-                    if current_payload_stats.finish_time > current_time {
-                        self.last_simulate_time_point = current_time;
-                        break;
-                    }
-                    self.finished_payloads_count += 1;
-                    {
-                        let interval = current_payload_stats.finish_time - self.last_payload_finished_time;
-                        self.interval_between_finished_payloads_sum += interval;
-                        self.queue_time_dur += self.queue_size * interval;
-                    }
-                    self.last_simulate_time_point = current_payload_stats.finish_time;
-                    self.last_payload_finished_time = current_payload_stats.finish_time;
-                    self.work_dur += current_payload_stats.work_time;
-
-                    if self.queue_size > QueueSize(0) {
-                        self.queue_size.decrement();
-                        current_payload_stats.work_time = self.delay_gen.sample();
-                        current_payload_stats.finish_time = current_time + current_payload_stats.work_time;
+impl EventCreate {
+    fn iterate(self) -> (EventCreate, Option<EventProcess>) {
+        self.bank.borrow_mut().clients_count += ClientsCount(1);
+        let event_finish_process_time = self.current_t + self.process_delay_gen.sample();
+        let bank_clone = self.bank.clone();
+        let is_first_queue_busy = self.bank.borrow_mut()
+            .get_cashier(CashierIndex::First).is_busy;
+        let is_second_queue_busy = self.bank.borrow_mut()
+            .get_cashier(CashierIndex::Second).is_busy;
+        (
+            EventCreate {
+                current_t: self.current_t + self.create_delay_gen.sample(),
+                create_delay_gen: self.create_delay_gen,
+                process_delay_gen: self.process_delay_gen,
+                bank: self.bank.clone()
+            },
+            match (
+                is_first_queue_busy,
+                is_second_queue_busy
+            ) {
+                (false, false) => {
+                    let mut bank = self.bank.borrow_mut();
+                    assert_eq!(bank.get_cashier(CashierIndex::First).queue_size, QueueSize(0));
+                    assert_eq!(bank.get_cashier(CashierIndex::Second).queue_size, QueueSize(0));
+                    bank.get_cashier_mut(CashierIndex::First).is_busy = true;
+                    Some(EventProcess {
+                        delay_gen: self.process_delay_gen,
+                        current_t: event_finish_process_time,
+                        bank: bank_clone,
+                        cashier_index: CashierIndex::First
+                    })
+                },
+                (true, false) => {
+                    let mut bank = self.bank.borrow_mut();
+                    assert_eq!(bank.get_cashier(CashierIndex::Second).queue_size, QueueSize(0));
+                    bank.get_cashier_mut(CashierIndex::Second).is_busy = true;
+                    Some(EventProcess {
+                        delay_gen: self.process_delay_gen,
+                        current_t: event_finish_process_time,
+                        bank: bank_clone,
+                        cashier_index: CashierIndex::Second
+                    })
+                },
+                (false, true) => {
+                    let mut bank = self.bank.borrow_mut();
+                    assert_eq!(bank.get_cashier(CashierIndex::First).queue_size, QueueSize(0));
+                    bank.get_cashier_mut(CashierIndex::First).is_busy = true;
+                    Some(EventProcess {
+                        delay_gen: self.process_delay_gen,
+                        current_t: event_finish_process_time,
+                        bank: bank_clone,
+                        cashier_index: CashierIndex::First
+                    })
+                }
+                (true, true) => {
+                    let cashier_index = {
+                        let mut bank = self.bank.borrow_mut();
+                        let first_queue_size = bank.get_cashier(CashierIndex::First).queue_size;
+                        let second_queue_size = bank.get_cashier(CashierIndex::Second).queue_size;
+                        if first_queue_size < second_queue_size {
+                            CashierIndex::First
+                        } else {
+                            CashierIndex::Second
+                        }
+                    };
+                    if self.bank.borrow().get_cashier(cashier_index).queue_size >= QUEUE_MAX_SIZE {
+                        self.bank.borrow_mut().refused_count += RefusedCount(1);
+                        None
                     } else {
-                        self.current_payload_stats = None;
+                        let mut bank = self.bank.borrow_mut();
+                        bank.get_cashier_mut(cashier_index).queue_size += QueueSize(1);
+                        let res = balance_queues(
+                            bank.get_cashier(CashierIndex::First).queue_size,
+                            bank.get_cashier(CashierIndex::Second).queue_size,
+                        );
+                        bank.get_cashier_mut(CashierIndex::First).queue_size = res.0;
+                        bank.get_cashier_mut(CashierIndex::Second).queue_size = res.1;
+                        bank.balance_count += res.2;
+
+                        Some(EventProcess {
+                            delay_gen: self.process_delay_gen,
+                            current_t: event_finish_process_time,
+                            bank: bank_clone,
+                            cashier_index
+                        })
                     }
-                } else {
-                    break;
                 }
             }
-            UpdateStatsAfterSimulation{
-                current_time,
-                queue_size: self.queue_size,
-                queue_time_dur: &mut self.queue_time_dur,
-                last_simulate_time_point: &mut self.last_simulate_time_point
-            }
-        }
-
-        pub fn simulate_without_payload(&mut self, current_time: TimePoint) {
-            let _ = self.catch_up_with_time(current_time);
-        }
-
-        pub fn simulate_with_payload(
-            &mut self, current_time: TimePoint, mut payload_vec: PayloadVec,
-        ) -> PayloadVecWithPossiblySomeConsumeElements {
-            let _ = self.catch_up_with_time(current_time);
-            loop {
-                if self.current_payload_stats.is_none() {
-                    if payload_vec.pop().is_none() {
-                        break;
-                    }
-                    let delay = self.delay_gen.sample();
-                    self.current_payload_stats = Some(PayloadStats{
-                        finish_time: current_time + delay, work_time: delay
-                    });
-                    continue;
-                }
-                if self.queue_size < self.max_queue_size {
-                    if payload_vec.pop().is_none() {
-                        break;
-                    }
-                    self.queue_size.increment();
-                    continue;
-                }
-                break;
-            }
-            PayloadVecWithPossiblySomeConsumeElements(payload_vec)
-        }
-
-
-        pub fn get_queue_size(&self) -> QueueSize {
-            self.queue_size
-        }
-        pub fn get_queue_size_mut(&mut self) -> &mut QueueSize {
-            &mut self.queue_size
-        }
+        )
     }
 }
 
-mod bank_window_queue_balancer {
-    use std::ops::Sub;
-    use derive_more::AddAssign;
-    use crate::element_processor::BankWindow;
-    use crate::{QueueSize, TimePoint};
-    use crate::payload_vec::PayloadVec;
+impl EventProcess {
+    fn iterate(self) -> Option<EventProcess> {
+        let mut bank = self.bank.borrow_mut();
+        let queue_size = bank.get_cashier(self.cashier_index).queue_size;
+        bank.get_cashier_mut(self.cashier_index).is_busy = false;
+        if queue_size > QueueSize(0) {
+            bank.get_cashier_mut(self.cashier_index).queue_size -= QueueSize(1);
 
-    const BANK_WINDOW_MAX_QUEUE_SIZE: QueueSize = QueueSize(3);
-    const QUEUE_CHANGE: QueueSize = QueueSize(2);
-
-    struct BankWindowQueueBalancer {
-        first_window: BankWindow,
-        second_window: BankWindow,
-        rejected_count: usize
-    }
-
-    fn is_bank_window_full(bank_window: &BankWindow) -> bool {
-        BANK_WINDOW_MAX_QUEUE_SIZE == bank_window.get_queue_size()
-    }
-
-    #[derive(Debug, AddAssign)]
-    struct RebalancedCount(usize);
-
-    fn make_rebalanced_queues(
-        first_queue_size: &mut QueueSize,
-        second_queue_size: &mut QueueSize
-    ) -> RebalancedCount {
-        let mmin = first_queue_size.min(second_queue_size);
-        let mmax = first_queue_size.max(second_queue_size);
-        let mut rebalancing_result = RebalancedCount(0);
-        while *mmax - *mmin >= QUEUE_CHANGE {
-            mmax.decrement();
-            mmin.increment();
-            *rebalancing_result += RebalancedCount(1);
-        }
-        rebalancing_result
-    }
-
-    impl BankWindowQueueBalancer {
-        fn simulate(&mut self, current_time: TimePoint, mut payload_vec: PayloadVec) {
-            make_rebalanced_queues(
-                self.first_window.get_queue_size_mut(),
-                self.second_window.get_queue_size_mut()
+            let res = balance_queues(
+                bank.get_cashier(CashierIndex::First).queue_size,
+                bank.get_cashier(CashierIndex::Second).queue_size,
             );
-            loop {
-                if is_bank_window_full(&self.first_window)
-                    && is_bank_window_full(&self.second_window) {
-                    while payload_vec.pop().is_some() {
-                        self.rejected_count += 1;
-                    }
-                    break;
-                }
-                if let Some(payload) = payload_vec.pop() {
-                    make_rebalanced_queues(
-                        self.first_window.get_queue_size_mut(),
-                        self.second_window.get_queue_size_mut()
-                    );
+            bank.get_cashier_mut(CashierIndex::First).queue_size = res.0;
+            bank.get_cashier_mut(CashierIndex::Second).queue_size = res.1;
+            bank.balance_count += res.2;
 
-
-
-                } else {
-                    break;
-                }
-            }
+            bank.get_cashier_mut(self.cashier_index).is_busy = true;
+            Some(EventProcess {
+                delay_gen: self.delay_gen,
+                current_t: self.current_t + self.delay_gen.sample(),
+                bank: self.bank.clone(),
+                cashier_index: self.cashier_index
+            })
+        } else {
+            None
         }
     }
 }
 
-mod element_create {
-    use crate::delay_gen::DelayGen;
-    use crate::payload_vec::PayloadVec;
-    use crate::TimePoint;
+#[derive(Debug)]
+enum Event {
+    EventProcess(EventProcess),
+    EventCreate(EventCreate),
+}
 
-    pub struct ElementCreate {
-        delay_gen: DelayGen,
-        next_t: TimePoint,
-    }
-
-    impl ElementCreate {
-        pub fn simulate(&mut self, current_t: TimePoint) -> PayloadVec {
-            let mut payload_vec = PayloadVec::default();
-            while self.next_t < current_t {
-                self.next_t = self.next_t + self.delay_gen.sample();
-                payload_vec.push();
-            }
-            payload_vec
+impl Event {
+    fn get_current_t(&self) -> TimePoint {
+        match self {
+            Event::EventProcess(e) => e.current_t,
+            Event::EventCreate(e) => e.current_t,
         }
     }
 }
 
 fn main() {
+    let bank = Rc::new(RefCell::new(
+        Bank {
+            cashiers: Default::default(),
+            balance_count: BalancedCount(0),
+            refused_count: RefusedCount(0),
+            clients_count: ClientsCount(0),
+        }
+    ));
+    let mut nodes = vec![
+        Event::EventCreate(EventCreate {
+            current_t: Default::default(),
+            create_delay_gen: DelayGen::Uniform(Uniform::new(0.0, 10.0)),
+            process_delay_gen: DelayGen::Uniform(Uniform::new(40.0, 50.0)),
+            bank,
+        })
+    ];
+    let total_time = loop {
+        nodes.sort_by(|a, b| b.get_current_t().cmp(&a.get_current_t()));
+        let next_event = nodes.pop().unwrap();
+        if next_event.get_current_t() > TimePoint(1000) {
+            break next_event.get_current_t();
+        }
+        // dbg!(&next_event);
+        match next_event {
+            Event::EventCreate(event) => {
+                let (event_create, event_process) = event.iterate();
+                nodes.push(Event::EventCreate(event_create));
+                if let Some(event_process) = event_process {
+                    nodes.push(Event::EventProcess(event_process));
+                }
+            },
+            Event::EventProcess(event) => {
+                if let Some(event_process) = event.iterate() {
+                    nodes.push(Event::EventProcess(event_process));
+                }
+            }
+        }
+    };
+    let node = nodes.pop().unwrap();
+    let bank = match node {
+        Event::EventCreate(event) => event.bank,
+        Event::EventProcess(event) => event.bank
+    };
+    let bank = bank.borrow();
 
+    println!("refused_count: {:?}", bank.refused_count.0 as f64 / bank.clients_count.0 as f64);
+    println!("balance_count: {:?}", bank.balance_count);
 }
 
 #[cfg(test)]
