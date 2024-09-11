@@ -1,20 +1,57 @@
+use std::cmp::Ordering;
 use std::collections::{BinaryHeap, VecDeque};
-use rand::distributions::{Distribution};
 use rand::{thread_rng, RngCore};
 use crate::task_2::create_patient::EventNewPatient;
 use crate::task_2::event_lab_registration::EventLabRegistration;
 use crate::task_2::event_laboratory::EventLaboratory;
 use crate::task_2::event_patient_wards::EventPatientWards;
 use crate::task_2::event_reception_department::EventReceptionDepartment;
-use crate::task_2::transition_lab_reception::EventTransitionFromLabToReception;
-use lazy_static::lazy_static;
+use crate::task_2::event_terminal::EventTerminal;
+use crate::task_2::transition_lab_reception::{EventTransitionFromLabToReception, EventTransitionFromReceptionToLaboratory};
+use crate::utils::TimePoint;
 
 #[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq, Default)]
-enum Patient {
+enum PatientType {
     #[default]
     Three,
     Two,
     One,
+}
+
+
+#[derive(Debug, Default, Copy, Clone)]
+struct Patient {
+    current_t: TimePoint,
+    group: PatientType,
+}
+
+impl Patient {
+    fn new(current_t: TimePoint, group: PatientType) -> Patient {
+        Patient { current_t, group }
+    }
+}
+
+impl Eq for Patient {}
+
+impl PartialEq<Self> for Patient {
+    fn eq(&self, other: &Self) -> bool {
+        self.group.eq(&other.group) && self.current_t.eq(&other.current_t)
+    }
+}
+
+impl PartialOrd<Self> for Patient {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        match self.group.cmp(&other.group) {
+            Ordering::Equal => other.current_t.partial_cmp(&self.current_t),
+            other => Some(other),
+        }
+    }
+}
+
+impl Ord for Patient {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.partial_cmp(&other).expect("Patient ordering went wrong")
+    }
 }
 
 #[derive(Debug, Default)]
@@ -56,7 +93,7 @@ mod create_patient {
     use rand::distributions::{Distribution, Uniform};
     use rand_distr::Exp;
     use crate::task_2::event_reception_department::EventReceptionDepartment;
-    use crate::task_2::{Clinic, Patient};
+    use crate::task_2::{Clinic, Patient, PatientType};
     use crate::TimeSpan;
     use crate::utils::TimePoint;
 
@@ -71,12 +108,12 @@ mod create_patient {
         static ref DELAY_GEN: Exp<f64> = Exp::new(15.0).expect("Failed to create delay gen");
     }
 
-    fn generate_patient() -> Patient {
+    fn generate_patient_type() -> PatientType {
         let value = Uniform::new(0.0, 1.0).sample(&mut rand::thread_rng());
         match value {
-            ..0.5 => Patient::One,
-            0.5..0.6 => Patient::Two,
-            0.6.. => Patient::Three,
+            ..0.5 => PatientType::One,
+            0.5..0.6 => PatientType::Two,
+            0.6.. => PatientType::Three,
             _ => panic!("PatientType::generate_patient error")
         }
     }
@@ -98,10 +135,11 @@ mod create_patient {
                 self.clinic.borrow_mut().reception_department.queue.push(self.patient);
                 None
             };
+            let patient_t = self.current_t + TimeSpan(DELAY_GEN.sample(&mut rand::thread_rng()));
             (
                 Self {
-                    current_t: self.current_t + TimeSpan(DELAY_GEN.sample(&mut rand::thread_rng())),
-                    patient: generate_patient(),
+                    current_t: patient_t,
+                    patient: Patient{ current_t: patient_t, group: generate_patient_type()},
                     clinic: self.clinic.clone()
                 },
                 event_reception_dep,
@@ -113,7 +151,7 @@ mod create_patient {
 mod event_reception_department {
     use std::cell::RefCell;
     use std::rc::Rc;
-    use crate::task_2::{Clinic, Patient};
+    use crate::task_2::{Clinic, Patient, PatientType};
     use crate::task_2::event_patient_wards::EventPatientWards;
     use crate::task_2::transition_lab_reception::{EventTransitionFromReceptionToLaboratory, EventTransitionReceptionLaboratory};
     use crate::TimeSpan;
@@ -126,15 +164,15 @@ mod event_reception_department {
         patient: Patient
     }
 
-    fn determine_delay(patient: Patient) -> TimeSpan {
-        match patient {
-            Patient::One => TimeSpan(15.0),
-            Patient::Two => TimeSpan(40.0),
-            Patient::Three => TimeSpan(30.0),
+    fn determine_delay(patient_type: PatientType) -> TimeSpan {
+        match patient_type {
+            PatientType::One => TimeSpan(15.0),
+            PatientType::Two => TimeSpan(40.0),
+            PatientType::Three => TimeSpan(30.0),
         }
     }
 
-    enum ReceptionDepartmentTransitionToResult {
+    pub enum ReceptionDepartmentTransitionToResult {
         PatientWards(Option<EventPatientWards>),
         FromReceptionToLaboratory(EventTransitionFromReceptionToLaboratory)
     }
@@ -145,12 +183,12 @@ mod event_reception_department {
         }
 
         pub fn new(old_current_t: TimePoint, doctor_index: usize, clinic: Rc<RefCell<Clinic>>, patient: Patient) -> Self {
-            Self{current_t: old_current_t + determine_delay(patient), doctor_index, clinic, patient}
+            Self{current_t: old_current_t + determine_delay(patient.group), doctor_index, clinic, patient}
         }
 
         pub fn iterate(self) -> (Option<EventReceptionDepartment>, ReceptionDepartmentTransitionToResult) {
-            let transition_to = match self.patient {
-                Patient::One => ReceptionDepartmentTransitionToResult::PatientWards (
+            let transition_to = match self.patient.group {
+                PatientType::One => ReceptionDepartmentTransitionToResult::PatientWards (
                     {
                         let free_attendant_index = self.clinic.borrow()
                             .patient_wards.is_attendant_busy.iter().position(|d| !*d);
@@ -164,7 +202,7 @@ mod event_reception_department {
                         }
                     }
                 ),
-                Patient::Two | Patient::Three => {
+                PatientType::Two | PatientType::Three => {
                     ReceptionDepartmentTransitionToResult::FromReceptionToLaboratory({
                         EventTransitionFromReceptionToLaboratory(
                             EventTransitionReceptionLaboratory::new(self.current_t, self.clinic.clone(), self.patient)
@@ -262,7 +300,8 @@ mod event_patient_wards {
     use std::rc::Rc;
     use lazy_static::lazy_static;
     use rand::distributions::{Distribution, Uniform};
-    use crate::task_2::{Clinic, EventTerminal};
+    use crate::task_2::{Clinic};
+    use crate::task_2::event_terminal::EventTerminal;
     use crate::TimeSpan;
     use crate::utils::TimePoint;
 
@@ -295,12 +334,30 @@ mod event_patient_wards {
                 clinic.patient_wards.is_attendant_busy[self.attendant_index] = false;
                 None
             };
-            (next_event, EventTerminal {})
+            (next_event, EventTerminal::new(self.current_t))
         }
     }
 }
 
-struct EventTerminal {}
+mod event_terminal {
+    use crate::utils::TimePoint;
+
+    pub struct EventTerminal {
+        current_t: TimePoint,
+    }
+
+    impl EventTerminal {
+        pub fn new(current_t: TimePoint) -> Self {
+            Self{current_t}
+        }
+        pub fn get_current_t(&self) -> TimePoint {
+            self.current_t
+        }
+    }
+}
+
+
+
 
 fn get_erlang_distribution(shape: i64, scale: f64) -> rand_simple::Erlang {
     let mut erlang = rand_simple::Erlang::new(
@@ -373,7 +430,8 @@ mod event_lab_registration {
 mod event_laboratory {
     use std::cell::RefCell;
     use std::rc::Rc;
-    use crate::task_2::{get_erlang_distribution, Clinic, EventTerminal, Patient};
+    use crate::task_2::{get_erlang_distribution, Clinic, Patient, PatientType};
+    use crate::task_2::event_terminal::EventTerminal;
     use crate::task_2::transition_lab_reception::{EventTransitionFromLabToReception, EventTransitionReceptionLaboratory};
     use crate::TimeSpan;
     use crate::utils::TimePoint;
@@ -389,7 +447,7 @@ mod event_laboratory {
         TimeSpan(get_erlang_distribution(2, 4.0).sample())
     }
 
-    enum EventLaboratoryTransitionResult {
+    pub enum EventLaboratoryTransitionResult {
         TransitionFromLabToReception(EventTransitionFromLabToReception),
         Terminal(EventTerminal)
     }
@@ -409,17 +467,18 @@ mod event_laboratory {
         }
 
         pub fn iterate(self) -> (Option<Self>, EventLaboratoryTransitionResult) {
-            let transition_to = match self.patient {
-                Patient::One => panic!("Patient one can not be in the laboratory"),
-                Patient::Two => EventLaboratoryTransitionResult::TransitionFromLabToReception(
+            let transition_to = match self.patient.group {
+                PatientType::One => panic!("Patient one can not be in the laboratory"),
+                PatientType::Two => EventLaboratoryTransitionResult::TransitionFromLabToReception(
                     EventTransitionFromLabToReception(
                         EventTransitionReceptionLaboratory::new(
-                            self.current_t, self.clinic.clone(), Patient::One
+                            self.current_t, self.clinic.clone(),
+                            Patient{current_t: self.current_t, group: PatientType::One}
                         )
                     )
                 ),
-                Patient::Three => EventLaboratoryTransitionResult::Terminal(
-                    EventTerminal{}
+                PatientType::Three => EventLaboratoryTransitionResult::Terminal(
+                    EventTerminal::new(self.current_t)
                 ),
             };
             let next_event = {
@@ -439,12 +498,27 @@ mod event_laboratory {
 enum Event {
     NewPatient(EventNewPatient),
     ReceptionDepartment(EventReceptionDepartment),
-    TransitionFromLabToReception(EventTransitionFromLabToReception),
-    TransitionFromReceptionLaboratory(EventTransitionFromLabToReception),
+    FromReceptionLaboratory(EventTransitionFromReceptionToLaboratory),
+    FromLabToReception(EventTransitionFromLabToReception),
     PatientWards(EventPatientWards),
     LabRegistration(EventLabRegistration),
     Laboratory(EventLaboratory),
     Terminal(EventTerminal),
+}
+
+impl Event {
+    fn get_current_t(&self) -> TimePoint {
+        match self {
+            Event::NewPatient(event) => event.get_current_t(),
+            Event::ReceptionDepartment(event) => event.get_current_t(),
+            Event::FromReceptionLaboratory(event) => event.get_current_t(),
+            Event::FromLabToReception(event) => event.get_current_t(),
+            Event::PatientWards(event) => event.get_current_t(),
+            Event::LabRegistration(event) => event.get_current_t(),
+            Event::Laboratory(event) => event.get_current_t(),
+            Event::Terminal(event) => event.get_current_t(),
+        }
+    }
 }
 
 impl Default for Event {
@@ -453,46 +527,171 @@ impl Default for Event {
     }
 }
 
+impl Eq for Event {}
+
+impl PartialEq<Self> for Event {
+    fn eq(&self, other: &Self) -> bool {
+        self.get_current_t() == other.get_current_t()
+    }
+}
+
+impl PartialOrd<Self> for Event {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        other.get_current_t().partial_cmp(&self.get_current_t())
+    }
+}
+
+impl Ord for Event {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.partial_cmp(&other).expect("Failed to compare events")
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::task_2::Event;
+    use std::collections::BinaryHeap;
+    use crate::task_2::{Event, Patient, PatientType};
+    use crate::task_2::event_laboratory::EventLaboratoryTransitionResult;
+    use crate::task_2::event_reception_department::ReceptionDepartmentTransitionToResult;
+    use crate::task_2::event_terminal::EventTerminal;
+    use crate::utils::TimePoint;
 
     #[test]
     fn test_general() {
 
-        let mut nodes = vec![Event::default()];
+        let mut nodes = BinaryHeap::new();
 
-        // let last_event = loop {
-        //
-        //     nodes.sort_by(|a, b| {
-        //         b.get_current_t().partial_cmp(&a.get_current_t())
-        //             .expect("Can not compare events current_t")
-        //     });
-        //
-        //     let next_event = nodes.pop().unwrap();
-        //     if next_event.get_current_t() > end_time {
-        //         break next_event;
-        //     }
-        //     match next_event {
-        //         Event::EventCreate(event) => {
-        //             let (event_create, event_process) = event.iterate();
-        //             nodes.push(Event::EventCreate(event_create));
-        //             if let Some(event_process) = event_process {
-        //                 nodes.push(Event::EventProcess(event_process));
-        //             }
-        //         },
-        //         Event::EventProcess(event) => {
-        //             if let Some(event_process) = event.iterate() {
-        //                 nodes.push(Event::EventProcess(event_process));
-        //             }
-        //         }
-        //     }
-        // };
+        nodes.push(Event::default());
 
+        let end_time = TimePoint(10000.0);
+
+        let last_event = loop {
+
+            let next_event = nodes.pop().unwrap();
+            if next_event.get_current_t() > end_time {
+                break next_event;
+            }
+            match next_event {
+                Event::NewPatient(event) => {
+                    let res = event.iterate();
+                    nodes.push(Event::NewPatient(res.0));
+                    if let Some(next_event) = res.1 {
+                        nodes.push(Event::ReceptionDepartment(next_event));
+                    }
+                },
+                Event::ReceptionDepartment(event) => {
+                    let res = event.iterate();
+                    if let Some(self_event) = res.0 {
+                        nodes.push(Event::ReceptionDepartment(self_event));
+                    }
+                    match res.1 {
+                        ReceptionDepartmentTransitionToResult::PatientWards(event) => {
+                            if let Some(event) = event {
+                                nodes.push(Event::PatientWards(event));
+                            }
+                        }
+                        ReceptionDepartmentTransitionToResult::FromReceptionToLaboratory(event) => {
+                            nodes.push(Event::FromReceptionLaboratory(event));
+                        }
+                    }
+                },
+                Event::FromReceptionLaboratory(event) => {
+                    if let Some(res) = event.iterate() {
+                        nodes.push(Event::LabRegistration(res));
+                    }
+                },
+                Event::FromLabToReception(event) => {
+                    if let Some(res) = event.iterate() {
+                        nodes.push(Event::ReceptionDepartment(res));
+                    }
+                },
+                Event::PatientWards(event) => {
+                    let (self_event, _) = event.iterate();
+                    if let Some(res_event) = self_event {
+                        nodes.push(Event::PatientWards(res_event));
+                    }
+                },
+                Event::LabRegistration(event) => {
+                    let (self_event, next_event) = event.iterate();
+                    if let Some(self_event) = self_event {
+                        nodes.push(Event::LabRegistration(self_event));
+                    }
+                    if let Some(next_event) = next_event {
+                        nodes.push(Event::Laboratory(next_event));
+                    }
+                },
+                Event::Laboratory(event) => {
+                    let (self_event, next_event) = event.iterate();
+                    if let Some(self_event) = self_event {
+                        nodes.push(Event::Laboratory(self_event));
+                    }
+                    match next_event {
+                        EventLaboratoryTransitionResult::TransitionFromLabToReception(next_event) => {
+                            nodes.push(Event::FromLabToReception(next_event));
+                        }
+                        EventLaboratoryTransitionResult::Terminal(_) => {}
+                    }
+                },
+                Event::Terminal(event) => (),
+            }
+        };
     }
 
     #[test]
-    fn test_binary_heap() {
+    fn test_patient_type_ordering() {
+        let mut bh = BinaryHeap::new();
+        bh.push(PatientType::Three);
+        bh.push(PatientType::Two);
+        bh.push(PatientType::One);
 
+        assert_eq!(bh.pop(), Some(PatientType::One));
+        assert_eq!(bh.pop(), Some(PatientType::Two));
+        assert_eq!(bh.pop(), Some(PatientType::Three));
+    }
+
+    #[test]
+    fn test_patient_ordering() {
+        let mut bh = BinaryHeap::new();
+
+        bh.push(Patient::new(TimePoint(100.0), PatientType::Three));
+        bh.push(Patient::new(TimePoint(50.0), PatientType::Three));
+        bh.push(Patient::new(TimePoint(25.0), PatientType::Three));
+
+        bh.push(Patient::new(TimePoint(900.0), PatientType::Two));
+        bh.push(Patient::new(TimePoint(800.0), PatientType::Two));
+        bh.push(Patient::new(TimePoint(700.0), PatientType::Two));
+
+        bh.push(Patient::new(TimePoint(2299.0), PatientType::One));
+        bh.push(Patient::new(TimePoint(999.0), PatientType::One));
+        bh.push(Patient::new(TimePoint(1999.0), PatientType::One));
+
+        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(999.0), PatientType::One)));
+        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(1999.0), PatientType::One)));
+        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(2299.0), PatientType::One)));
+
+        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(700.0), PatientType::Two)));
+        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(800.0), PatientType::Two)));
+        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(900.0), PatientType::Two)));
+
+        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(25.0), PatientType::Three)));
+        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(50.0), PatientType::Three)));
+        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(100.0), PatientType::Three)));
+    }
+
+    #[test]
+    fn test_event_ordering() {
+        let mut bh = BinaryHeap::new();
+
+        bh.push(Event::Terminal(EventTerminal::new(TimePoint(10.0))));
+        bh.push(Event::Terminal(EventTerminal::new(TimePoint(9.0))));
+        bh.push(Event::Terminal(EventTerminal::new(TimePoint(8.0))));
+        bh.push(Event::Terminal(EventTerminal::new(TimePoint(14.0))));
+        bh.push(Event::Terminal(EventTerminal::new(TimePoint(1.0))));
+
+        assert_eq!(bh.pop().unwrap().get_current_t(), TimePoint(1.0));
+        assert_eq!(bh.pop().unwrap().get_current_t(), TimePoint(8.0));
+        assert_eq!(bh.pop().unwrap().get_current_t(), TimePoint(9.0));
+        assert_eq!(bh.pop().unwrap().get_current_t(), TimePoint(10.0));
+        assert_eq!(bh.pop().unwrap().get_current_t(), TimePoint(14.0));
     }
 }
