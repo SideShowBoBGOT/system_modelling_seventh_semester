@@ -1,5 +1,5 @@
 use std::cell::RefCell;
-use std::collections::BinaryHeap;
+use std::collections::{BinaryHeap, VecDeque};
 use std::rc::Rc;
 use rand::distributions::{Distribution, Uniform};
 use rand::{thread_rng, RngCore};
@@ -16,7 +16,9 @@ enum Patient {
 
 struct Clinic {
     reception_department: ReceptionDepartment,
-    patient_wards: PatientWards
+    patient_wards: PatientWards,
+    lab_registry: LabRegistry,
+    laboratory: Laboratory
 }
 
 struct ReceptionDepartment {
@@ -27,6 +29,16 @@ struct ReceptionDepartment {
 struct PatientWards {
     queue_size: usize,
     is_attendant_busy: [bool; 3],
+}
+
+struct LabRegistry {
+    queue: VecDeque<Patient>,
+    is_busy: bool
+}
+
+struct Laboratory {
+    queue: VecDeque<Patient>,
+    is_lab_assistant_busy: [bool; 2],
 }
 
 mod create_patient {
@@ -86,7 +98,7 @@ mod event_reception_department {
     use std::rc::Rc;
     use crate::task_2::{Clinic, Patient};
     use crate::task_2::event_patient_wards::EventPatientWards;
-    use crate::task_2::event_transition_from_reception_to_lab::EventTransitionFromReceptionToLaboratory;
+    use crate::task_2::transition_lab_reception::{EventTransitionFromReceptionToLaboratory, EventTransitionReceptionLaboratory};
     use crate::TimeSpan;
     use crate::utils::TimePoint;
 
@@ -133,8 +145,8 @@ mod event_reception_department {
                 ),
                 Patient::Two | Patient::Three => {
                     TransitionToResult::EventTransitionFromReceptionToLaboratory({
-                        EventTransitionFromReceptionToLaboratory::new(
-                            self.current_t, self.clinic.clone(), self.patient
+                        EventTransitionFromReceptionToLaboratory(
+                            EventTransitionReceptionLaboratory::new(self.current_t, self.clinic.clone(), self.patient)
                         )
                     })
                 },
@@ -153,40 +165,69 @@ mod event_reception_department {
     }
 }
 
-static RECEPTION_LABORATORY_TRANSITION_DELAY: Uniform<f64> = Uniform::new(2.0, 5.0);
 
-mod event_transition_from_reception_to_lab {
+mod transition_lab_reception {
     use std::cell::RefCell;
     use std::rc::Rc;
-    use rand::distributions::Distribution;
-    use crate::task_2::{Clinic, Patient, RECEPTION_LABORATORY_TRANSITION_DELAY};
-    use crate::task_2::event_registration::EventRegistration;
+    use rand::distributions::{Distribution, Uniform};
+    use crate::task_2::{Clinic, Patient};
+    use crate::task_2::event_lab_registration::EventLabRegistration;
+    use crate::task_2::event_reception_department::EventReceptionDepartment;
     use crate::TimeSpan;
     use crate::utils::TimePoint;
 
-    pub struct EventTransitionFromReceptionToLaboratory {
+    static RECEPTION_LABORATORY_TRANSITION_DELAY: Uniform<f64> = Uniform::new(2.0, 5.0);
+
+    pub struct EventTransitionReceptionLaboratory {
         current_t: TimePoint,
         clinic: Rc<RefCell<Clinic>>,
         patient: Patient,
     }
 
-    impl EventTransitionFromReceptionToLaboratory {
+    impl EventTransitionReceptionLaboratory {
         pub fn new(old_current_t: TimePoint, clinic: Rc<RefCell<Clinic>>, patient: Patient) -> Self {
             let delay = TimeSpan(RECEPTION_LABORATORY_TRANSITION_DELAY.sample(&mut rand::thread_rng()));
             Self{current_t: old_current_t + delay, clinic, patient}
         }
+    }
 
-        pub fn iterate(self) -> EventRegistration {
+    pub struct EventTransitionFromReceptionToLaboratory(EventTransitionReceptionLaboratory);
 
+    impl EventTransitionFromReceptionToLaboratory {
+        pub fn iterate(self) -> Option<EventLabRegistration> {
+            if self.0.clinic.borrow().lab_registry.is_busy {
+                self.0.clinic.borrow_mut().lab_registry.queue.push_back(self.0.patient);
+                None
+            } else {
+                assert!(self.0.clinic.borrow().lab_registry.queue.is_empty());
+                self.0.clinic.borrow_mut().lab_registry.is_busy = true;
+                Some(EventLabRegistration::new(self.0.current_t, self.0.clinic, self.0.patient))
+            }
         }
     }
+
+    pub struct EventTransitionFromLabToReception(EventTransitionReceptionLaboratory);
+
+    impl EventTransitionFromLabToReception {
+        pub fn iterate(self) -> Option<EventReceptionDepartment> {
+            if self.0.clinic.borrow().lab_registry.is_busy {
+                self.0.clinic.borrow_mut().lab_registry.queue.push_back(self.0.patient);
+                None
+            } else {
+                assert!(self.0.clinic.borrow().lab_registry.queue.is_empty());
+                self.0.clinic.borrow_mut().lab_registry.is_busy = true;
+                Some(EventLabRegistration::new(self.0.current_t, self.0.clinic, self.0.patient))
+            }
+        }
+    }
+
 }
 
 mod event_patient_wards {
     use std::cell::RefCell;
     use std::rc::Rc;
     use rand::distributions::{Distribution, Uniform};
-    use crate::task_2::Clinic;
+    use crate::task_2::{Clinic, EventTerminal};
     use crate::TimeSpan;
     use crate::utils::TimePoint;
 
@@ -204,18 +245,21 @@ mod event_patient_wards {
             Self{current_t: old_current_t + delay, clinic, attendant_index}
         }
 
-        pub fn iterate(self) -> Option<Self> {
+        pub fn iterate(self) -> (Option<Self>, EventTerminal) {
             let mut clinic = self.clinic.borrow_mut();
-            if clinic.patient_wards.queue_size > 0 {
+            let next_event = if clinic.patient_wards.queue_size > 0 {
                 clinic.patient_wards.queue_size -= 1;
                 Some(Self::new(self.current_t, self.clinic, self.attendant_index))
             } else {
                 clinic.patient_wards.is_attendant_busy[self.attendant_index] = false;
                 None
-            }
+            };
+            (next_event, EventTerminal {})
         }
     }
 }
+
+struct EventTerminal {}
 
 mod erlang_distribution {
     use std::cell::RefCell;
@@ -242,30 +286,117 @@ mod erlang_distribution {
     }
 }
 
-mod event_registration {
+mod event_lab_registration {
     use std::cell::RefCell;
     use std::rc::Rc;
     use crate::task_2::{Clinic, Patient};
     use crate::task_2::erlang_distribution::ErlangDistribution;
+    use crate::task_2::event_laboratory::EventLaboratory;
     use crate::TimeSpan;
     use crate::utils::TimePoint;
 
     static DELAY_GEN: ErlangDistribution = ErlangDistribution::new(3, 4.5);
 
-    pub struct EventRegistration {
+    pub struct EventLabRegistration {
         current_t: TimePoint,
         clinic: Rc<RefCell<Clinic>>,
         patient: Patient
     }
 
-    impl EventRegistration {
+    impl EventLabRegistration {
         pub fn new(
             old_current_t: TimePoint,
             clinic: Rc<RefCell<Clinic>>,
             patient: Patient
         ) -> Self {
             let delay = TimeSpan(DELAY_GEN.sample());
-            Self{current_t: old_current_t + delay, clinic, attendant_index}
+            Self{current_t: old_current_t + delay, clinic, patient}
+        }
+
+        pub fn iterate(self) -> (Option<Self>, Option<EventLaboratory>) {
+            let free_assistant_index = self.clinic.borrow()
+                .laboratory.is_lab_assistant_busy.iter().position(|d| !*d);
+            let event_lab = if let Some(index) = free_assistant_index {
+                assert!(self.clinic.borrow().laboratory.queue.is_empty());
+                self.clinic.borrow_mut().laboratory.is_lab_assistant_busy[index] = true;
+                Some(EventLaboratory::new(self.current_t, self.clinic.clone(), self.patient, index))
+            } else {
+                self.clinic.borrow_mut().laboratory.queue.push_back(self.patient);
+                None
+            };
+            let next_reg = {
+                let mut clinic = self.clinic.borrow_mut();
+                if let Some(patient) = clinic.lab_registry.queue.pop_front() {
+                    Some(Self::new(self.current_t, self.clinic.clone(), patient))
+                } else {
+                    clinic.lab_registry.is_busy = false;
+                    None
+                }
+            };
+            (next_reg, event_lab)
+        }
+    }
+}
+
+mod event_laboratory {
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    use crate::task_2::{Clinic, EventTerminal, Patient};
+    use crate::task_2::erlang_distribution::ErlangDistribution;
+    use crate::task_2::transition_lab_reception::{EventTransitionFromLabToReception, EventTransitionReceptionLaboratory};
+    use crate::TimeSpan;
+    use crate::utils::TimePoint;
+
+    pub struct EventLaboratory {
+        current_t: TimePoint,
+        clinic: Rc<RefCell<Clinic>>,
+        patient: Patient,
+        assistant_index: usize
+    }
+
+    static DELAY_GEN: ErlangDistribution = ErlangDistribution::new(2, 4.0);
+
+    enum EventLaboratoryTransitionResult {
+        EventTransitionFromLabToReception(EventTransitionFromLabToReception),
+        EventTerminal(EventTerminal)
+    }
+
+    impl EventLaboratory {
+        pub fn new(
+            old_current_t: TimePoint,
+            clinic: Rc<RefCell<Clinic>>,
+            patient: Patient,
+            assistant_index: usize
+        ) -> Self {
+            let delay = TimeSpan(DELAY_GEN.sample());
+            Self{current_t: old_current_t + delay, clinic, patient, assistant_index}
+        }
+
+        pub fn iterate(self) -> (Option<Self>, EventLaboratoryTransitionResult) {
+
+            let transition_to = match self.patient {
+                Patient::One => panic!("Patient one can not be in the laboratory"),
+                Patient::Two => EventLaboratoryTransitionResult::EventTransitionFromLabToReception(
+                    EventTransitionFromLabToReception(
+                        EventTransitionReceptionLaboratory::new(
+                            self.current_t, self.clinic.clone(), Patient::One
+                        )
+                    )
+                ),
+                Patient::Three => EventLaboratoryTransitionResult::EventTerminal(
+                    EventTerminal{}
+                ),
+            };
+            let next_event = {
+                let mut clinic = self.clinic.borrow_mut();
+                if let Some(patient) = clinic.laboratory.queue.pop_front() {
+                    Some(Self::new(self.current_t, self.clinic, patient, self.assistant_index))
+                } else {
+                    clinic.laboratory.is_lab_assistant_busy[self.assistant_index] = false;
+                    None
+                }
+            };
+            (next_event, transition_to)
         }
     }
 }
