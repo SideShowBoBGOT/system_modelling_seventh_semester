@@ -8,7 +8,7 @@ use crate::task_2::event_patient_wards::EventPatientWards;
 use crate::task_2::event_reception_department::EventReceptionDepartment;
 use crate::task_2::event_terminal::EventTerminal;
 use crate::task_2::transition_lab_reception::{EventTransitionFromLabToReception, EventTransitionFromReceptionToLaboratory};
-use crate::utils::TimePoint;
+use crate::TimePoint;
 
 #[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq, Default)]
 enum PatientType {
@@ -94,8 +94,7 @@ mod create_patient {
     use rand_distr::Exp;
     use crate::task_2::event_reception_department::EventReceptionDepartment;
     use crate::task_2::{Clinic, Patient, PatientType};
-    use crate::TimeSpan;
-    use crate::utils::TimePoint;
+    use crate::{TimePoint, TimeSpan};
 
     #[derive(Debug, Default)]
     pub struct EventNewPatient {
@@ -154,8 +153,7 @@ mod event_reception_department {
     use crate::task_2::{Clinic, Patient, PatientType};
     use crate::task_2::event_patient_wards::EventPatientWards;
     use crate::task_2::transition_lab_reception::{EventTransitionFromReceptionToLaboratory, EventTransitionReceptionLaboratory};
-    use crate::TimeSpan;
-    use crate::utils::TimePoint;
+    use crate::{TimePoint, TimeSpan};
 
     pub struct EventReceptionDepartment {
         current_t: TimePoint,
@@ -233,8 +231,7 @@ mod transition_lab_reception {
     use crate::task_2::{Clinic, Patient};
     use crate::task_2::event_lab_registration::EventLabRegistration;
     use crate::task_2::event_reception_department::EventReceptionDepartment;
-    use crate::TimeSpan;
-    use crate::utils::TimePoint;
+    use crate::{TimePoint, TimeSpan};
 
     lazy_static! {
         static ref RECEPTION_LABORATORY_TRANSITION_DELAY: Uniform<f64> = Uniform::new(2.0, 5.0);
@@ -302,8 +299,7 @@ mod event_patient_wards {
     use rand::distributions::{Distribution, Uniform};
     use crate::task_2::{Clinic};
     use crate::task_2::event_terminal::EventTerminal;
-    use crate::TimeSpan;
-    use crate::utils::TimePoint;
+    use crate::{TimePoint, TimeSpan};
 
     pub struct EventPatientWards {
         current_t: TimePoint,
@@ -340,7 +336,7 @@ mod event_patient_wards {
 }
 
 mod event_terminal {
-    use crate::utils::TimePoint;
+    use crate::TimePoint;
 
     pub struct EventTerminal {
         current_t: TimePoint,
@@ -376,8 +372,7 @@ mod event_lab_registration {
     use std::rc::Rc;
     use crate::task_2::{get_erlang_distribution, Clinic, Patient};
     use crate::task_2::event_laboratory::EventLaboratory;
-    use crate::TimeSpan;
-    use crate::utils::TimePoint;
+    use crate::{TimePoint, TimeSpan};
 
     fn sample_delay() -> TimeSpan {
         TimeSpan(get_erlang_distribution(3, 4.5).sample())
@@ -433,8 +428,7 @@ mod event_laboratory {
     use crate::task_2::{get_erlang_distribution, Clinic, Patient, PatientType};
     use crate::task_2::event_terminal::EventTerminal;
     use crate::task_2::transition_lab_reception::{EventTransitionFromLabToReception, EventTransitionReceptionLaboratory};
-    use crate::TimeSpan;
-    use crate::utils::TimePoint;
+    use crate::{TimePoint, TimeSpan};
 
     pub struct EventLaboratory {
         current_t: TimePoint,
@@ -554,7 +548,7 @@ mod tests {
     use crate::task_2::event_laboratory::EventLaboratoryTransitionResult;
     use crate::task_2::event_reception_department::ReceptionDepartmentTransitionToResult;
     use crate::task_2::event_terminal::EventTerminal;
-    use crate::utils::TimePoint;
+    use crate::TimePoint;
 
     #[test]
     fn test_general() {
