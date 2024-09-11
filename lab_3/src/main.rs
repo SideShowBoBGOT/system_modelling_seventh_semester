@@ -1,3 +1,6 @@
+mod task_2;
+mod utils;
+
 use std::cell::RefCell;
 use std::fmt::Debug;
 use std::ops::{Div, Mul };
@@ -5,37 +8,12 @@ use std::rc::Rc;
 use derive_more::{Sub, Add, AddAssign, SubAssign};
 use rand_distr::Exp;
 use scopeguard::defer;
-use crate::delay_gen::DelayGen;
+use crate::utils::delay_gen::DelayGen;
+use crate::utils::TimePoint;
+
 extern crate scopeguard;
 
-pub mod delay_gen {
-    use rand::distributions::Distribution;
-    use crate::TimeSpan;
-    use rand::thread_rng;
-    use rand_distr::{Exp, Normal, Uniform};
 
-    #[derive(Clone, Copy, Debug)]
-    pub enum DelayGen {
-        Normal(Normal<f64>),
-        Uniform(Uniform<f64>),
-        Exponential(Exp<f64>),
-    }
-
-    impl DelayGen {
-        pub fn sample(&self) -> TimeSpan {
-            TimeSpan(
-                match self {
-                    Self::Normal(dist) => dist.sample(&mut thread_rng()),
-                    Self::Uniform(dist) => dist.sample(&mut thread_rng()),
-                    Self::Exponential(dist) => dist.sample(&mut thread_rng()),
-                }
-            )
-        }
-    }
-}
-
-#[derive(Debug, Copy, Clone, Default, PartialOrd, PartialEq)]
-struct TimePoint(f64);
 
 impl Sub for TimePoint {
     type Output = TimeSpan;
