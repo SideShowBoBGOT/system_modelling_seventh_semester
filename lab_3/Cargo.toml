@@ -9,3 +9,4 @@ rand_distr = "0.4.3"
 derive_more = { version = "1.0.0", features = ["add", "mul", "add_assign"] }
 scopeguard = "1.2.0"
 rand_simple = "0.2.31"
+lazy_static = "1.5.0"

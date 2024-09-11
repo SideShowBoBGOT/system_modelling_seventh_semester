@@ -458,13 +458,3 @@ fn main() {
     println!("6) refused_count: {:?}", bank.refused_count.0 as f64 / bank.clients_count.0 as f64);
     println!("7) balance_count: {:?}", bank.balance_count);
 }
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn test_bank() {
-
-    }
-}
-
-
