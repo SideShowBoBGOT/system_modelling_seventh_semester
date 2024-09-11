@@ -54,6 +54,135 @@ impl Ord for Patient {
     }
 }
 
+mod queue_resource {
+    use std::cell::{Cell};
+    use std::rc::{Rc, Weak};
+
+    pub trait Queue {
+        type Item;
+        fn push(&mut self, t: Self::Item);
+        fn pop(&mut self) -> Option<Self::Item>;
+        fn is_empty(&self) -> bool;
+    }
+
+    pub struct QueueResource<Q> {
+        max_acquires: usize,
+        acquires_count: Rc<Cell<usize>>,
+        queue: Q,
+    }
+
+    pub struct QueueProcessor<E> {
+        acquires_count: Weak<Cell<usize>>,
+        value: E
+    }
+
+    impl<E> Drop for QueueProcessor<E> {
+        fn drop(&mut self) {
+            let acquires_count = self.acquires_count.upgrade().expect("Queue resource does not exist");
+            acquires_count.set(acquires_count.get() - 1);
+        }
+    }
+
+    impl<E> QueueProcessor<E> {
+        pub fn value(&self) -> &E {
+            &self.value
+        }
+
+        pub fn value_mut(&mut self) -> &mut E {
+            &mut self.value
+        }
+    }
+
+    impl<Q: Queue> QueueResource<Q> {
+        pub fn new(queue: Q, max_acquires: usize) -> Self {
+            Self{max_acquires, acquires_count: Rc::new(Cell::new(0usize)), queue}
+        }
+
+        pub fn push(&mut self, t: Q::Item) {
+            self.queue.push(t)
+        }
+
+        pub fn is_empty(&self) -> bool {
+            self.queue.is_empty()
+        }
+
+        pub fn acquire_processor(&mut self) -> QueueProcessor<Q::Item> {
+            assert!(self.acquires_count.get() < self.max_acquires);
+            let value = self.queue.pop().expect("Queue is empty");
+            self.acquires_count.set(self.acquires_count.get() + 1);
+            QueueProcessor{acquires_count: Rc::downgrade(&self.acquires_count), value}
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use crate::task_2::queue_resource::{Queue, QueueResource};
+
+        #[derive(Default)]
+        struct DummyQueue {
+            len: usize
+        }
+
+        impl Queue for DummyQueue {
+            type Item = ();
+            fn push(&mut self, t: ()) {
+                self.len += 1;
+            }
+
+            fn pop(&mut self) -> Option<()> {
+                assert_eq!(self.is_empty(), false);
+                self.len -= 1;
+                Some(())
+            }
+
+            fn is_empty(&self) -> bool {
+                self.len == 0
+            }
+        }
+
+        #[test]
+        fn test_one() {
+            let mut res = QueueResource::new(DummyQueue::default(), 3usize);
+            res.push(());
+            res.push(());
+            res.push(());
+            res.push(());
+            let proc_one = res.acquire_processor();
+            let proc_two = res.acquire_processor();
+            let proc_three = res.acquire_processor();
+        }
+
+        #[test]
+        #[should_panic]
+        fn test_two() {
+            let mut res = QueueResource::new(DummyQueue::default(), 2usize);
+            res.push(());
+            res.push(());
+            res.push(());
+            res.push(());
+
+            let proc_one = res.acquire_processor();
+            let proc_two = res.acquire_processor();
+            let proc_three = res.acquire_processor();
+        }
+
+        #[test]
+        fn test_three() {
+            let mut res = QueueResource::new(DummyQueue::default(), 2usize);
+            res.push(());
+            res.push(());
+            res.push(());
+            res.push(());
+
+            let proc_one = res.acquire_processor();
+            let proc_two = res.acquire_processor();
+            drop(proc_two);
+            let proc_three = res.acquire_processor();
+        }
+
+    }
+}
+
 #[derive(Debug, Default)]
 struct Clinic {
     reception_department: ReceptionDepartment,
@@ -124,6 +253,7 @@ mod create_patient {
         }
 
         pub fn iterate(self) -> (Self, Option<EventReceptionDepartment>) {
+
             let free_doctor_index = self.clinic.borrow()
                 .reception_department.is_doctor_busy.iter().position(|d| !*d);
             let event_reception_dep = if let Some(index) = free_doctor_index {
@@ -134,6 +264,7 @@ mod create_patient {
                 self.clinic.borrow_mut().reception_department.queue.push(self.patient);
                 None
             };
+
             let patient_t = self.current_t + TimeSpan(DELAY_GEN.sample(&mut rand::thread_rng()));
             (
                 Self {
@@ -352,9 +483,6 @@ mod event_terminal {
     }
 }
 
-
-
-
 fn get_erlang_distribution(shape: i64, scale: f64) -> rand_simple::Erlang {
     let mut erlang = rand_simple::Erlang::new(
         [
@@ -543,6 +671,7 @@ impl Ord for Event {
 
 #[cfg(test)]
 mod tests {
+    use std::cell::RefCell;
     use std::collections::BinaryHeap;
     use crate::task_2::{Event, Patient, PatientType};
     use crate::task_2::event_laboratory::EventLaboratoryTransitionResult;
@@ -687,5 +816,17 @@ mod tests {
         assert_eq!(bh.pop().unwrap().get_current_t(), TimePoint(9.0));
         assert_eq!(bh.pop().unwrap().get_current_t(), TimePoint(10.0));
         assert_eq!(bh.pop().unwrap().get_current_t(), TimePoint(14.0));
+    }
+
+    #[derive(Debug, Clone)]
+    struct Object {}
+    #[test]
+    fn test_ref_cell() {
+        let obj = RefCell::new(Object{});
+        let obj_mut_1 = obj.borrow_mut();
+        drop(obj_mut_1);
+        let obj_mut_2 = obj.borrow_mut();
+        drop(obj_mut_2);
+        let obj_mut_3 = obj.borrow_mut();
     }
 }
