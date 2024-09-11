@@ -58,6 +58,7 @@ dependencies = [
  "derive_more",
  "rand",
  "rand_distr",
+ "rand_simple",
  "scopeguard",
 ]
 
@@ -149,6 +150,12 @@ dependencies = [
  "num-traits",
  "rand",
 ]
+
+[[package]]
+name = "rand_simple"
+version = "0.2.31"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a9defcdfff61d2b1025cb782930230e3d005773a9ff0826c67830567934924e1"
 
 [[package]]
 name = "scopeguard"
