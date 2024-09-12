@@ -7,9 +7,9 @@ use crate::task_2::event_terminal::EventTerminal;
 use crate::task_2::patient::{Patient, PatientType};
 use crate::task_2::queue_resource::{Queue, QueueProcessor, QueueResource};
 use crate::task_2::transition_lab_reception::{
-    EventTransitionFromLabToReception,
+    EventTransitionFromLabToPatientWards,
     EventTransitionFromReceptionToLaboratory,
-    EventTransitionReceptionLaboratory
+    EventTransition
 };
 use crate::{TimePoint, TimeSpan};
 
@@ -395,7 +395,7 @@ impl EventReceptionDepartment {
             }),
             PatientType::Two | PatientType::Three => {
                 ReceptionDepartmentTransitionToResult::FromReceptionToLaboratory(EventTransitionFromReceptionToLaboratory(
-                    EventTransitionReceptionLaboratory::new(self.0.current_t, self.0.patient_processor.value().clone())
+                    EventTransition::new(self.0.current_t, self.0.patient_processor.value().clone())
                 ))
             },
         };
@@ -407,26 +407,26 @@ impl EventReceptionDepartment {
 mod transition_lab_reception {
     use lazy_static::lazy_static;
     use rand::distributions::{Distribution, Uniform};
-    use crate::task_2::{EventLabRegistration, EventPatientWards, EventReceptionDepartment, LabRegistry, Patient, PatientWards, ReceptionDepartment};
+    use crate::task_2::{EventLabRegistration, EventPatientWards, LabRegistry, Patient, PatientWards};
     use crate::{TimePoint, TimeSpan};
 
     lazy_static! {
         static ref RECEPTION_LABORATORY_TRANSITION_DELAY: Uniform<f64> = Uniform::new(2.0, 5.0);
     }
 
-    pub struct EventTransitionReceptionLaboratory {
+    pub struct EventTransition {
         current_t: TimePoint,
         patient: Patient,
     }
 
-    impl EventTransitionReceptionLaboratory {
+    impl EventTransition {
         pub fn new(old_current_t: TimePoint, patient: Patient) -> Self {
             let delay = TimeSpan(RECEPTION_LABORATORY_TRANSITION_DELAY.sample(&mut rand::thread_rng()));
             Self{current_t: old_current_t + delay, patient}
         }
     }
 
-    pub struct EventTransitionFromReceptionToLaboratory(pub EventTransitionReceptionLaboratory);
+    pub struct EventTransitionFromReceptionToLaboratory(pub EventTransition);
 
     impl EventTransitionFromReceptionToLaboratory {
         pub fn get_current_t(&self) -> TimePoint {
@@ -439,14 +439,14 @@ mod transition_lab_reception {
         }
     }
 
-    pub struct EventTransitionFromLabToReception(pub EventTransitionReceptionLaboratory);
+    pub struct EventTransitionFromLabToPatientWards(pub EventTransition);
 
-    impl EventTransitionFromLabToReception {
+    impl EventTransitionFromLabToPatientWards {
         pub fn get_current_t(&self) -> TimePoint {
             self.0.current_t
         }
 
-        pub fn iterate(self, patient_wards: &mut PatientWards) -> Option<EventPatientWards> {
+        pub(super) fn iterate(self, patient_wards: &mut PatientWards) -> Option<EventPatientWards> {
             patient_wards.0.push(self.0.patient);
             EventPatientWards::new(self.0.current_t, patient_wards)
         }
@@ -520,7 +520,7 @@ impl EventLabRegistration {
 struct EventLaboratory(EventBase);
 impl_event_new!(EventLaboratory, Laboratory);
 pub enum EventLaboratoryTransitionResult {
-    TransitionFromLabToReception(EventTransitionFromLabToReception),
+    TransitionFromLabToPatientWards(EventTransitionFromLabToPatientWards),
     Terminal(EventTerminal)
 }
 
@@ -532,9 +532,9 @@ impl EventLaboratory {
     pub fn iterate(self, laboratory: &mut Laboratory) -> (Option<Self>, EventLaboratoryTransitionResult) {
         let transition_to = match self.0.patient_processor.value().get_group() {
             PatientType::One => panic!("Patient one can not be in the laboratory"),
-            PatientType::Two => EventLaboratoryTransitionResult::TransitionFromLabToReception(
-                EventTransitionFromLabToReception(
-                    EventTransitionReceptionLaboratory::new(
+            PatientType::Two => EventLaboratoryTransitionResult::TransitionFromLabToPatientWards(
+                EventTransitionFromLabToPatientWards(
+                    EventTransition::new(
                         self.0.current_t, self.0.patient_processor.value().clone().upgrade_to_first_group()
                     )
                 )
@@ -552,7 +552,7 @@ enum Event {
     NewPatient(EventNewPatient),
     ReceptionDepartment(EventReceptionDepartment),
     FromReceptionLaboratory(EventTransitionFromReceptionToLaboratory),
-    FromLabToReception(EventTransitionFromLabToReception),
+    FromLabToReception(EventTransitionFromLabToPatientWards),
     PatientWards(EventPatientWards),
     LabRegistration(EventLabRegistration),
     Laboratory(EventLaboratory),
@@ -697,7 +697,7 @@ mod tests {
                         nodes.push(Event::Laboratory(self_event));
                     }
                     match next_event {
-                        EventLaboratoryTransitionResult::TransitionFromLabToReception(next_event) => {
+                        EventLaboratoryTransitionResult::TransitionFromLabToPatientWards(next_event) => {
                             nodes.push(Event::FromLabToReception(next_event));
                         }
                         EventLaboratoryTransitionResult::Terminal(event) => {
@@ -714,7 +714,6 @@ mod tests {
 
         println!("Mean time: {:?}", total_patients_spent_time.0 / total_terminal_patients as f64);
         println!("Lab registration mean time: {:?}", lab_registration_interval_sum.0 / lab_registration_count as f64);
-
     }
 
     #[test]
