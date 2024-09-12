@@ -8,6 +8,7 @@ use crate::task_2::event_patient_wards::EventPatientWards;
 use crate::task_2::event_reception_department::EventReceptionDepartment;
 use crate::task_2::event_terminal::EventTerminal;
 use crate::task_2::patient::Patient;
+use crate::task_2::queue_resource::{Queue, QueueResource};
 use crate::task_2::transition_lab_reception::{EventTransitionFromLabToReception, EventTransitionFromReceptionToLaboratory};
 use crate::TimePoint;
 
@@ -131,136 +132,139 @@ mod patient {
     }
 }
 
+mod queue_resource {
+    use std::cell::{Cell};
+    use std::rc::{Rc, Weak};
 
+    pub trait Queue {
+        type Item;
+        fn push(&mut self, t: Self::Item);
+        fn pop(&mut self) -> Option<Self::Item>;
+        fn is_empty(&self) -> bool;
+    }
 
-// mod queue_resource {
-//     use std::cell::{Cell};
-//     use std::rc::{Rc, Weak};
-//
-//     pub trait Queue {
-//         type Item;
-//         fn push(&mut self, t: Self::Item);
-//         fn pop(&mut self) -> Option<Self::Item>;
-//         fn is_empty(&self) -> bool;
-//     }
-//
-//     pub struct QueueResource<Q> {
-//         max_acquires: usize,
-//         acquires_count: Rc<Cell<usize>>,
-//         queue: Q,
-//     }
-//
-//     pub struct QueueProcessor<E> {
-//         acquires_count: Weak<Cell<usize>>,
-//         value: E
-//     }
-//
-//     impl<E> Drop for QueueProcessor<E> {
-//         fn drop(&mut self) {
-//             let acquires_count = self.acquires_count.upgrade().expect("Queue resource does not exist");
-//             acquires_count.set(acquires_count.get() - 1);
-//         }
-//     }
-//
-//     impl<E> QueueProcessor<E> {
-//         pub fn value(&self) -> &E {
-//             &self.value
-//         }
-//
-//         pub fn value_mut(&mut self) -> &mut E {
-//             &mut self.value
-//         }
-//     }
-//
-//     impl<Q: Queue> QueueResource<Q> {
-//         pub fn new(queue: Q, max_acquires: usize) -> Self {
-//             Self{max_acquires, acquires_count: Rc::new(Cell::new(0usize)), queue}
-//         }
-//
-//         pub fn push(&mut self, t: Q::Item) {
-//             self.queue.push(t)
-//         }
-//
-//         pub fn is_empty(&self) -> bool {
-//             self.queue.is_empty()
-//         }
-//
-//         pub fn acquire_processor(&mut self) -> QueueProcessor<Q::Item> {
-//             assert!(self.acquires_count.get() < self.max_acquires);
-//             let value = self.queue.pop().expect("Queue is empty");
-//             self.acquires_count.set(self.acquires_count.get() + 1);
-//             QueueProcessor{acquires_count: Rc::downgrade(&self.acquires_count), value}
-//         }
-//     }
-//
-//     #[cfg(test)]
-//     mod tests {
-//         use crate::task_2::queue_resource::{Queue, QueueResource};
-//
-//         #[derive(Default)]
-//         struct DummyQueue {
-//             len: usize
-//         }
-//
-//         impl Queue for DummyQueue {
-//             type Item = ();
-//             fn push(&mut self, t: ()) {
-//                 self.len += 1;
-//             }
-//
-//             fn pop(&mut self) -> Option<()> {
-//                 assert_eq!(self.is_empty(), false);
-//                 self.len -= 1;
-//                 Some(())
-//             }
-//
-//             fn is_empty(&self) -> bool {
-//                 self.len == 0
-//             }
-//         }
-//
-//         #[test]
-//         fn test_one() {
-//             let mut res = QueueResource::new(DummyQueue::default(), 3usize);
-//             res.push(());
-//             res.push(());
-//             res.push(());
-//             res.push(());
-//             let proc_one = res.acquire_processor();
-//             let proc_two = res.acquire_processor();
-//             let proc_three = res.acquire_processor();
-//         }
-//
-//         #[test]
-//         #[should_panic]
-//         fn test_two() {
-//             let mut res = QueueResource::new(DummyQueue::default(), 2usize);
-//             res.push(());
-//             res.push(());
-//             res.push(());
-//             res.push(());
-//
-//             let proc_one = res.acquire_processor();
-//             let proc_two = res.acquire_processor();
-//             let proc_three = res.acquire_processor();
-//         }
-//
-//         #[test]
-//         fn test_three() {
-//             let mut res = QueueResource::new(DummyQueue::default(), 2usize);
-//             res.push(());
-//             res.push(());
-//             res.push(());
-//             res.push(());
-//
-//             let proc_one = res.acquire_processor();
-//             let proc_two = res.acquire_processor();
-//             drop(proc_two);
-//             let proc_three = res.acquire_processor();
-//         }
-//
-//     }
-// }
+    #[derive(Debug, Default)]
+    pub struct QueueResource<Q> {
+        max_acquires: usize,
+        acquires_count: Rc<Cell<usize>>,
+        queue: Q,
+    }
+
+    pub struct QueueProcessor<E> {
+        acquires_count: Weak<Cell<usize>>,
+        value: E
+    }
+
+    impl<E> Drop for QueueProcessor<E> {
+        fn drop(&mut self) {
+            let acquires_count = self.acquires_count.upgrade().expect("Queue resource does not exist");
+            acquires_count.set(acquires_count.get() - 1);
+        }
+    }
+
+    impl<E> QueueProcessor<E> {
+        pub fn value(&self) -> &E {
+            &self.value
+        }
+
+        pub fn value_mut(&mut self) -> &mut E {
+            &mut self.value
+        }
+    }
+
+    impl<Q: Queue> QueueResource<Q> {
+        pub fn new(queue: Q, max_acquires: usize) -> Self {
+            Self{max_acquires, acquires_count: Rc::new(Cell::new(0usize)), queue}
+        }
+
+        pub fn push(&mut self, t: Q::Item) {
+            self.queue.push(t)
+        }
+
+        pub fn is_empty(&self) -> bool {
+            self.queue.is_empty()
+        }
+
+        pub fn is_any_free_processor(&self) -> bool {
+            self.acquires_count.get() < self.max_acquires
+        }
+
+        pub fn acquire_processor(&mut self) -> QueueProcessor<Q::Item> {
+            assert!(self.acquires_count.get() < self.max_acquires);
+            let value = self.queue.pop().expect("Queue is empty");
+            self.acquires_count.set(self.acquires_count.get() + 1);
+            QueueProcessor{acquires_count: Rc::downgrade(&self.acquires_count), value}
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use crate::task_2::queue_resource::{Queue, QueueResource};
+
+        #[derive(Default)]
+        struct DummyQueue {
+            len: usize
+        }
+
+        impl Queue for DummyQueue {
+            type Item = ();
+            fn push(&mut self, t: ()) {
+                self.len += 1;
+            }
+
+            fn pop(&mut self) -> Option<()> {
+                assert_eq!(self.is_empty(), false);
+                self.len -= 1;
+                Some(())
+            }
+
+            fn is_empty(&self) -> bool {
+                self.len == 0
+            }
+        }
+
+        #[test]
+        fn test_one() {
+            let mut res = QueueResource::new(DummyQueue::default(), 3usize);
+            res.push(());
+            res.push(());
+            res.push(());
+            res.push(());
+            let proc_one = res.acquire_processor();
+            let proc_two = res.acquire_processor();
+            let proc_three = res.acquire_processor();
+        }
+
+        #[test]
+        #[should_panic]
+        fn test_two() {
+            let mut res = QueueResource::new(DummyQueue::default(), 2usize);
+            res.push(());
+            res.push(());
+            res.push(());
+            res.push(());
+
+            let proc_one = res.acquire_processor();
+            let proc_two = res.acquire_processor();
+            let proc_three = res.acquire_processor();
+        }
+
+        #[test]
+        fn test_three() {
+            let mut res = QueueResource::new(DummyQueue::default(), 2usize);
+            res.push(());
+            res.push(());
+            res.push(());
+            res.push(());
+
+            let proc_one = res.acquire_processor();
+            let proc_two = res.acquire_processor();
+            drop(proc_two);
+            let proc_three = res.acquire_processor();
+        }
+
+    }
+}
 
 #[derive(Debug, Default)]
 struct Clinic {
@@ -270,17 +274,27 @@ struct Clinic {
     laboratory: Laboratory
 }
 
-#[derive(Debug, Default)]
-struct ReceptionDepartment {
-    queue: BinaryHeap<Patient>,
-    is_doctor_busy: [bool; 2],
+impl<T> Queue for BinaryHeap<T> {
+    type Item = T;
+
+    fn push(&mut self, t: Self::Item) {
+        self.push(t);
+    }
+
+    fn pop(&mut self) -> Option<Self::Item> {
+        self.pop()
+    }
+
+    fn is_empty(&self) -> bool {
+        self.is_empty()
+    }
 }
 
 #[derive(Debug, Default)]
-struct PatientWards {
-    queue_size: usize,
-    is_attendant_busy: [bool; 3],
-}
+struct ReceptionDepartment(QueueResource<BinaryHeap<Patient>>);
+
+#[derive(Debug, Default)]
+struct PatientWards(QueueResource<BinaryHeap<Patient>>);
 
 #[derive(Debug, Default)]
 struct LabRegistry {
@@ -330,24 +344,20 @@ mod create_patient {
         }
 
         pub fn iterate(self, clinic: &mut Clinic) -> (Self, Option<EventReceptionDepartment>) {
-
-            let free_doctor_index = clinic.reception_department.is_doctor_busy.iter().position(|d| !*d);
-            let event_reception_dep = if let Some(index) = free_doctor_index {
-                assert!(clinic.reception_department.queue.is_empty());
-                clinic.reception_department.is_doctor_busy[index] = true;
-                Some(EventReceptionDepartment::new(self.current_t, index, self.patient))
-            } else {
-                clinic.reception_department.queue.push(self.patient);
-                None
-            };
-
+            clinic.reception_department.0.push(self.patient);
             let patient_t = self.current_t + TimeSpan(DELAY_GEN.sample(&mut rand::thread_rng()));
             (
                 Self {
                     current_t: patient_t,
                     patient: Patient::new(patient_t, generate_patient_type()),
                 },
-                event_reception_dep,
+                if clinic.reception_department.0.is_any_free_processor() {
+                    Some(EventReceptionDepartment::new(
+                        self.current_t, clinic.reception_department.0.acquire_processor()
+                    ))
+                } else {
+                    None
+                }
             )
         }
     }
@@ -359,11 +369,11 @@ mod event_reception_department {
     use crate::task_2::transition_lab_reception::{EventTransitionFromReceptionToLaboratory, EventTransitionReceptionLaboratory};
     use crate::{TimePoint, TimeSpan};
     use crate::task_2::patient::PatientType;
+    use crate::task_2::queue_resource::QueueProcessor;
 
     pub struct EventReceptionDepartment {
         current_t: TimePoint,
-        doctor_index: usize,
-        patient: Patient
+        patient_processor: QueueProcessor<Patient>
     }
 
     fn determine_delay(patient_type: PatientType) -> TimeSpan {
@@ -384,12 +394,12 @@ mod event_reception_department {
             self.current_t
         }
 
-        pub fn new(old_current_t: TimePoint, doctor_index: usize, patient: Patient) -> Self {
-            Self{current_t: old_current_t + determine_delay(patient.get_group()), doctor_index, patient}
+        pub fn new(old_current_t: TimePoint, patient_processor: QueueProcessor<Patient>) -> Self {
+            Self{current_t: old_current_t + determine_delay(patient_processor.value().get_group()), patient_processor}
         }
 
         pub fn iterate(self, clinic: &mut Clinic) -> (Option<EventReceptionDepartment>, ReceptionDepartmentTransitionToResult) {
-            let transition_to = match self.patient.get_group() {
+            let transition_to = match self.patient_processor.value().get_group() {
                 PatientType::One => ReceptionDepartmentTransitionToResult::PatientWards (
                     {
                         let free_attendant_index = clinic
@@ -412,15 +422,15 @@ mod event_reception_department {
                     })
                 },
             };
-            let next_reception_dep = {
-                if let Some(patient) = clinic.reception_department.queue.pop() {
-                    Some(Self::new(self.current_t, self.doctor_index, patient))
+
+            (
+                if clinic.reception_department.0.is_any_free_processor() {
+                    Some(Self::new(self.current_t, clinic.reception_department.0.acquire_processor()))
                 } else {
-                    clinic.reception_department.is_doctor_busy[self.doctor_index] = false;
                     None
-                }
-            };
-            (next_reception_dep, transition_to)
+                },
+                transition_to
+            )
         }
     }
 }
