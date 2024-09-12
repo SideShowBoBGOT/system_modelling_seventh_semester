@@ -7,181 +7,259 @@ use crate::task_2::event_laboratory::EventLaboratory;
 use crate::task_2::event_patient_wards::EventPatientWards;
 use crate::task_2::event_reception_department::EventReceptionDepartment;
 use crate::task_2::event_terminal::EventTerminal;
+use crate::task_2::patient::Patient;
 use crate::task_2::transition_lab_reception::{EventTransitionFromLabToReception, EventTransitionFromReceptionToLaboratory};
 use crate::TimePoint;
 
-#[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq, Default)]
-enum PatientType {
-    #[default]
-    Three,
-    Two,
-    One,
-}
+mod patient {
+    use std::cmp::Ordering;
+    use crate::{TimePoint, TimeSpan};
 
-
-#[derive(Debug, Default, Copy, Clone)]
-struct Patient {
-    current_t: TimePoint,
-    group: PatientType,
-}
-
-impl Patient {
-    fn new(current_t: TimePoint, group: PatientType) -> Patient {
-        Patient { current_t, group }
+    #[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq, Default)]
+    pub enum PatientType {
+        #[default]
+        Three,
+        Two,
+        One,
     }
-}
 
-impl Eq for Patient {}
-
-impl PartialEq<Self> for Patient {
-    fn eq(&self, other: &Self) -> bool {
-        self.group.eq(&other.group) && self.current_t.eq(&other.current_t)
+    #[derive(Debug, Default, Copy, Clone)]
+    pub struct Patient {
+        clinic_in_t: TimePoint,
+        group: PatientType,
+        last_update_time: TimePoint,
+        time_spent: TimeSpan
     }
-}
 
-impl PartialOrd<Self> for Patient {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        match self.group.cmp(&other.group) {
-            Ordering::Equal => other.current_t.partial_cmp(&self.current_t),
-            other => Some(other),
+    impl Patient {
+        pub fn new(clinic_in_t: TimePoint, group: PatientType) -> Patient {
+            Patient {
+                clinic_in_t, group, last_update_time: clinic_in_t,
+                time_spent: TimeSpan::default()
+            }
         }
-    }
-}
 
-impl Ord for Patient {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.partial_cmp(&other).expect("Patient ordering went wrong")
-    }
-}
+        pub fn upgrade_to_first_group(mut self) -> Patient {
+            self.group = PatientType::One;
+            self
+        }
 
-mod queue_resource {
-    use std::cell::{Cell};
-    use std::rc::{Rc, Weak};
+        pub fn update_time(&mut self, current_t: TimePoint) {
+            assert!(current_t > self.last_update_time);
+            self.time_spent += current_t - self.last_update_time;
+            self.last_update_time = current_t;
+        }
 
-    pub trait Queue {
-        type Item;
-        fn push(&mut self, t: Self::Item);
-        fn pop(&mut self) -> Option<Self::Item>;
-        fn is_empty(&self) -> bool;
-    }
+        pub fn get_group(&self) -> PatientType {
+            self.group
+        }
 
-    pub struct QueueResource<Q> {
-        max_acquires: usize,
-        acquires_count: Rc<Cell<usize>>,
-        queue: Q,
-    }
-
-    pub struct QueueProcessor<E> {
-        acquires_count: Weak<Cell<usize>>,
-        value: E
-    }
-
-    impl<E> Drop for QueueProcessor<E> {
-        fn drop(&mut self) {
-            let acquires_count = self.acquires_count.upgrade().expect("Queue resource does not exist");
-            acquires_count.set(acquires_count.get() - 1);
+        pub fn get_clinic_in_t(&self) -> TimePoint {
+            self.clinic_in_t
         }
     }
 
-    impl<E> QueueProcessor<E> {
-        pub fn value(&self) -> &E {
-            &self.value
-        }
+    impl Eq for Patient {}
 
-        pub fn value_mut(&mut self) -> &mut E {
-            &mut self.value
+    impl PartialEq<Self> for Patient {
+        fn eq(&self, other: &Self) -> bool {
+            self.group.eq(&other.group) && self.clinic_in_t.eq(&other.clinic_in_t)
         }
     }
 
-    impl<Q: Queue> QueueResource<Q> {
-        pub fn new(queue: Q, max_acquires: usize) -> Self {
-            Self{max_acquires, acquires_count: Rc::new(Cell::new(0usize)), queue}
+    impl PartialOrd<Self> for Patient {
+        fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+            match self.group.cmp(&other.group) {
+                Ordering::Equal => other.clinic_in_t.partial_cmp(&self.clinic_in_t),
+                other => Some(other),
+            }
         }
+    }
 
-        pub fn push(&mut self, t: Q::Item) {
-            self.queue.push(t)
-        }
-
-        pub fn is_empty(&self) -> bool {
-            self.queue.is_empty()
-        }
-
-        pub fn acquire_processor(&mut self) -> QueueProcessor<Q::Item> {
-            assert!(self.acquires_count.get() < self.max_acquires);
-            let value = self.queue.pop().expect("Queue is empty");
-            self.acquires_count.set(self.acquires_count.get() + 1);
-            QueueProcessor{acquires_count: Rc::downgrade(&self.acquires_count), value}
+    impl Ord for Patient {
+        fn cmp(&self, other: &Self) -> Ordering {
+            self.partial_cmp(&other).expect("Patient ordering went wrong")
         }
     }
 
     #[cfg(test)]
     mod tests {
-        use crate::task_2::queue_resource::{Queue, QueueResource};
+        use std::collections::BinaryHeap;
+        use crate::task_2::patient::{Patient, PatientType};
+        use crate::TimePoint;
 
-        #[derive(Default)]
-        struct DummyQueue {
-            len: usize
-        }
+        #[test]
+        fn test_patient_type_ordering() {
+            let mut bh = BinaryHeap::new();
+            bh.push(PatientType::Three);
+            bh.push(PatientType::Two);
+            bh.push(PatientType::One);
 
-        impl Queue for DummyQueue {
-            type Item = ();
-            fn push(&mut self, t: ()) {
-                self.len += 1;
-            }
-
-            fn pop(&mut self) -> Option<()> {
-                assert_eq!(self.is_empty(), false);
-                self.len -= 1;
-                Some(())
-            }
-
-            fn is_empty(&self) -> bool {
-                self.len == 0
-            }
+            assert_eq!(bh.pop(), Some(PatientType::One));
+            assert_eq!(bh.pop(), Some(PatientType::Two));
+            assert_eq!(bh.pop(), Some(PatientType::Three));
         }
 
         #[test]
-        fn test_one() {
-            let mut res = QueueResource::new(DummyQueue::default(), 3usize);
-            res.push(());
-            res.push(());
-            res.push(());
-            res.push(());
-            let proc_one = res.acquire_processor();
-            let proc_two = res.acquire_processor();
-            let proc_three = res.acquire_processor();
+        fn test_patient_ordering() {
+            let mut bh = BinaryHeap::new();
+
+            bh.push(Patient::new(TimePoint(100.0), PatientType::Three));
+            bh.push(Patient::new(TimePoint(50.0), PatientType::Three));
+            bh.push(Patient::new(TimePoint(25.0), PatientType::Three));
+
+            bh.push(Patient::new(TimePoint(900.0), PatientType::Two));
+            bh.push(Patient::new(TimePoint(800.0), PatientType::Two));
+            bh.push(Patient::new(TimePoint(700.0), PatientType::Two));
+
+            bh.push(Patient::new(TimePoint(2299.0), PatientType::One));
+            bh.push(Patient::new(TimePoint(999.0), PatientType::One));
+            bh.push(Patient::new(TimePoint(1999.0), PatientType::One));
+
+            assert_eq!(bh.pop(), Some(Patient::new(TimePoint(999.0), PatientType::One)));
+            assert_eq!(bh.pop(), Some(Patient::new(TimePoint(1999.0), PatientType::One)));
+            assert_eq!(bh.pop(), Some(Patient::new(TimePoint(2299.0), PatientType::One)));
+
+            assert_eq!(bh.pop(), Some(Patient::new(TimePoint(700.0), PatientType::Two)));
+            assert_eq!(bh.pop(), Some(Patient::new(TimePoint(800.0), PatientType::Two)));
+            assert_eq!(bh.pop(), Some(Patient::new(TimePoint(900.0), PatientType::Two)));
+
+            assert_eq!(bh.pop(), Some(Patient::new(TimePoint(25.0), PatientType::Three)));
+            assert_eq!(bh.pop(), Some(Patient::new(TimePoint(50.0), PatientType::Three)));
+            assert_eq!(bh.pop(), Some(Patient::new(TimePoint(100.0), PatientType::Three)));
         }
-
-        #[test]
-        #[should_panic]
-        fn test_two() {
-            let mut res = QueueResource::new(DummyQueue::default(), 2usize);
-            res.push(());
-            res.push(());
-            res.push(());
-            res.push(());
-
-            let proc_one = res.acquire_processor();
-            let proc_two = res.acquire_processor();
-            let proc_three = res.acquire_processor();
-        }
-
-        #[test]
-        fn test_three() {
-            let mut res = QueueResource::new(DummyQueue::default(), 2usize);
-            res.push(());
-            res.push(());
-            res.push(());
-            res.push(());
-
-            let proc_one = res.acquire_processor();
-            let proc_two = res.acquire_processor();
-            drop(proc_two);
-            let proc_three = res.acquire_processor();
-        }
-
     }
 }
+
+
+// mod queue_resource {
+//     use std::cell::{Cell};
+//     use std::rc::{Rc, Weak};
+//
+//     pub trait Queue {
+//         type Item;
+//         fn push(&mut self, t: Self::Item);
+//         fn pop(&mut self) -> Option<Self::Item>;
+//         fn is_empty(&self) -> bool;
+//     }
+//
+//     pub struct QueueResource<Q> {
+//         max_acquires: usize,
+//         acquires_count: Rc<Cell<usize>>,
+//         queue: Q,
+//     }
+//
+//     pub struct QueueProcessor<E> {
+//         acquires_count: Weak<Cell<usize>>,
+//         value: E
+//     }
+//
+//     impl<E> Drop for QueueProcessor<E> {
+//         fn drop(&mut self) {
+//             let acquires_count = self.acquires_count.upgrade().expect("Queue resource does not exist");
+//             acquires_count.set(acquires_count.get() - 1);
+//         }
+//     }
+//
+//     impl<E> QueueProcessor<E> {
+//         pub fn value(&self) -> &E {
+//             &self.value
+//         }
+//
+//         pub fn value_mut(&mut self) -> &mut E {
+//             &mut self.value
+//         }
+//     }
+//
+//     impl<Q: Queue> QueueResource<Q> {
+//         pub fn new(queue: Q, max_acquires: usize) -> Self {
+//             Self{max_acquires, acquires_count: Rc::new(Cell::new(0usize)), queue}
+//         }
+//
+//         pub fn push(&mut self, t: Q::Item) {
+//             self.queue.push(t)
+//         }
+//
+//         pub fn is_empty(&self) -> bool {
+//             self.queue.is_empty()
+//         }
+//
+//         pub fn acquire_processor(&mut self) -> QueueProcessor<Q::Item> {
+//             assert!(self.acquires_count.get() < self.max_acquires);
+//             let value = self.queue.pop().expect("Queue is empty");
+//             self.acquires_count.set(self.acquires_count.get() + 1);
+//             QueueProcessor{acquires_count: Rc::downgrade(&self.acquires_count), value}
+//         }
+//     }
+//
+//     #[cfg(test)]
+//     mod tests {
+//         use crate::task_2::queue_resource::{Queue, QueueResource};
+//
+//         #[derive(Default)]
+//         struct DummyQueue {
+//             len: usize
+//         }
+//
+//         impl Queue for DummyQueue {
+//             type Item = ();
+//             fn push(&mut self, t: ()) {
+//                 self.len += 1;
+//             }
+//
+//             fn pop(&mut self) -> Option<()> {
+//                 assert_eq!(self.is_empty(), false);
+//                 self.len -= 1;
+//                 Some(())
+//             }
+//
+//             fn is_empty(&self) -> bool {
+//                 self.len == 0
+//             }
+//         }
+//
+//         #[test]
+//         fn test_one() {
+//             let mut res = QueueResource::new(DummyQueue::default(), 3usize);
+//             res.push(());
+//             res.push(());
+//             res.push(());
+//             res.push(());
+//             let proc_one = res.acquire_processor();
+//             let proc_two = res.acquire_processor();
+//             let proc_three = res.acquire_processor();
+//         }
+//
+//         #[test]
+//         #[should_panic]
+//         fn test_two() {
+//             let mut res = QueueResource::new(DummyQueue::default(), 2usize);
+//             res.push(());
+//             res.push(());
+//             res.push(());
+//             res.push(());
+//
+//             let proc_one = res.acquire_processor();
+//             let proc_two = res.acquire_processor();
+//             let proc_three = res.acquire_processor();
+//         }
+//
+//         #[test]
+//         fn test_three() {
+//             let mut res = QueueResource::new(DummyQueue::default(), 2usize);
+//             res.push(());
+//             res.push(());
+//             res.push(());
+//             res.push(());
+//
+//             let proc_one = res.acquire_processor();
+//             let proc_two = res.acquire_processor();
+//             drop(proc_two);
+//             let proc_three = res.acquire_processor();
+//         }
+//
+//     }
+// }
 
 #[derive(Debug, Default)]
 struct Clinic {
@@ -222,8 +300,9 @@ mod create_patient {
     use rand::distributions::{Distribution, Uniform};
     use rand_distr::Exp;
     use crate::task_2::event_reception_department::EventReceptionDepartment;
-    use crate::task_2::{Clinic, Patient, PatientType};
+    use crate::task_2::{Clinic, Patient};
     use crate::{TimePoint, TimeSpan};
+    use crate::task_2::patient::PatientType;
 
     #[derive(Debug, Default)]
     pub struct EventNewPatient {
@@ -269,7 +348,7 @@ mod create_patient {
             (
                 Self {
                     current_t: patient_t,
-                    patient: Patient{ current_t: patient_t, group: generate_patient_type()},
+                    patient: Patient::new(patient_t, generate_patient_type()),
                     clinic: self.clinic.clone()
                 },
                 event_reception_dep,
@@ -281,10 +360,11 @@ mod create_patient {
 mod event_reception_department {
     use std::cell::RefCell;
     use std::rc::Rc;
-    use crate::task_2::{Clinic, Patient, PatientType};
+    use crate::task_2::{Clinic, Patient};
     use crate::task_2::event_patient_wards::EventPatientWards;
     use crate::task_2::transition_lab_reception::{EventTransitionFromReceptionToLaboratory, EventTransitionReceptionLaboratory};
     use crate::{TimePoint, TimeSpan};
+    use crate::task_2::patient::PatientType;
 
     pub struct EventReceptionDepartment {
         current_t: TimePoint,
@@ -312,11 +392,11 @@ mod event_reception_department {
         }
 
         pub fn new(old_current_t: TimePoint, doctor_index: usize, clinic: Rc<RefCell<Clinic>>, patient: Patient) -> Self {
-            Self{current_t: old_current_t + determine_delay(patient.group), doctor_index, clinic, patient}
+            Self{current_t: old_current_t + determine_delay(patient.get_group()), doctor_index, clinic, patient}
         }
 
         pub fn iterate(self) -> (Option<EventReceptionDepartment>, ReceptionDepartmentTransitionToResult) {
-            let transition_to = match self.patient.group {
+            let transition_to = match self.patient.get_group() {
                 PatientType::One => ReceptionDepartmentTransitionToResult::PatientWards (
                     {
                         let free_attendant_index = self.clinic.borrow()
@@ -553,10 +633,11 @@ mod event_lab_registration {
 mod event_laboratory {
     use std::cell::RefCell;
     use std::rc::Rc;
-    use crate::task_2::{get_erlang_distribution, Clinic, Patient, PatientType};
+    use crate::task_2::{get_erlang_distribution, Clinic, Patient};
     use crate::task_2::event_terminal::EventTerminal;
     use crate::task_2::transition_lab_reception::{EventTransitionFromLabToReception, EventTransitionReceptionLaboratory};
     use crate::{TimePoint, TimeSpan};
+    use crate::task_2::patient::PatientType;
 
     pub struct EventLaboratory {
         current_t: TimePoint,
@@ -589,13 +670,13 @@ mod event_laboratory {
         }
 
         pub fn iterate(self) -> (Option<Self>, EventLaboratoryTransitionResult) {
-            let transition_to = match self.patient.group {
+            let transition_to = match self.patient.get_group() {
                 PatientType::One => panic!("Patient one can not be in the laboratory"),
                 PatientType::Two => EventLaboratoryTransitionResult::TransitionFromLabToReception(
                     EventTransitionFromLabToReception(
                         EventTransitionReceptionLaboratory::new(
                             self.current_t, self.clinic.clone(),
-                            Patient{current_t: self.current_t, group: PatientType::One}
+                            self.patient.upgrade_to_first_group()
                         )
                     )
                 ),
@@ -673,7 +754,7 @@ impl Ord for Event {
 mod tests {
     use std::cell::RefCell;
     use std::collections::BinaryHeap;
-    use crate::task_2::{Event, Patient, PatientType};
+    use crate::task_2::{Event};
     use crate::task_2::event_laboratory::EventLaboratoryTransitionResult;
     use crate::task_2::event_reception_department::ReceptionDepartmentTransitionToResult;
     use crate::task_2::event_terminal::EventTerminal;
@@ -758,47 +839,6 @@ mod tests {
                 Event::Terminal(event) => (),
             }
         };
-    }
-
-    #[test]
-    fn test_patient_type_ordering() {
-        let mut bh = BinaryHeap::new();
-        bh.push(PatientType::Three);
-        bh.push(PatientType::Two);
-        bh.push(PatientType::One);
-
-        assert_eq!(bh.pop(), Some(PatientType::One));
-        assert_eq!(bh.pop(), Some(PatientType::Two));
-        assert_eq!(bh.pop(), Some(PatientType::Three));
-    }
-
-    #[test]
-    fn test_patient_ordering() {
-        let mut bh = BinaryHeap::new();
-
-        bh.push(Patient::new(TimePoint(100.0), PatientType::Three));
-        bh.push(Patient::new(TimePoint(50.0), PatientType::Three));
-        bh.push(Patient::new(TimePoint(25.0), PatientType::Three));
-
-        bh.push(Patient::new(TimePoint(900.0), PatientType::Two));
-        bh.push(Patient::new(TimePoint(800.0), PatientType::Two));
-        bh.push(Patient::new(TimePoint(700.0), PatientType::Two));
-
-        bh.push(Patient::new(TimePoint(2299.0), PatientType::One));
-        bh.push(Patient::new(TimePoint(999.0), PatientType::One));
-        bh.push(Patient::new(TimePoint(1999.0), PatientType::One));
-
-        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(999.0), PatientType::One)));
-        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(1999.0), PatientType::One)));
-        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(2299.0), PatientType::One)));
-
-        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(700.0), PatientType::Two)));
-        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(800.0), PatientType::Two)));
-        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(900.0), PatientType::Two)));
-
-        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(25.0), PatientType::Three)));
-        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(50.0), PatientType::Three)));
-        assert_eq!(bh.pop(), Some(Patient::new(TimePoint(100.0), PatientType::Three)));
     }
 
     #[test]
