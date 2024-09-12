@@ -294,8 +294,6 @@ struct Laboratory {
 }
 
 mod create_patient {
-    use std::cell::RefCell;
-    use std::rc::Rc;
     use lazy_static::lazy_static;
     use rand::distributions::{Distribution, Uniform};
     use rand_distr::Exp;
@@ -308,7 +306,6 @@ mod create_patient {
     pub struct EventNewPatient {
         current_t: TimePoint,
         patient: Patient,
-        clinic: Rc<RefCell<Clinic>>
     }
 
     lazy_static! {
@@ -331,16 +328,15 @@ mod create_patient {
             self.current_t
         }
 
-        pub fn iterate(self) -> (Self, Option<EventReceptionDepartment>) {
+        pub fn iterate(self, clinic: &mut Clinic) -> (Self, Option<EventReceptionDepartment>) {
 
-            let free_doctor_index = self.clinic.borrow()
-                .reception_department.is_doctor_busy.iter().position(|d| !*d);
+            let free_doctor_index = clinic.reception_department.is_doctor_busy.iter().position(|d| !*d);
             let event_reception_dep = if let Some(index) = free_doctor_index {
-                assert!(self.clinic.borrow_mut().reception_department.queue.is_empty());
-                self.clinic.borrow_mut().reception_department.is_doctor_busy[index] = true;
-                Some(EventReceptionDepartment::new(self.current_t, index, self.clinic.clone(), self.patient))
+                assert!(clinic.reception_department.queue.is_empty());
+                clinic.reception_department.is_doctor_busy[index] = true;
+                Some(EventReceptionDepartment::new(self.current_t, index, self.patient))
             } else {
-                self.clinic.borrow_mut().reception_department.queue.push(self.patient);
+                clinic.reception_department.queue.push(self.patient);
                 None
             };
 
@@ -349,7 +345,6 @@ mod create_patient {
                 Self {
                     current_t: patient_t,
                     patient: Patient::new(patient_t, generate_patient_type()),
-                    clinic: self.clinic.clone()
                 },
                 event_reception_dep,
             )
@@ -358,8 +353,6 @@ mod create_patient {
 }
 
 mod event_reception_department {
-    use std::cell::RefCell;
-    use std::rc::Rc;
     use crate::task_2::{Clinic, Patient};
     use crate::task_2::event_patient_wards::EventPatientWards;
     use crate::task_2::transition_lab_reception::{EventTransitionFromReceptionToLaboratory, EventTransitionReceptionLaboratory};
@@ -369,7 +362,6 @@ mod event_reception_department {
     pub struct EventReceptionDepartment {
         current_t: TimePoint,
         doctor_index: usize,
-        clinic: Rc<RefCell<Clinic>>,
         patient: Patient
     }
 
@@ -391,22 +383,22 @@ mod event_reception_department {
             self.current_t
         }
 
-        pub fn new(old_current_t: TimePoint, doctor_index: usize, clinic: Rc<RefCell<Clinic>>, patient: Patient) -> Self {
-            Self{current_t: old_current_t + determine_delay(patient.get_group()), doctor_index, clinic, patient}
+        pub fn new(old_current_t: TimePoint, doctor_index: usize, patient: Patient) -> Self {
+            Self{current_t: old_current_t + determine_delay(patient.get_group()), doctor_index, patient}
         }
 
-        pub fn iterate(self) -> (Option<EventReceptionDepartment>, ReceptionDepartmentTransitionToResult) {
+        pub fn iterate(self, clinic: &mut Clinic) -> (Option<EventReceptionDepartment>, ReceptionDepartmentTransitionToResult) {
             let transition_to = match self.patient.get_group() {
                 PatientType::One => ReceptionDepartmentTransitionToResult::PatientWards (
                     {
-                        let free_attendant_index = self.clinic.borrow()
+                        let free_attendant_index = clinic
                             .patient_wards.is_attendant_busy.iter().position(|d| !*d);
                         if let Some(index) = free_attendant_index {
-                            assert_eq!(self.clinic.borrow().patient_wards.queue_size, 0);
-                            self.clinic.borrow_mut().patient_wards.is_attendant_busy[index] = true;
-                            Some(EventPatientWards::new(self.current_t, self.clinic.clone(), index))
+                            assert_eq!(clinic.patient_wards.queue_size, 0);
+                            clinic.patient_wards.is_attendant_busy[index] = true;
+                            Some(EventPatientWards::new(self.current_t, index))
                         } else {
-                            self.clinic.borrow_mut().patient_wards.queue_size += 1;
+                            clinic.patient_wards.queue_size += 1;
                             None
                         }
                     }
@@ -414,15 +406,14 @@ mod event_reception_department {
                 PatientType::Two | PatientType::Three => {
                     ReceptionDepartmentTransitionToResult::FromReceptionToLaboratory({
                         EventTransitionFromReceptionToLaboratory(
-                            EventTransitionReceptionLaboratory::new(self.current_t, self.clinic.clone(), self.patient)
+                            EventTransitionReceptionLaboratory::new(self.current_t, self.patient)
                         )
                     })
                 },
             };
             let next_reception_dep = {
-                let mut clinic = self.clinic.borrow_mut();
                 if let Some(patient) = clinic.reception_department.queue.pop() {
-                    Some(Self::new(self.current_t, self.doctor_index, self.clinic.clone(), patient))
+                    Some(Self::new(self.current_t, self.doctor_index, patient))
                 } else {
                     clinic.reception_department.is_doctor_busy[self.doctor_index] = false;
                     None
@@ -435,8 +426,6 @@ mod event_reception_department {
 
 
 mod transition_lab_reception {
-    use std::cell::RefCell;
-    use std::rc::Rc;
     use lazy_static::lazy_static;
     use rand::distributions::{Distribution, Uniform};
     use crate::task_2::{Clinic, Patient};
@@ -450,14 +439,13 @@ mod transition_lab_reception {
 
     pub struct EventTransitionReceptionLaboratory {
         current_t: TimePoint,
-        clinic: Rc<RefCell<Clinic>>,
         patient: Patient,
     }
 
     impl EventTransitionReceptionLaboratory {
-        pub fn new(old_current_t: TimePoint, clinic: Rc<RefCell<Clinic>>, patient: Patient) -> Self {
+        pub fn new(old_current_t: TimePoint, patient: Patient) -> Self {
             let delay = TimeSpan(RECEPTION_LABORATORY_TRANSITION_DELAY.sample(&mut rand::thread_rng()));
-            Self{current_t: old_current_t + delay, clinic, patient}
+            Self{current_t: old_current_t + delay, patient}
         }
     }
 
@@ -468,14 +456,14 @@ mod transition_lab_reception {
             self.0.current_t
         }
 
-        pub fn iterate(self) -> Option<EventLabRegistration> {
-            if self.0.clinic.borrow().lab_registry.is_busy {
-                self.0.clinic.borrow_mut().lab_registry.queue.push_back(self.0.patient);
+        pub fn iterate(self, clinic: &mut Clinic) -> Option<EventLabRegistration> {
+            if clinic.lab_registry.is_busy {
+                clinic.lab_registry.queue.push_back(self.0.patient);
                 None
             } else {
-                assert!(self.0.clinic.borrow().lab_registry.queue.is_empty());
-                self.0.clinic.borrow_mut().lab_registry.is_busy = true;
-                Some(EventLabRegistration::new(self.0.current_t, self.0.clinic, self.0.patient))
+                assert!(clinic.lab_registry.queue.is_empty());
+                clinic.lab_registry.is_busy = true;
+                Some(EventLabRegistration::new(self.0.current_t, self.0.patient))
             }
         }
     }
@@ -487,15 +475,15 @@ mod transition_lab_reception {
             self.0.current_t
         }
 
-        pub fn iterate(self) -> Option<EventReceptionDepartment> {
-            let free_doctor_index = self.0.clinic.borrow()
-                .reception_department.is_doctor_busy.iter().position(|d| !*d);
+        pub fn iterate(self, clinic: &mut Clinic) -> Option<EventReceptionDepartment> {
+            let free_doctor_index = clinic.reception_department
+                .is_doctor_busy.iter().position(|d| !*d);
             if let Some(index) = free_doctor_index {
-                assert!(self.0.clinic.borrow_mut().reception_department.queue.is_empty());
-                self.0.clinic.borrow_mut().reception_department.is_doctor_busy[index] = true;
-                Some(EventReceptionDepartment::new(self.0.current_t, index, self.0.clinic.clone(), self.0.patient))
+                assert!(clinic.reception_department.queue.is_empty());
+                clinic.reception_department.is_doctor_busy[index] = true;
+                Some(EventReceptionDepartment::new(self.0.current_t, index, self.0.patient))
             } else {
-                self.0.clinic.borrow_mut().reception_department.queue.push(self.0.patient);
+                clinic.reception_department.queue.push(self.0.patient);
                 None
             }
         }
@@ -504,17 +492,14 @@ mod transition_lab_reception {
 }
 
 mod event_patient_wards {
-    use std::cell::RefCell;
-    use std::rc::Rc;
     use lazy_static::lazy_static;
     use rand::distributions::{Distribution, Uniform};
-    use crate::task_2::{Clinic};
     use crate::task_2::event_terminal::EventTerminal;
     use crate::{TimePoint, TimeSpan};
+    use crate::task_2::Clinic;
 
     pub struct EventPatientWards {
         current_t: TimePoint,
-        clinic: Rc<RefCell<Clinic>>,
         attendant_index: usize
     }
 
@@ -527,16 +512,15 @@ mod event_patient_wards {
             self.current_t
         }
 
-        pub fn new(old_current_t: TimePoint, clinic: Rc<RefCell<Clinic>>, attendant_index: usize) -> Self {
+        pub fn new(old_current_t: TimePoint, attendant_index: usize) -> Self {
             let delay = TimeSpan(DELAY_GEN.sample(&mut rand::thread_rng()));
-            Self{current_t: old_current_t + delay, clinic, attendant_index}
+            Self{current_t: old_current_t + delay, attendant_index}
         }
 
-        pub fn iterate(self) -> (Option<Self>, EventTerminal) {
-            let mut clinic = self.clinic.borrow_mut();
+        pub fn iterate(self, clinic: &mut Clinic) -> (Option<Self>, EventTerminal) {
             let next_event = if clinic.patient_wards.queue_size > 0 {
                 clinic.patient_wards.queue_size -= 1;
-                Some(Self::new(self.current_t, self.clinic.clone(), self.attendant_index))
+                Some(Self::new(self.current_t, self.attendant_index))
             } else {
                 clinic.patient_wards.is_attendant_busy[self.attendant_index] = false;
                 None
@@ -576,8 +560,6 @@ fn get_erlang_distribution(shape: i64, scale: f64) -> rand_simple::Erlang {
 }
 
 mod event_lab_registration {
-    use std::cell::RefCell;
-    use std::rc::Rc;
     use crate::task_2::{get_erlang_distribution, Clinic, Patient};
     use crate::task_2::event_laboratory::EventLaboratory;
     use crate::{TimePoint, TimeSpan};
@@ -588,7 +570,6 @@ mod event_lab_registration {
 
     pub struct EventLabRegistration {
         current_t: TimePoint,
-        clinic: Rc<RefCell<Clinic>>,
         patient: Patient
     }
 
@@ -599,27 +580,25 @@ mod event_lab_registration {
 
         pub fn new(
             old_current_t: TimePoint,
-            clinic: Rc<RefCell<Clinic>>,
             patient: Patient
         ) -> Self {
-            Self{current_t: old_current_t + sample_delay(), clinic, patient}
+            Self{current_t: old_current_t + sample_delay(), patient}
         }
 
-        pub fn iterate(self) -> (Option<Self>, Option<EventLaboratory>) {
-            let free_assistant_index = self.clinic.borrow()
-                .laboratory.is_lab_assistant_busy.iter().position(|d| !*d);
+        pub fn iterate(self, clinic: &mut Clinic) -> (Option<Self>, Option<EventLaboratory>) {
+            let free_assistant_index = clinic.laboratory
+                .is_lab_assistant_busy.iter().position(|d| !*d);
             let event_lab = if let Some(index) = free_assistant_index {
-                assert!(self.clinic.borrow().laboratory.queue.is_empty());
-                self.clinic.borrow_mut().laboratory.is_lab_assistant_busy[index] = true;
-                Some(EventLaboratory::new(self.current_t, self.clinic.clone(), self.patient, index))
+                assert!(clinic.laboratory.queue.is_empty());
+                clinic.laboratory.is_lab_assistant_busy[index] = true;
+                Some(EventLaboratory::new(self.current_t, self.patient, index))
             } else {
-                self.clinic.borrow_mut().laboratory.queue.push_back(self.patient);
+                clinic.laboratory.queue.push_back(self.patient);
                 None
             };
             let next_reg = {
-                let mut clinic = self.clinic.borrow_mut();
                 if let Some(patient) = clinic.lab_registry.queue.pop_front() {
-                    Some(Self::new(self.current_t, self.clinic.clone(), patient))
+                    Some(Self::new(self.current_t, patient))
                 } else {
                     clinic.lab_registry.is_busy = false;
                     None
@@ -631,8 +610,6 @@ mod event_lab_registration {
 }
 
 mod event_laboratory {
-    use std::cell::RefCell;
-    use std::rc::Rc;
     use crate::task_2::{get_erlang_distribution, Clinic, Patient};
     use crate::task_2::event_terminal::EventTerminal;
     use crate::task_2::transition_lab_reception::{EventTransitionFromLabToReception, EventTransitionReceptionLaboratory};
@@ -641,7 +618,6 @@ mod event_laboratory {
 
     pub struct EventLaboratory {
         current_t: TimePoint,
-        clinic: Rc<RefCell<Clinic>>,
         patient: Patient,
         assistant_index: usize
     }
@@ -662,21 +638,19 @@ mod event_laboratory {
 
         pub fn new(
             old_current_t: TimePoint,
-            clinic: Rc<RefCell<Clinic>>,
             patient: Patient,
             assistant_index: usize
         ) -> Self {
-            Self{current_t: old_current_t + sample_delay(), clinic, patient, assistant_index}
+            Self{current_t: old_current_t + sample_delay(), patient, assistant_index}
         }
 
-        pub fn iterate(self) -> (Option<Self>, EventLaboratoryTransitionResult) {
+        pub fn iterate(self, clinic: &mut Clinic) -> (Option<Self>, EventLaboratoryTransitionResult) {
             let transition_to = match self.patient.get_group() {
                 PatientType::One => panic!("Patient one can not be in the laboratory"),
                 PatientType::Two => EventLaboratoryTransitionResult::TransitionFromLabToReception(
                     EventTransitionFromLabToReception(
                         EventTransitionReceptionLaboratory::new(
-                            self.current_t, self.clinic.clone(),
-                            self.patient.upgrade_to_first_group()
+                            self.current_t, self.patient.upgrade_to_first_group()
                         )
                     )
                 ),
@@ -685,9 +659,8 @@ mod event_laboratory {
                 ),
             };
             let next_event = {
-                let mut clinic = self.clinic.borrow_mut();
                 if let Some(patient) = clinic.laboratory.queue.pop_front() {
-                    Some(Self::new(self.current_t, self.clinic.clone(), patient, self.assistant_index))
+                    Some(Self::new(self.current_t, patient, self.assistant_index))
                 } else {
                     clinic.laboratory.is_lab_assistant_busy[self.assistant_index] = false;
                     None
@@ -754,7 +727,7 @@ impl Ord for Event {
 mod tests {
     use std::cell::RefCell;
     use std::collections::BinaryHeap;
-    use crate::task_2::{Event};
+    use crate::task_2::{Clinic, Event};
     use crate::task_2::event_laboratory::EventLaboratoryTransitionResult;
     use crate::task_2::event_reception_department::ReceptionDepartmentTransitionToResult;
     use crate::task_2::event_terminal::EventTerminal;
@@ -762,12 +735,11 @@ mod tests {
 
     #[test]
     fn test_general() {
+        let end_time = TimePoint(10000.0);
 
         let mut nodes = BinaryHeap::new();
-
         nodes.push(Event::default());
-
-        let end_time = TimePoint(10000.0);
+        let mut clinic = Clinic::default();
 
         let last_event = loop {
 
@@ -777,14 +749,14 @@ mod tests {
             }
             match next_event {
                 Event::NewPatient(event) => {
-                    let res = event.iterate();
+                    let res = event.iterate(&mut clinic);
                     nodes.push(Event::NewPatient(res.0));
                     if let Some(next_event) = res.1 {
                         nodes.push(Event::ReceptionDepartment(next_event));
                     }
                 },
                 Event::ReceptionDepartment(event) => {
-                    let res = event.iterate();
+                    let res = event.iterate(&mut clinic);
                     if let Some(self_event) = res.0 {
                         nodes.push(Event::ReceptionDepartment(self_event));
                     }
@@ -800,23 +772,23 @@ mod tests {
                     }
                 },
                 Event::FromReceptionLaboratory(event) => {
-                    if let Some(res) = event.iterate() {
+                    if let Some(res) = event.iterate(&mut clinic) {
                         nodes.push(Event::LabRegistration(res));
                     }
                 },
                 Event::FromLabToReception(event) => {
-                    if let Some(res) = event.iterate() {
+                    if let Some(res) = event.iterate(&mut clinic) {
                         nodes.push(Event::ReceptionDepartment(res));
                     }
                 },
                 Event::PatientWards(event) => {
-                    let (self_event, _) = event.iterate();
+                    let (self_event, _) = event.iterate(&mut clinic);
                     if let Some(res_event) = self_event {
                         nodes.push(Event::PatientWards(res_event));
                     }
                 },
                 Event::LabRegistration(event) => {
-                    let (self_event, next_event) = event.iterate();
+                    let (self_event, next_event) = event.iterate(&mut clinic);
                     if let Some(self_event) = self_event {
                         nodes.push(Event::LabRegistration(self_event));
                     }
@@ -825,7 +797,7 @@ mod tests {
                     }
                 },
                 Event::Laboratory(event) => {
-                    let (self_event, next_event) = event.iterate();
+                    let (self_event, next_event) = event.iterate(&mut clinic);
                     if let Some(self_event) = self_event {
                         nodes.push(Event::Laboratory(self_event));
                     }
