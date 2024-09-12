@@ -332,7 +332,8 @@ mod create_patient {
 
         pub fn iterate(self, reception_department: &mut ReceptionDepartment) -> (Self, Option<EventReceptionDepartment>) {
             reception_department.0.push(self.patient);
-            let patient_t = self.current_t + TimeSpan(DELAY_GEN.sample(&mut rand::thread_rng()));
+            let delay = TimeSpan(DELAY_GEN.sample(&mut rand::thread_rng()));
+            let patient_t = self.current_t + delay;
             (
                 Self {
                     current_t: patient_t,
@@ -406,7 +407,7 @@ impl EventReceptionDepartment {
 mod transition_lab_reception {
     use lazy_static::lazy_static;
     use rand::distributions::{Distribution, Uniform};
-    use crate::task_2::{EventLabRegistration, EventReceptionDepartment, LabRegistry, Patient, ReceptionDepartment};
+    use crate::task_2::{EventLabRegistration, EventPatientWards, EventReceptionDepartment, LabRegistry, Patient, PatientWards, ReceptionDepartment};
     use crate::{TimePoint, TimeSpan};
 
     lazy_static! {
@@ -445,9 +446,9 @@ mod transition_lab_reception {
             self.0.current_t
         }
 
-        pub fn iterate(self, reception_department: &mut ReceptionDepartment) -> Option<EventReceptionDepartment> {
-            reception_department.0.push(self.0.patient);
-            EventReceptionDepartment::new(self.0.current_t, reception_department)
+        pub fn iterate(self, patient_wards: &mut PatientWards) -> Option<EventPatientWards> {
+            patient_wards.0.push(self.0.patient);
+            EventPatientWards::new(self.0.current_t, patient_wards)
         }
     }
 }
@@ -504,7 +505,9 @@ struct EventLabRegistration(EventBase);
 impl_event_new!(EventLabRegistration, LabRegistry);
 impl EventLabRegistration {
     fn determine_delay(_: PatientType) -> TimeSpan {
-        TimeSpan(get_erlang_distribution(3, 4.5).sample())
+        let delay = TimeSpan(get_erlang_distribution(3, 4.5).sample());
+        // println!("{:?}", delay);
+        delay
     }
     pub fn iterate(self, lab_registry: &mut LabRegistry, laboratory: &mut Laboratory)
         -> (Option<Self>, Option<EventLaboratory>) {
@@ -523,7 +526,8 @@ pub enum EventLaboratoryTransitionResult {
 
 impl EventLaboratory {
     fn determine_delay(_: PatientType) -> TimeSpan {
-        TimeSpan(get_erlang_distribution(2, 4.0).sample())
+        let delay = TimeSpan(get_erlang_distribution(2, 4.0).sample());
+        delay
     }
     pub fn iterate(self, laboratory: &mut Laboratory) -> (Option<Self>, EventLaboratoryTransitionResult) {
         let transition_to = match self.0.patient_processor.value().get_group() {
@@ -663,15 +667,16 @@ mod tests {
                     }
                 },
                 Event::FromLabToReception(event) => {
-                    if let Some(res) = event.iterate(&mut reception_department) {
-                        nodes.push(Event::ReceptionDepartment(res));
+                    if let Some(res) = event.iterate(&mut patient_wards) {
+                        nodes.push(Event::PatientWards(res));
                     }
                 },
                 Event::PatientWards(event) => {
-                    let (self_event, _) = event.iterate(&mut patient_wards);
+                    let (self_event, terminal) = event.iterate(&mut patient_wards);
                     if let Some(res_event) = self_event {
                         nodes.push(Event::PatientWards(res_event));
                     }
+                    nodes.push(Event::Terminal(terminal));
                 },
                 Event::LabRegistration(event) => {
                     lab_registration_count += 1;
@@ -696,12 +701,14 @@ mod tests {
                             nodes.push(Event::FromLabToReception(next_event));
                         }
                         EventLaboratoryTransitionResult::Terminal(event) => {
-                            total_terminal_patients += 1;
-                            total_patients_spent_time += event.get_current_t() - event.get_patient().get_clinic_in_t()
+                            nodes.push(Event::Terminal(event));
                         }
                     }
                 },
-                Event::Terminal(_) => (),
+                Event::Terminal(event) => {
+                    total_terminal_patients += 1;
+                    total_patients_spent_time += event.get_current_t() - event.get_patient().get_clinic_in_t();
+                },
             }
         };
 
