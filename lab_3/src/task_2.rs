@@ -132,6 +132,7 @@ mod patient {
 }
 
 
+
 // mod queue_resource {
 //     use std::cell::{Cell};
 //     use std::rc::{Rc, Weak};
