@@ -310,7 +310,7 @@ mod create_patient {
     }
 
     lazy_static! {
-        static ref DELAY_GEN: Exp<f64> = Exp::new(15.0).expect("Failed to create delay gen");
+        static ref DELAY_GEN: Exp<f64> = Exp::new(1.0 / 15.0).expect("Failed to create delay gen");
     }
 
     fn generate_patient_type() -> PatientType {
