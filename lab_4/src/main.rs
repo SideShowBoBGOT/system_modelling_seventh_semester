@@ -1,4 +1,5 @@
 use std::cell::RefCell;
+use std::cmp::Ordering;
 use std::ops::{Add, Sub};
 use crate::delay_gen::DelayGen;
 use crate::event_create::EventCreate;
@@ -7,7 +8,6 @@ use crate::node_create::NodeCreate;
 use crate::node_process::NodeProcess;
 use crate::payload_queue::PayloadQueue;
 use crate::prob_arr::ProbabilityArray;
-use crate::queue_resource::{Queue, QueueProcessor};
 
 #[derive(Debug, Copy, Clone, Default, PartialOrd, PartialEq)]
 pub struct TimePoint(f64);
@@ -40,6 +40,12 @@ pub mod delay_gen {
         Normal(Normal<f64>),
         Uniform(Uniform<f64>),
         Exponential(Exp<f64>),
+    }
+
+    impl Default for DelayGen {
+        fn default() -> DelayGen {
+            DelayGen::Normal(Normal::new(0.0, 1.0).unwrap())
+        }
     }
 
     impl DelayGen {
@@ -249,6 +255,10 @@ mod event_create {
             Self{current_t, node}
         }
 
+        pub(super) fn get_current_t(&self) -> TimePoint {
+            self.current_t
+        }
+
         pub(super) fn iterate(self) -> (Self, Option<Event>) {
             let node = unsafe { &*self.node };
             let next_event = if let Some(next_node) = node.next_node() {
@@ -266,7 +276,6 @@ mod event_create {
             (node.produce_event(self.current_t), next_event)
         }
     }
-
 }
 
 mod event_process {
@@ -288,6 +297,10 @@ mod event_process {
             queue_processor: QueueProcessor<Payload>
         ) -> Self {
             Self{current_t, node, queue_processor}
+        }
+
+        pub(super) fn get_current_t(&self) -> TimePoint {
+            self.current_t
         }
 
         pub(super) fn iterate(mut self) -> (Option<Self>, Option<Event>) {
@@ -321,17 +334,58 @@ enum Event {
     Process(EventProcess),
 }
 
+impl Event {
+    fn get_current_t(&self) -> TimePoint {
+        match self {
+            Event::Create(event) => event.get_current_t(),
+            Event::Process(event) => event.get_current_t(),
+        }
+    }
+}
+
+impl Eq for Event {}
+
+impl PartialEq<Self> for Event {
+    fn eq(&self, other: &Self) -> bool {
+        self.get_current_t() == other.get_current_t()
+    }
+}
+
+impl PartialOrd<Self> for Event {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        other.get_current_t().partial_cmp(&self.get_current_t())
+    }
+}
+
+impl Ord for Event {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.partial_cmp(other).expect("Cannot compare events")
+    }
+}
+
+#[derive(Default)]
 struct NodeBase {
     next_nodes: ProbabilityArray<Node>,
     delay_gen: DelayGen
 }
 
+impl NodeBase {
+    fn new(next_nodes: ProbabilityArray<Node>, delay_gen: DelayGen) -> Self {
+        Self {next_nodes, delay_gen}
+    }
+}
+
 mod node_create {
     use crate::{EventCreate, Node, NodeBase, TimePoint};
 
+    #[derive(Default)]
     pub(super) struct NodeCreate(NodeBase);
 
     impl NodeCreate {
+        pub(super) fn new(base: NodeBase) -> Self {
+            Self(base)
+        }
+
         pub(super) fn next_node(&self) -> Option<&Node> {
             self.0.next_nodes.sample()
         }
@@ -342,32 +396,34 @@ mod node_create {
     }
 }
 
-
-
 mod payload_queue {
+    use crate::Payload;
+    use crate::queue_resource::Queue;
+
+    #[derive(Default)]
     pub(super) struct PayloadQueue{
-        pub(super) len: usize,
-    }
-}
-
-impl Queue for PayloadQueue {
-    type Item = Payload;
-
-    fn push(&mut self, _: Self::Item) {
-        self.len += 1;
+        len: usize,
     }
 
-    fn pop(&mut self) -> Option<Self::Item> {
-        if self.is_empty() {
-            None
-        } else {
-            self.len -= 1;
-            Some(Payload())
+    impl Queue for PayloadQueue {
+        type Item = Payload;
+
+        fn push(&mut self, _: Self::Item) {
+            self.len += 1;
         }
-    }
 
-    fn is_empty(&self) -> bool {
-        self.len == 0
+        fn pop(&mut self) -> Option<Self::Item> {
+            if self.is_empty() {
+                None
+            } else {
+                self.len -= 1;
+                Some(Payload())
+            }
+        }
+
+        fn is_empty(&self) -> bool {
+            self.len == 0
+        }
     }
 }
 
@@ -392,7 +448,8 @@ mod node_process {
 
         pub(super) fn pop_produce_event(node: &RefCell<Self>, old_t: TimePoint) -> Option<EventProcess> {
             let is_any_free_processor = node.borrow().queue.is_any_free_processor();
-            if is_any_free_processor {
+            let is_not_empty = !node.borrow().queue.is_empty();
+            if is_any_free_processor && is_not_empty {
                 let delay = node.borrow().base.delay_gen.sample();
                 Some(EventProcess::new(old_t + delay, node, node.borrow_mut().queue.acquire_processor()))
             } else {
@@ -400,17 +457,22 @@ mod node_process {
             }
         }
 
-        pub(super)  fn push_produce_event(node: &RefCell<Self>, old_t: TimePoint, payload: Payload) -> Option<EventProcess> {
+        pub(super) fn push_produce_event(node: &RefCell<Self>, old_t: TimePoint, payload: Payload) -> Option<EventProcess> {
             node.borrow_mut().queue.push(payload);
             NodeProcess::pop_produce_event(node, old_t)
         }
     }
 }
 
-
 enum Node {
     Create(NodeCreate),
     Process(RefCell<NodeProcess>),
+}
+
+impl Default for Node {
+    fn default() -> Self {
+        Node::Create(Default::default())
+    }
 }
 
 fn main() {
@@ -422,9 +484,66 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::BinaryHeap;
+    use rand::distributions::Uniform;
+    use crate::prob_arr::Probability;
+    use crate::queue_resource::QueueResource;
     use super::*;
 
     #[test]
     fn test_one() {
+        let tree = NodeCreate::new(
+            NodeBase::new(
+                ProbabilityArray::<Node>::new(
+                    vec![
+                        (
+                            Node::Process(RefCell::new(NodeProcess::new(
+                                NodeBase::new(
+                                    Default::default(),
+                                    DelayGen::Uniform(Uniform::new(5.0, 15.0))
+                                ),
+                                QueueResource::new(
+                                    PayloadQueue::default(),
+                                    3
+                                )
+                            ))),
+                            Probability::new(1.0)
+                        ),
+                    ]
+                ),
+                DelayGen::Uniform(Uniform::new(10.0, 20.0))
+            )
+        );
+
+        let mut events = BinaryHeap::<Event>::new();
+        events.push(Event::Create(tree.produce_event(TimePoint(0.0))));
+
+        let end_time = TimePoint(100000.0);
+        let _ = loop {
+            let next_event = events.pop().unwrap();
+            if next_event.get_current_t() > end_time {
+                break next_event;
+            }
+
+            match next_event {
+                Event::Create(event) => {
+                    let (event_self, next_event) = event.iterate();
+                    events.push(Event::Create(event_self));
+                    if let Some(next_event) = next_event {
+                        events.push(next_event)
+                    }
+                },
+                Event::Process(event) => {
+                    let (event_self, next_event) = event.iterate();
+                    if let Some(event_self) = event_self {
+                        events.push(Event::Process(event_self))
+                    }
+                    if let Some(next_event) = next_event {
+                        events.push(next_event)
+                    }
+                }
+            }
+        };
+
     }
 }
