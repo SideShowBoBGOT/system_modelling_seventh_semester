@@ -1,8 +1,13 @@
 use std::cell::RefCell;
 use std::ops::{Add, Sub};
 use crate::delay_gen::DelayGen;
+use crate::event_create::EventCreate;
+use crate::event_process::EventProcess;
+use crate::node_create::NodeCreate;
+use crate::node_process::NodeProcess;
+use crate::payload_queue::PayloadQueue;
 use crate::prob_arr::ProbabilityArray;
-use crate::queue_resource::{Queue, QueueProcessor, QueueResource};
+use crate::queue_resource::{Queue, QueueProcessor};
 
 #[derive(Debug, Copy, Clone, Default, PartialOrd, PartialEq)]
 pub struct TimePoint(f64);
@@ -185,28 +190,27 @@ mod queue_resource {
 
 pub mod prob_arr {
     use rand::random;
-    use std::fmt::{Debug};
 
-    struct Probability(f64);
+    pub(super) struct Probability(f64);
     impl Probability {
-        pub fn new(prob: f64) -> Self {
+        pub(super) fn new(prob: f64) -> Self {
             assert!(prob >= 0.0 && prob <= 1.0);
             Self(prob)
         }
     }
 
     #[derive(Default)]
-    pub struct ProbabilityArray<T>(Vec<(T, Probability)>);
+    pub(super) struct ProbabilityArray<T>(Vec<(T, Probability)>);
 
     impl<T> ProbabilityArray<T> {
-        pub fn new(next_elements_map: Vec<(T, Probability)>) -> Self {
+        pub(super) fn new(next_elements_map: Vec<(T, Probability)>) -> Self {
             const EPSILON: f64 = 0.001;
             let sum = next_elements_map.iter().map(|e| (*e).1.0).sum::<f64>();
             assert!((sum - 1.0).abs() < EPSILON);
             Self(next_elements_map)
         }
 
-        pub fn sample(&self) -> Option<&T> {
+        pub(super) fn sample(&self) -> Option<&T> {
             if self.0.is_empty() {
                 return None;
             }
@@ -230,64 +234,87 @@ pub mod prob_arr {
 #[derive(Clone, Default)]
 struct Payload();
 
-struct EventCreate {
-    current_t: TimePoint,
-    node: *const NodeCreate
-}
+mod event_create {
+    use crate::node_create::NodeCreate;
+    use crate::{Event, Node, Payload, TimePoint};
+    use crate::node_process::NodeProcess;
 
-impl EventCreate {
-    fn iterate(self) -> (Self, Option<Event>) {
-        let node = unsafe { &*self.node };
-        let next_node = node.0.next_nodes.sample();
-        let next_event = if let Some(next_node) = next_node {
-            match next_node {
-                Node::Create(node_create) => {
-                    Some(Event::Create(node_create.produce_event(self.current_t)))
-                },
-                Node::Process(node_process) => {
-                    node_process.borrow_mut().queue.push(Payload());
-                    NodeProcess::produce_event(node_process, self.current_t).map(Event::Process)
-                }
-            }
-        } else {
-            None
-        };
-        (node.produce_event(self.current_t), next_event)
+    pub(super) struct EventCreate {
+        current_t: TimePoint,
+        node: *const NodeCreate
     }
-}
 
-struct EventProcess {
-    current_t: TimePoint,
-    node: *const RefCell<NodeProcess>,
-    queue_processor: QueueProcessor<Payload>
-}
+    impl EventCreate {
+        pub(super) fn new(current_t: TimePoint, node: *const NodeCreate) -> Self {
+            Self{current_t, node}
+        }
 
-impl EventProcess {
-    fn iterate(mut self) -> (Option<Self>, Option<Event>) {
-        let mut node = unsafe { &*self.node };
-        let payload = std::mem::take(self.queue_processor.value_mut());
-        drop(self.queue_processor);
-
-        let next_event = {
-            let node = node.borrow();
-            let next_node = node.base.next_nodes.sample();
-            if let Some(next_node) = next_node {
+        pub(super) fn iterate(self) -> (Self, Option<Event>) {
+            let node = unsafe { &*self.node };
+            let next_event = if let Some(next_node) = node.next_node() {
                 match next_node {
                     Node::Create(node_create) => {
                         Some(Event::Create(node_create.produce_event(self.current_t)))
                     },
                     Node::Process(node_process) => {
-                        node_process.borrow_mut().queue.push(payload);
-                        NodeProcess::produce_event(node_process, self.current_t).map(Event::Process)
+                        NodeProcess::push_produce_event(node_process, self.current_t, Payload()).map(Event::Process)
                     }
                 }
             } else {
                 None
-            }
-        };
-        (NodeProcess::produce_event(node, self.current_t), next_event)
+            };
+            (node.produce_event(self.current_t), next_event)
+        }
+    }
+
+}
+
+mod event_process {
+    use std::cell::RefCell;
+    use crate::{Event, Node, Payload, TimePoint};
+    use crate::node_process::NodeProcess;
+    use crate::queue_resource::QueueProcessor;
+
+    pub(super) struct EventProcess {
+        current_t: TimePoint,
+        node: *const RefCell<NodeProcess>,
+        queue_processor: QueueProcessor<Payload>
+    }
+
+    impl EventProcess {
+        pub(super) fn new(
+            current_t: TimePoint,
+            node: *const RefCell<NodeProcess>,
+            queue_processor: QueueProcessor<Payload>
+        ) -> Self {
+            Self{current_t, node, queue_processor}
+        }
+
+        pub(super) fn iterate(mut self) -> (Option<Self>, Option<Event>) {
+            let node = unsafe { &*self.node };
+            let payload = std::mem::take(self.queue_processor.value_mut());
+            drop(self.queue_processor);
+
+            let next_event = {
+                let node = node.borrow();
+                if let Some(next_node) = node.next_node() {
+                    match next_node {
+                        Node::Create(node_create) => {
+                            Some(Event::Create(node_create.produce_event(self.current_t)))
+                        },
+                        Node::Process(node_process) => {
+                            NodeProcess::push_produce_event(node_process, self.current_t, payload).map(Event::Process)
+                        }
+                    }
+                } else {
+                    None
+                }
+            };
+            (NodeProcess::pop_produce_event(node, self.current_t), next_event)
+        }
     }
 }
+
 
 enum Event {
     Create(EventCreate),
@@ -299,22 +326,34 @@ struct NodeBase {
     delay_gen: DelayGen
 }
 
-struct NodeCreate(NodeBase);
+mod node_create {
+    use crate::{EventCreate, Node, NodeBase, TimePoint};
 
-impl NodeCreate {
-    fn produce_event(&self, old_t: TimePoint) -> EventCreate {
-        EventCreate{current_t: old_t + self.0.delay_gen.sample(), node: self}
+    pub(super) struct NodeCreate(NodeBase);
+
+    impl NodeCreate {
+        pub(super) fn next_node(&self) -> Option<&Node> {
+            self.0.next_nodes.sample()
+        }
+
+        pub(super) fn produce_event(&self, old_t: TimePoint) -> EventCreate {
+            EventCreate::new(old_t + self.0.delay_gen.sample(), self)
+        }
     }
 }
 
-struct PayloadQueue{
-    len: usize,
+
+
+mod payload_queue {
+    pub(super) struct PayloadQueue{
+        pub(super) len: usize,
+    }
 }
 
 impl Queue for PayloadQueue {
     type Item = Payload;
 
-    fn push(&mut self, t: Self::Item) {
+    fn push(&mut self, _: Self::Item) {
         self.len += 1;
     }
 
@@ -332,33 +371,47 @@ impl Queue for PayloadQueue {
     }
 }
 
-struct NodeProcess {
-    base: NodeBase,
-    queue: QueueResource<PayloadQueue>
-}
+mod node_process {
+    use std::cell::RefCell;
+    use crate::{EventProcess, Node, NodeBase, Payload, PayloadQueue, TimePoint};
+    use crate::queue_resource::QueueResource;
 
-impl NodeProcess {
-    fn produce_event(node: &RefCell<Self>, old_t: TimePoint) -> Option<EventProcess> {
-        let is_any_free_processor = node.borrow().queue.is_any_free_processor();
-        if is_any_free_processor {
-            let delay = node.borrow().base.delay_gen.sample();
-            Some(EventProcess{
-                current_t: old_t + delay,
-                node,
-                queue_processor: node.borrow_mut().queue.acquire_processor()
-            })
-        } else {
-            None
+    pub(super) struct NodeProcess {
+        base: NodeBase,
+        queue: QueueResource<PayloadQueue>
+    }
+
+    impl NodeProcess {
+        pub(super) fn new(base: NodeBase, queue: QueueResource<PayloadQueue>) -> Self {
+            Self { base, queue }
+        }
+
+        pub(super) fn next_node(&self) -> Option<&Node> {
+            self.base.next_nodes.sample()
+        }
+
+        pub(super) fn pop_produce_event(node: &RefCell<Self>, old_t: TimePoint) -> Option<EventProcess> {
+            let is_any_free_processor = node.borrow().queue.is_any_free_processor();
+            if is_any_free_processor {
+                let delay = node.borrow().base.delay_gen.sample();
+                Some(EventProcess::new(old_t + delay, node, node.borrow_mut().queue.acquire_processor()))
+            } else {
+                None
+            }
+        }
+
+        pub(super)  fn push_produce_event(node: &RefCell<Self>, old_t: TimePoint, payload: Payload) -> Option<EventProcess> {
+            node.borrow_mut().queue.push(payload);
+            NodeProcess::pop_produce_event(node, old_t)
         }
     }
 }
+
 
 enum Node {
     Create(NodeCreate),
     Process(RefCell<NodeProcess>),
 }
-
-
 
 fn main() {
 
