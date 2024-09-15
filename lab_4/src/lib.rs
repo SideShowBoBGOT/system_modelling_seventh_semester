@@ -10,7 +10,7 @@ use crate::payload_queue::PayloadQueue;
 use crate::prob_arr::ProbabilityArray;
 
 #[derive(Debug, Copy, Clone, Default, PartialOrd, PartialEq)]
-pub struct TimePoint(f64);
+pub struct TimePoint(pub f64);
 
 impl Sub for TimePoint {
     type Output = TimeSpan;
@@ -61,7 +61,7 @@ pub mod delay_gen {
     }
 }
 
-mod queue_resource {
+pub mod queue_resource {
     use std::cell::{Cell};
     use std::rc::{Rc, Weak};
 
@@ -79,6 +79,7 @@ mod queue_resource {
         queue: Q,
     }
 
+    #[derive(Clone)]
     pub struct QueueProcessor<E> {
         acquires_count: Weak<Cell<usize>>,
         value: E
@@ -92,9 +93,9 @@ mod queue_resource {
     }
 
     impl<E> QueueProcessor<E> {
-        pub fn value(&self) -> &E {
-            &self.value
-        }
+        // pub fn value(&self) -> &E {
+        //     &self.value
+        // }
         pub fn value_mut(&mut self) -> &mut E {
             &mut self.value
         }
@@ -198,26 +199,26 @@ pub mod prob_arr {
     use rand::random;
 
     #[derive(Default, Clone, Copy)]
-    pub(super) struct Probability(f64);
+    pub struct Probability(f64);
     impl Probability {
-        pub(super) fn new(prob: f64) -> Self {
+        pub fn new(prob: f64) -> Self {
             assert!(prob >= 0.0 && prob <= 1.0);
             Self(prob)
         }
     }
 
     #[derive(Default, Clone)]
-    pub(super) struct ProbabilityArray<T>(Vec<(T, Probability)>);
+    pub struct ProbabilityArray<T>(Vec<(T, Probability)>);
 
     impl<T> ProbabilityArray<T> {
-        pub(super) fn new(next_elements_map: Vec<(T, Probability)>) -> Self {
+        pub fn new(next_elements_map: Vec<(T, Probability)>) -> Self {
             const EPSILON: f64 = 0.001;
             let sum = next_elements_map.iter().map(|e| (*e).1.0).sum::<f64>();
             assert!((sum - 1.0).abs() < EPSILON);
             Self(next_elements_map)
         }
 
-        pub(super) fn sample(&self) -> Option<&T> {
+        pub fn sample(&self) -> Option<&T> {
             if self.0.is_empty() {
                 return None;
             }
@@ -239,28 +240,29 @@ pub mod prob_arr {
 }
 
 #[derive(Clone, Default)]
-struct Payload();
+pub struct Payload();
 
-mod event_create {
+pub mod event_create {
     use crate::node_create::NodeCreate;
     use crate::{Event, Node, Payload, TimePoint};
     use crate::node_process::NodeProcess;
 
-    pub(super) struct EventCreate {
+    #[derive(Clone)]
+    pub struct EventCreate {
         current_t: TimePoint,
         node: *const NodeCreate
     }
 
     impl EventCreate {
-        pub(super) fn new(current_t: TimePoint, node: *const NodeCreate) -> Self {
+        pub fn new(current_t: TimePoint, node: *const NodeCreate) -> Self {
             Self{current_t, node}
         }
 
-        pub(super) fn get_current_t(&self) -> TimePoint {
+        pub fn get_current_t(&self) -> TimePoint {
             self.current_t
         }
 
-        pub(super) fn iterate(self) -> (Self, Option<Event>) {
+        pub fn iterate(self) -> (Self, Option<Event>) {
             let node = unsafe { &*self.node };
             let next_event = if let Some(next_node) = node.next_node() {
                 match next_node {
@@ -279,20 +281,21 @@ mod event_create {
     }
 }
 
-mod event_process {
+pub mod event_process {
     use std::cell::RefCell;
     use crate::{Event, Node, Payload, TimePoint};
     use crate::node_process::NodeProcess;
     use crate::queue_resource::QueueProcessor;
 
-    pub(super) struct EventProcess {
+    #[derive(Clone)]
+    pub struct EventProcess {
         current_t: TimePoint,
         node: *const RefCell<NodeProcess>,
         queue_processor: QueueProcessor<Payload>
     }
 
     impl EventProcess {
-        pub(super) fn new(
+        pub fn new(
             current_t: TimePoint,
             node: *const RefCell<NodeProcess>,
             queue_processor: QueueProcessor<Payload>
@@ -300,11 +303,11 @@ mod event_process {
             Self{current_t, node, queue_processor}
         }
 
-        pub(super) fn get_current_t(&self) -> TimePoint {
+        pub fn get_current_t(&self) -> TimePoint {
             self.current_t
         }
 
-        pub(super) fn iterate(mut self) -> (Option<Self>, Option<Event>) {
+        pub fn iterate(mut self) -> (Option<Self>, Option<Event>) {
             let node = unsafe { &*self.node };
             let payload = std::mem::take(self.queue_processor.value_mut());
             drop(self.queue_processor);
@@ -329,14 +332,14 @@ mod event_process {
     }
 }
 
-
-enum Event {
+#[derive(Clone)]
+pub enum Event {
     Create(EventCreate),
     Process(EventProcess),
 }
 
 impl Event {
-    fn get_current_t(&self) -> TimePoint {
+    pub fn get_current_t(&self) -> TimePoint {
         match self {
             Event::Create(event) => event.get_current_t(),
             Event::Process(event) => event.get_current_t(),
@@ -365,44 +368,44 @@ impl Ord for Event {
 }
 
 #[derive(Default, Clone)]
-struct NodeBase {
+pub struct NodeBase {
     next_nodes: ProbabilityArray<Node>,
     delay_gen: DelayGen
 }
 
 impl NodeBase {
-    fn new(next_nodes: ProbabilityArray<Node>, delay_gen: DelayGen) -> Self {
+    pub fn new(next_nodes: ProbabilityArray<Node>, delay_gen: DelayGen) -> Self {
         Self {next_nodes, delay_gen}
     }
 }
 
-mod node_create {
+pub mod node_create {
     use crate::{EventCreate, Node, NodeBase, TimePoint};
 
     #[derive(Default, Clone)]
-    pub(super) struct NodeCreate(NodeBase);
+    pub struct NodeCreate(NodeBase);
 
     impl NodeCreate {
-        pub(super) fn new(base: NodeBase) -> Self {
+        pub fn new(base: NodeBase) -> Self {
             Self(base)
         }
 
-        pub(super) fn next_node(&self) -> Option<&Node> {
+        pub fn next_node(&self) -> Option<&Node> {
             self.0.next_nodes.sample()
         }
 
-        pub(super) fn produce_event(&self, old_t: TimePoint) -> EventCreate {
+        pub fn produce_event(&self, old_t: TimePoint) -> EventCreate {
             EventCreate::new(old_t + self.0.delay_gen.sample(), self)
         }
     }
 }
 
-mod payload_queue {
+pub mod payload_queue {
     use crate::Payload;
     use crate::queue_resource::Queue;
 
     #[derive(Default, Clone)]
-    pub(super) struct PayloadQueue{
+    pub struct PayloadQueue{
         len: usize,
     }
 
@@ -428,27 +431,27 @@ mod payload_queue {
     }
 }
 
-mod node_process {
+pub mod node_process {
     use std::cell::RefCell;
     use crate::{EventProcess, Node, NodeBase, Payload, PayloadQueue, TimePoint};
     use crate::queue_resource::QueueResource;
 
     #[derive(Clone)]
-    pub(super) struct NodeProcess {
+    pub struct NodeProcess {
         base: NodeBase,
         queue: QueueResource<PayloadQueue>
     }
 
     impl NodeProcess {
-        pub(super) fn new(base: NodeBase, queue: QueueResource<PayloadQueue>) -> Self {
+        pub fn new(base: NodeBase, queue: QueueResource<PayloadQueue>) -> Self {
             Self { base, queue }
         }
 
-        pub(super) fn next_node(&self) -> Option<&Node> {
+        pub fn next_node(&self) -> Option<&Node> {
             self.base.next_nodes.sample()
         }
 
-        pub(super) fn pop_produce_event(node: &RefCell<Self>, old_t: TimePoint) -> Option<EventProcess> {
+        pub fn pop_produce_event(node: &RefCell<Self>, old_t: TimePoint) -> Option<EventProcess> {
             let is_any_free_processor = node.borrow().queue.is_any_free_processor();
             let is_not_empty = !node.borrow().queue.is_empty();
             if is_any_free_processor && is_not_empty {
@@ -459,7 +462,7 @@ mod node_process {
             }
         }
 
-        pub(super) fn push_produce_event(node: &RefCell<Self>, old_t: TimePoint, payload: Payload) -> Option<EventProcess> {
+        pub fn push_produce_event(node: &RefCell<Self>, old_t: TimePoint, payload: Payload) -> Option<EventProcess> {
             node.borrow_mut().queue.push(payload);
             NodeProcess::pop_produce_event(node, old_t)
         }
@@ -467,7 +470,7 @@ mod node_process {
 }
 
 #[derive(Clone)]
-enum Node {
+pub enum Node {
     Create(NodeCreate),
     Process(RefCell<NodeProcess>),
 }
@@ -475,149 +478,5 @@ enum Node {
 impl Default for Node {
     fn default() -> Self {
         Node::Create(Default::default())
-    }
-}
-
-fn main() {
-
-
-
-    println!("Hello, world!");
-}
-
-#[cfg(test)]
-mod tests {
-    use std::collections::BinaryHeap;
-    use rand::distributions::Uniform;
-    use crate::prob_arr::Probability;
-    use crate::queue_resource::QueueResource;
-    use super::*;
-
-    #[test]
-    fn test_one() {
-        let tree = NodeCreate::new(
-            NodeBase::new(
-                ProbabilityArray::<Node>::new(
-                    vec![
-                        (
-                            Node::Process(RefCell::new(NodeProcess::new(
-                                NodeBase::new(
-                                    Default::default(),
-                                    DelayGen::Uniform(Uniform::new(5.0, 15.0))
-                                ),
-                                QueueResource::new(
-                                    PayloadQueue::default(),
-                                    3
-                                )
-                            ))),
-                            Probability::new(1.0)
-                        ),
-                    ]
-                ),
-                DelayGen::Uniform(Uniform::new(10.0, 20.0))
-            )
-        );
-
-        let mut events = BinaryHeap::<Event>::new();
-        events.push(Event::Create(tree.produce_event(TimePoint(0.0))));
-
-        let end_time = TimePoint(100000.0);
-        let _ = loop {
-            let next_event = events.pop().unwrap();
-            if next_event.get_current_t() > end_time {
-                break next_event;
-            }
-
-            match next_event {
-                Event::Create(event) => {
-                    let (event_self, next_event) = event.iterate();
-                    events.push(Event::Create(event_self));
-                    if let Some(next_event) = next_event {
-                        events.push(next_event)
-                    }
-                },
-                Event::Process(event) => {
-                    let (event_self, next_event) = event.iterate();
-                    if let Some(event_self) = event_self {
-                        events.push(Event::Process(event_self))
-                    }
-                    if let Some(next_event) = next_event {
-                        events.push(next_event)
-                    }
-                }
-            }
-        };
-    }
-
-    #[test]
-    fn test_two() {
-        let prob_array = {
-            let prob_array = {
-                let node_prob = (
-                    Node::Process(RefCell::new(NodeProcess::new(
-                        NodeBase::new(
-                            Default::default(),
-                            DelayGen::Uniform(Uniform::new(5.0, 15.0))
-                        ),
-                        QueueResource::new(
-                            PayloadQueue::default(),
-                            3
-                        )
-                    ))),
-                    Probability::new(0.5)
-                );
-                ProbabilityArray::<Node>::new(vec![node_prob.clone(), node_prob])
-            };
-            let node = (
-                Node::Process(RefCell::new(NodeProcess::new(
-                    NodeBase::new(
-                        prob_array,
-                        DelayGen::Uniform(Uniform::new(5.0, 15.0))
-                    ),
-                    QueueResource::new(
-                        PayloadQueue::default(),
-                        3
-                    )
-                ))),
-                Probability::new(0.1)
-            );
-            ProbabilityArray::<Node>::new(
-                (0..10).map(|_| node.clone()).collect::<Vec<(Node, Probability)>>()
-            )
-        };
-
-        let tree = NodeCreate::new(
-            NodeBase::new(prob_array, DelayGen::Uniform(Uniform::new(10.0, 20.0)))
-        );
-
-        let mut events = BinaryHeap::<Event>::new();
-        events.push(Event::Create(tree.produce_event(TimePoint(0.0))));
-
-        let end_time = TimePoint(100000.0);
-        let _ = loop {
-            let next_event = events.pop().unwrap();
-            if next_event.get_current_t() > end_time {
-                break next_event;
-            }
-
-            match next_event {
-                Event::Create(event) => {
-                    let (event_self, next_event) = event.iterate();
-                    events.push(Event::Create(event_self));
-                    if let Some(next_event) = next_event {
-                        events.push(next_event)
-                    }
-                },
-                Event::Process(event) => {
-                    let (event_self, next_event) = event.iterate();
-                    if let Some(event_self) = event_self {
-                        events.push(Event::Process(event_self))
-                    }
-                    if let Some(next_event) = next_event {
-                        events.push(next_event)
-                    }
-                }
-            }
-        };
     }
 }
