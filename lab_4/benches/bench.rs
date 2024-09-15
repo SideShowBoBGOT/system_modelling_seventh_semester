@@ -1,6 +1,6 @@
 use std::cell::RefCell;
 use std::collections::BinaryHeap;
-use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
+use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
 use rand::distributions::Uniform;
 use lab_4::{Event, Node, NodeBase, TimePoint};
 use lab_4::delay_gen::DelayGen;
@@ -59,7 +59,7 @@ pub fn model_sequential(c: &mut Criterion) {
     let tree = NodeCreate::new(
         NodeBase::new(
             ProbabilityArray::<Node>::new(vec![generate_recursive_sequential(50)]),
-            DelayGen::Uniform(Uniform::new(3.0, 7.0))
+            DelayGen::Uniform(Uniform::new(1.0, 3.0))
         )
     );
 
@@ -81,7 +81,7 @@ pub fn model_trees_depth_2(c: &mut Criterion) {
                 Node::Process(RefCell::new(NodeProcess::new(
                     NodeBase::new(
                         Default::default(),
-                        DelayGen::Uniform(Uniform::new(5.0, 15.0))
+                        DelayGen::Uniform(Uniform::new(10.0, 15.0))
                     ),
                     QueueResource::new(
                         PayloadQueue::default(),
@@ -96,7 +96,7 @@ pub fn model_trees_depth_2(c: &mut Criterion) {
             Node::Process(RefCell::new(NodeProcess::new(
                 NodeBase::new(
                     prob_array,
-                    DelayGen::Uniform(Uniform::new(5.0, 15.0))
+                    DelayGen::Uniform(Uniform::new(10.0, 15.0))
                 ),
                 QueueResource::new(
                     PayloadQueue::default(),
@@ -111,7 +111,7 @@ pub fn model_trees_depth_2(c: &mut Criterion) {
     };
 
     let tree = NodeCreate::new(
-        NodeBase::new(prob_array, DelayGen::Uniform(Uniform::new(10.0, 20.0)))
+        NodeBase::new(prob_array, DelayGen::Uniform(Uniform::new(1.0, 3.0)))
     );
 
     let mut events = BinaryHeap::<Event>::new();
@@ -124,5 +124,57 @@ pub fn model_trees_depth_2(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(benches, model_sequential, model_trees_depth_2);
+pub fn model_trees_depth_2_sequential(c: &mut Criterion) {
+    let prob_array = {
+        let prob_array = {
+            let node_prob = (
+                Node::Process(RefCell::new(NodeProcess::new(
+                    NodeBase::new(
+                        ProbabilityArray::<Node>::new(
+                            vec![generate_recursive_sequential(50)]
+                        ),
+                        DelayGen::Uniform(Uniform::new(10.0, 15.0))
+                    ),
+                    QueueResource::new(
+                        PayloadQueue::default(),
+                        3
+                    )
+                ))),
+                Probability::new(0.5)
+            );
+            ProbabilityArray::<Node>::new(vec![node_prob.clone(), node_prob])
+        };
+        let node = (
+            Node::Process(RefCell::new(NodeProcess::new(
+                NodeBase::new(
+                    prob_array,
+                    DelayGen::Uniform(Uniform::new(10.0, 15.0))
+                ),
+                QueueResource::new(
+                    PayloadQueue::default(),
+                    3
+                )
+            ))),
+            Probability::new(0.1)
+        );
+        ProbabilityArray::<Node>::new(
+            (0..10).map(|_| node.clone()).collect::<Vec<(Node, Probability)>>()
+        )
+    };
+
+    let tree = NodeCreate::new(
+        NodeBase::new(prob_array, DelayGen::Uniform(Uniform::new(1.0, 3.0)))
+    );
+
+    let mut events = BinaryHeap::<Event>::new();
+    events.push(Event::Create(tree.produce_event(TimePoint(0.0))));
+
+    let mut group = c.benchmark_group("model_trees_depth_2_sequential");
+    for size in (10000..=100000).step_by(10000) {
+        group.bench_with_input(BenchmarkId::from_parameter(size), &size, |b, i| b.iter(|| simulate_model(events.clone(), TimePoint(*i as f64))) );
+    }
+    group.finish();
+}
+
+criterion_group!(benches, model_sequential, model_trees_depth_2, model_trees_depth_2_sequential);
 criterion_main!(benches);

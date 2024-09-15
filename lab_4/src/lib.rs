@@ -480,3 +480,140 @@ impl Default for Node {
         Node::Create(Default::default())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::BinaryHeap;
+    use rand::distributions::Uniform;
+    use crate::prob_arr::Probability;
+    use crate::queue_resource::QueueResource;
+    use super::*;
+
+    #[test]
+    fn test_one() {
+        let tree = NodeCreate::new(
+            NodeBase::new(
+                ProbabilityArray::<Node>::new(
+                    vec![
+                        (
+                            Node::Process(RefCell::new(NodeProcess::new(
+                                NodeBase::new(
+                                    Default::default(),
+                                    DelayGen::Uniform(Uniform::new(5.0, 15.0))
+                                ),
+                                QueueResource::new(
+                                    PayloadQueue::default(),
+                                    3
+                                )
+                            ))),
+                            Probability::new(1.0)
+                        ),
+                    ]
+                ),
+                DelayGen::Uniform(Uniform::new(1.0, 3.0))
+            )
+        );
+
+        let mut events = BinaryHeap::<Event>::new();
+        events.push(Event::Create(tree.produce_event(TimePoint(0.0))));
+
+        let end_time = TimePoint(100000.0);
+        let _ = loop {
+            let next_event = events.pop().unwrap();
+            if next_event.get_current_t() > end_time {
+                break next_event;
+            }
+
+            match next_event {
+                Event::Create(event) => {
+                    let (event_self, next_event) = event.iterate();
+                    events.push(Event::Create(event_self));
+                    if let Some(next_event) = next_event {
+                        events.push(next_event)
+                    }
+                },
+                Event::Process(event) => {
+                    let (event_self, next_event) = event.iterate();
+                    if let Some(event_self) = event_self {
+                        events.push(Event::Process(event_self))
+                    }
+                    if let Some(next_event) = next_event {
+                        events.push(next_event)
+                    }
+                }
+            }
+        };
+    }
+
+    #[test]
+    fn test_two() {
+        let prob_array = {
+            let prob_array = {
+                let node_prob = (
+                    Node::Process(RefCell::new(NodeProcess::new(
+                        NodeBase::new(
+                            Default::default(),
+                            DelayGen::Uniform(Uniform::new(5.0, 15.0))
+                        ),
+                        QueueResource::new(
+                            PayloadQueue::default(),
+                            3
+                        )
+                    ))),
+                    Probability::new(0.5)
+                );
+                ProbabilityArray::<Node>::new(vec![node_prob.clone(), node_prob])
+            };
+            let node = (
+                Node::Process(RefCell::new(NodeProcess::new(
+                    NodeBase::new(
+                        prob_array,
+                        DelayGen::Uniform(Uniform::new(5.0, 15.0))
+                    ),
+                    QueueResource::new(
+                        PayloadQueue::default(),
+                        3
+                    )
+                ))),
+                Probability::new(0.1)
+            );
+            ProbabilityArray::<Node>::new(
+                (0..10).map(|_| node.clone()).collect::<Vec<(Node, Probability)>>()
+            )
+        };
+
+        let tree = NodeCreate::new(
+            NodeBase::new(prob_array, DelayGen::Uniform(Uniform::new(1.0, 3.0)))
+        );
+
+        let mut events = BinaryHeap::<Event>::new();
+        events.push(Event::Create(tree.produce_event(TimePoint(0.0))));
+
+        let end_time = TimePoint(100000.0);
+        let _ = loop {
+            let next_event = events.pop().unwrap();
+            if next_event.get_current_t() > end_time {
+                break next_event;
+            }
+
+            match next_event {
+                Event::Create(event) => {
+                    let (event_self, next_event) = event.iterate();
+                    events.push(Event::Create(event_self));
+                    if let Some(next_event) = next_event {
+                        events.push(next_event)
+                    }
+                },
+                Event::Process(event) => {
+                    let (event_self, next_event) = event.iterate();
+                    if let Some(event_self) = event_self {
+                        events.push(Event::Process(event_self))
+                    }
+                    if let Some(next_event) = next_event {
+                        events.push(next_event)
+                    }
+                }
+            }
+        };
+    }
+}
