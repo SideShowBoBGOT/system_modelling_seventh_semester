@@ -56,10 +56,10 @@
 									},
 									"font": "Arial;13;0",
 									"parentStyle": true,
-									"left": 221,
-									"top": 256,
+									"left": 357,
+									"top": 296,
 									"width": 13,
-									"height": 144,
+									"height": 136,
 									"text": "Генератор завдань",
 									"verticalAlignment": 3
 								}
@@ -69,16 +69,22 @@
 									"$ref": "AAAAAAGTWTEv373cFVw="
 								},
 								{
+									"$ref": "AAAAAAGTWUAiqxVWSbE="
+								},
+								{
 									"$ref": "AAAAAAGTWTL6Fr3zMu4="
+								},
+								{
+									"$ref": "AAAAAAGTWUJUZhWjcqc="
 								}
 							],
 							"font": "Arial;13;0",
 							"parentStyle": false,
 							"containerChangeable": true,
-							"left": 216,
-							"top": 256,
-							"width": 440,
-							"height": 144,
+							"left": 352,
+							"top": 296,
+							"width": 664,
+							"height": 136,
 							"nameLabel": {
 								"$ref": "AAAAAAGTWRjhSr2ASAY="
 							}
@@ -104,8 +110,8 @@
 									},
 									"font": "Arial;13;0",
 									"parentStyle": false,
-									"left": 351.0361328125,
-									"top": 357.5,
+									"left": 487.0361328125,
+									"top": 397.5,
 									"width": 113.927734375,
 									"height": 13,
 									"alpha": -1.5707963267948966,
@@ -119,8 +125,8 @@
 							"font": "Arial;13;0",
 							"parentStyle": false,
 							"containerChangeable": true,
-							"left": 384,
-							"top": 304,
+							"left": 520,
+							"top": 344,
 							"width": 48,
 							"height": 48,
 							"nameLabel": {
@@ -145,8 +151,8 @@
 									},
 									"font": "Arial;13;0",
 									"parentStyle": true,
-									"left": 496,
-									"top": 308,
+									"left": 640,
+									"top": 332,
 									"width": 144,
 									"height": 39,
 									"text": "Призначити кількість сторінок процесора заданню",
@@ -159,8 +165,8 @@
 							"font": "Arial;13;0",
 							"parentStyle": false,
 							"containerChangeable": true,
-							"left": 496,
-							"top": 280,
+							"left": 640,
+							"top": 304,
 							"width": 144,
 							"height": 96,
 							"nameLabel": {
@@ -178,8 +184,8 @@
 							},
 							"font": "Arial;13;0",
 							"parentStyle": false,
-							"left": 256,
-							"top": 280,
+							"left": 408,
+							"top": 304,
 							"width": 98.1689453125,
 							"height": 90
 						},
@@ -201,7 +207,7 @@
 								"$ref": "AAAAAAGTWTx22BUNidM="
 							},
 							"lineStyle": 1,
-							"points": "355:326;383:327"
+							"points": "507:360;519:363"
 						},
 						{
 							"_type": "BPMNSequenceFlowView",
@@ -225,8 +231,8 @@
 									"visible": false,
 									"font": "Arial;13;0",
 									"parentStyle": false,
-									"left": 464,
-									"top": 307,
+									"left": 604,
+									"top": 331,
 									"height": 13,
 									"alpha": 1.5707963267948966,
 									"distance": 15,
@@ -245,46 +251,2312 @@
 								"$ref": "AAAAAAGTWTEv373cFVw="
 							},
 							"lineStyle": 2,
-							"points": "432:328;496:328",
+							"points": "568:352;640:352",
 							"nameLabel": {
 								"$ref": "AAAAAAGTWTzVLxUmVas="
 							}
 						},
 						{
-							"_type": "BPMNPoolView",
-							"_id": "AAAAAAGTWT3fnRU963g=",
+							"_type": "BPMNTaskView",
+							"_id": "AAAAAAGTWUJUZhWjcqc=",
 							"_parent": {
 								"$ref": "AAAAAAGTWPCHz71SH2w="
 							},
 							"model": {
-								"$ref": "AAAAAAGTWT3fnBU7RQc="
+								"$ref": "AAAAAAGTWUJUZhWh9+o="
 							},
 							"subViews": [
 								{
 									"_type": "LabelView",
-									"_id": "AAAAAAGTWT3fnRU+Fm0=",
+									"_id": "AAAAAAGTWUJUZhWkuXQ=",
 									"_parent": {
-										"$ref": "AAAAAAGTWT3fnRU963g="
+										"$ref": "AAAAAAGTWUJUZhWjcqc="
 									},
 									"font": "Arial;13;0",
 									"parentStyle": true,
-									"left": 213,
-									"top": 560,
+									"left": 832,
+									"top": 339,
+									"width": 176,
+									"height": 26,
+									"text": "Надіслати завдання до оперативної пам'яті",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWRjhSr1/pNw="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 832,
+							"top": 312,
+							"width": 176,
+							"height": 80,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWUJUZhWkuXQ="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWUKORRWsquA=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWUKORRWqwzM="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWUKORRWtZpQ=",
+									"_parent": {
+										"$ref": "AAAAAAGTWUKORRWsquA="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWUKORRWqwzM="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 808,
+									"top": 331,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWUKORRWsquA="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWUJUZhWjcqc="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWTL6Fr3zMu4="
+							},
+							"lineStyle": 2,
+							"points": "784:352;832:352",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWUKORRWtZpQ="
+							}
+						},
+						{
+							"_type": "BPMNPoolView",
+							"_id": "AAAAAAGTWZAmShfikQk=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWZAmShfjLF0=",
+									"_parent": {
+										"$ref": "AAAAAAGTWZAmShfikQk="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 341,
+									"top": 456,
 									"width": 13,
-									"height": 160,
-									"text": "BPMNParticipant1",
+									"height": 344,
+									"text": "Оперативна пам'ять",
 									"verticalAlignment": 3
+								}
+							],
+							"containedViews": [
+								{
+									"$ref": "AAAAAAGTWZfCiRgjuvc="
+								},
+								{
+									"$ref": "AAAAAAGTWcQCmhimamw="
+								},
+								{
+									"$ref": "AAAAAAGTWgj8UxlRUkY="
+								},
+								{
+									"$ref": "AAAAAAGTWgsp9xl2WMU="
+								},
+								{
+									"$ref": "AAAAAAGTWg0mxRmfBtY="
+								},
+								{
+									"$ref": "AAAAAAGTWg5fjxm5LRY="
+								},
+								{
+									"$ref": "AAAAAAGTWg569BnCDSI="
+								},
+								{
+									"$ref": "AAAAAAGTWg6pdhnO1KQ="
+								},
+								{
+									"$ref": "AAAAAAGTWhiJzhq8Txw="
+								},
+								{
+									"$ref": "AAAAAAGTWhnunBrtq2g="
+								},
+								{
+									"$ref": "AAAAAAGTWhtXihr/uP4="
+								},
+								{
+									"$ref": "AAAAAAGTWhu+ixsOOPo="
 								}
 							],
 							"font": "Arial;13;0",
 							"parentStyle": false,
 							"containerChangeable": true,
-							"left": 208,
-							"top": 560,
-							"width": 448,
-							"height": 160,
+							"left": 336,
+							"top": 456,
+							"width": 1272,
+							"height": 344,
 							"nameLabel": {
-								"$ref": "AAAAAAGTWT3fnRU+Fm0="
+								"$ref": "AAAAAAGTWZAmShfjLF0="
+							}
+						},
+						{
+							"_type": "BPMNEventView",
+							"_id": "AAAAAAGTWZfCiRgjuvc=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWZfCiBghKEA="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWZfCiRgkQ4M=",
+									"_parent": {
+										"$ref": "AAAAAAGTWZfCiRgjuvc="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWZfCiBghKEA="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 376.182861328125,
+									"top": 545.5,
+									"width": 119.63427734375,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "Завдання отримано"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWZAmShfikQk="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 408,
+							"top": 488,
+							"width": 56,
+							"height": 56,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWZfCiRgkQ4M="
+							}
+						},
+						{
+							"_type": "BPMNMessageFlowView",
+							"_id": "AAAAAAGTWZh8BhhDLD4=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWZh8BhhBNZ0="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWZh8BhhESf4=",
+									"_parent": {
+										"$ref": "AAAAAAGTWZh8BhhDLD4="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWZh8BhhBNZ0="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 669,
+									"top": 457,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWZh8BhhDLD4="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWZfCiRgjuvc="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWUJUZhWjcqc="
+							},
+							"lineStyle": 2,
+							"points": "896:392;896:448;444:448;444:488",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWZh8BhhESf4="
+							}
+						},
+						{
+							"_type": "BPMNTaskView",
+							"_id": "AAAAAAGTWcQCmhimamw=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWcQCmRikcFY="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWcQCmhinxZ0=",
+									"_parent": {
+										"$ref": "AAAAAAGTWcQCmhimamw="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 584,
+									"top": 509,
+									"width": 176,
+									"height": 13,
+									"text": "Додати завдання в чергу",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWZAmShfikQk="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 584,
+							"top": 496,
+							"width": 176,
+							"height": 40,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWcQCmhinxZ0="
+							}
+						},
+						{
+							"_type": "BPMNDataStoreView",
+							"_id": "AAAAAAGTWgj8UxlRUkY=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWgj8UxlPZ8I="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWgj8UxlSWg4=",
+									"_parent": {
+										"$ref": "AAAAAAGTWgj8UxlRUkY="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 400,
+									"top": 620,
+									"width": 128,
+									"height": 39,
+									"text": "Черга завдань, що очікують виділення пам'яті",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWZAmShfikQk="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 400,
+							"top": 600,
+							"width": 128,
+							"height": 80,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWgj8UxlSWg4="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWglPuhlk30E=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWglPuhlimFA="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWglPuhlldTI=",
+									"_parent": {
+										"$ref": "AAAAAAGTWglPuhlk30E="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWglPuhlimFA="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 524,
+									"top": 491,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWglPuhlk30E="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWcQCmhimamw="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWZfCiRgjuvc="
+							},
+							"lineStyle": 2,
+							"points": "464:512;584:512",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWglPuhlldTI="
+							}
+						},
+						{
+							"_type": "BPMNDataAssociationView",
+							"_id": "AAAAAAGTWgsOMRlxWzc=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWgsOMBlvnrs="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWgj8UxlRUkY="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWcQCmhimamw="
+							},
+							"lineStyle": 1,
+							"points": "637:537;529:601"
+						},
+						{
+							"_type": "BPMNGatewayView",
+							"_id": "AAAAAAGTWgsp9xl2WMU=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWgsp9xl0Wzs="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWgsp9xl3EWU=",
+									"_parent": {
+										"$ref": "AAAAAAGTWgsp9xl2WMU="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWgsp9xl0Wzs="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 536.2001953125,
+									"top": 661.5,
+									"width": 287.599609375,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "Чи є достатньо сторінок для завдання?"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWZAmShfikQk="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 648,
+							"top": 600,
+							"width": 64,
+							"height": 64,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWgsp9xl3EWU="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWgvVuRmGS/A=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWgvVuBmE7E4="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWgvVuRmHE0I=",
+									"_parent": {
+										"$ref": "AAAAAAGTWgvVuRmGS/A="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWgvVuBmE7E4="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 694,
+									"top": 561,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWgvVuRmGS/A="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWgsp9xl2WMU="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWcQCmhimamw="
+							},
+							"lineStyle": 2,
+							"points": "680:536;680:600",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWgvVuRmHE0I="
+							}
+						},
+						{
+							"_type": "BPMNDataAssociationView",
+							"_id": "AAAAAAGTWgwIQhmRw2g=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWgwIQRmP6UU="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWgsp9xl2WMU="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWgj8UxlRUkY="
+							},
+							"lineStyle": 1,
+							"points": "529:638;647:633"
+						},
+						{
+							"_type": "BPMNEventView",
+							"_id": "AAAAAAGTWg0mxRmfBtY=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWg0mxRmdZgU="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWg0mxRmgsyQ=",
+									"_parent": {
+										"$ref": "AAAAAAGTWg0mxRmfBtY="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWg0mxRmdZgU="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 580.415771484375,
+									"top": 757.5,
+									"width": 207.16845703125,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "Назад до перевірки черги завдань"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWZAmShfikQk="
+							},
+							"lineColor": "#FFFFFF",
+							"fillColor": "#000000",
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 656,
+							"top": 704,
+							"width": 56,
+							"height": 48,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWg0mxRmgsyQ="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWg2jpBmvUzk=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWg2jpBmt8UY="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWg2jpBmwRdI=",
+									"_parent": {
+										"$ref": "AAAAAAGTWg2jpBmvUzk="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWg2jpBmt8UY="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 665,
+									"top": 677,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWg2jpBmvUzk="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWgsp9xl2WMU="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWg0mxRmfBtY="
+							},
+							"lineStyle": 2,
+							"points": "680:704;680:664",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWg2jpBmwRdI="
+							}
+						},
+						{
+							"_type": "BPMNEventView",
+							"_id": "AAAAAAGTWg5fjxm5LRY=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWg5fjhm3Ge0="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWg5fjxm6EO4=",
+									"_parent": {
+										"$ref": "AAAAAAGTWg5fjxm5LRY="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWg5fjhm3Ge0="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 860.415771484375,
+									"top": 761.5,
+									"width": 207.16845703125,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "Назад до перевірки черги завдань"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWZAmShfikQk="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 936,
+							"top": 704,
+							"width": 56,
+							"height": 56,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWg5fjxm6EO4="
+							}
+						},
+						{
+							"_type": "BPMNEventView",
+							"_id": "AAAAAAGTWg569BnCDSI=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWg569BnA/rI="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWg569BnDrus=",
+									"_parent": {
+										"$ref": "AAAAAAGTWg569BnCDSI="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWg569BnA/rI="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 1316.415771484375,
+									"top": 697.5,
+									"width": 207.16845703125,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "Назад до перевірки черги завдань"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWZAmShfikQk="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 1392,
+							"top": 640,
+							"width": 56,
+							"height": 56,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWg569BnDrus="
+							}
+						},
+						{
+							"_type": "BPMNTaskView",
+							"_id": "AAAAAAGTWg6pdhnO1KQ=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWg6pdhnMvgk="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWg6pdhnPqaI=",
+									"_parent": {
+										"$ref": "AAAAAAGTWg6pdhnO1KQ="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 1112,
+									"top": 643,
+									"width": 168,
+									"height": 26,
+									"text": "Надіслати завдання процесорам",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWZAmShfikQk="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 1112,
+							"top": 624,
+							"width": 168,
+							"height": 64,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWg6pdhnPqaI="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWhHi0hn/HNY=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWhHi0Rn9Qe0="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWhHi0hoAXig=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhHi0hn/HNY="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWhHi0Rn9Qe0="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 824,
+									"top": 679,
+									"width": 12.2763671875,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWhHi0hn/HNY="
+									},
+									"edgePosition": 1,
+									"text": "Ні"
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWg5fjxm5LRY="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWgsp9xl2WMU="
+							},
+							"lineStyle": 2,
+							"points": "712:632;816:632;816:740;936:740",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWhHi0hoAXig="
+							}
+						},
+						{
+							"_type": "BPMNTaskView",
+							"_id": "AAAAAAGTWhiJzhq8Txw=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWhiJzRq61h0="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWhiJzhq9Css=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhiJzhq8Txw="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 880,
+									"top": 631,
+									"width": 176,
+									"height": 26,
+									"text": "Виділити сторінки для завдання",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWZAmShfikQk="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 880,
+							"top": 608,
+							"width": 176,
+							"height": 72,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWhiJzhq9Css="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWhknVhrWNrk=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWhknVhrUars="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWhknVhrX0YE=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhknVhrWNrk="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWhknVhrUars="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 786,
+									"top": 611,
+									"width": 20.2744140625,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWhknVhrWNrk="
+									},
+									"edgePosition": 1,
+									"text": "Так"
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWhiJzhq8Txw="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWgsp9xl2WMU="
+							},
+							"lineStyle": 2,
+							"points": "712:632;880:632",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWhknVhrX0YE="
+							}
+						},
+						{
+							"_type": "BPMNDataStoreView",
+							"_id": "AAAAAAGTWhnunBrtq2g=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWhnunBrr9Tc="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWhnunBrubek=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhnunBrtq2g="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 832,
+									"top": 495,
+									"width": 120,
+									"height": 26,
+									"text": "Вільні сторінки пам'яті",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWZAmShfikQk="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 832,
+							"top": 472,
+							"width": 120,
+							"height": 72,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWhnunBrubek="
+							}
+						},
+						{
+							"_type": "BPMNEventView",
+							"_id": "AAAAAAGTWhtXihr/uP4=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWhtXihr94R4="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWhtXihsApDc=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhtXihr/uP4="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWhtXihr94R4="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 1306.391845703125,
+									"top": 527.5,
+									"width": 115.21630859375,
+									"height": 13,
+									"alpha": -1.7033475315806392,
+									"distance": 30.265491900843113,
+									"text": "Сторінки звільнено"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWZAmShfikQk="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 1336,
+							"top": 472,
+							"width": 64,
+							"height": 64,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWhtXihsApDc="
+							}
+						},
+						{
+							"_type": "BPMNTaskView",
+							"_id": "AAAAAAGTWhu+ixsOOPo=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWhu+ixsMmAM="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWhu+jBsPQeA=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhu+ixsOOPo="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 1056,
+									"top": 501,
+									"width": 168,
+									"height": 13,
+									"text": "Звільнити сторінки пам'яті",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWZAmShfikQk="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 1056,
+							"top": 488,
+							"width": 168,
+							"height": 40,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWhu+jBsPQeA="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWh0DyRsuEsY=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWh0DyRss6A8="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWh0DyRsvDcE=",
+									"_parent": {
+										"$ref": "AAAAAAGTWh0DyRsuEsY="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWh0DyRss6A8="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 1279,
+									"top": 521,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWh0DyRsuEsY="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWhu+ixsOOPo="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWhtXihr/uP4="
+							},
+							"lineStyle": 2,
+							"points": "1336:512;1224:512",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWh0DyRsvDcE="
+							}
+						},
+						{
+							"_type": "BPMNDataAssociationView",
+							"_id": "AAAAAAGTWh16KhtMPfM=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWh16KRtKGuY="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWhiJzhq8Txw="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWhnunBrtq2g="
+							},
+							"lineStyle": 1,
+							"points": "913:545;947:607"
+						},
+						{
+							"_type": "BPMNDataAssociationView",
+							"_id": "AAAAAAGTWh2GARtRJME=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWh2GARtPiag="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWhnunBrtq2g="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWhu+ixsOOPo="
+							},
+							"lineStyle": 1,
+							"points": "1055:508;953:508"
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWh9FYht/jLw=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWh9FYRt96vc="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWh9FYhuAVYU=",
+									"_parent": {
+										"$ref": "AAAAAAGTWh9FYht/jLw="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWh9FYRt96vc="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 1288,
+									"top": 563,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWh9FYht/jLw="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWg569BnCDSI="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWhu+ixsOOPo="
+							},
+							"lineStyle": 2,
+							"points": "1160:528;1160:584;1416:584;1416:640",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWh9FYhuAVYU="
+							}
+						},
+						{
+							"_type": "BPMNPoolView",
+							"_id": "AAAAAAGTWiInaRu9sd4=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWiInaRu+CNY=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiInaRu9sd4="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 341,
+									"top": 856,
+									"width": 13,
+									"height": 392,
+									"text": "BPMNParticipant1",
+									"verticalAlignment": 3
+								}
+							],
+							"containedViews": [
+								{
+									"$ref": "AAAAAAGTWiJfpxvG6Fw="
+								},
+								{
+									"$ref": "AAAAAAGTWiMaCRvg41Y="
+								},
+								{
+									"$ref": "AAAAAAGTWiPoPRv92j0="
+								},
+								{
+									"$ref": "AAAAAAGTWiRPexwGXCs="
+								},
+								{
+									"$ref": "AAAAAAGTWii33Bx/zAw="
+								},
+								{
+									"$ref": "AAAAAAGTWilzUhyObr8="
+								},
+								{
+									"$ref": "AAAAAAGTWisxdhyycz0="
+								},
+								{
+									"$ref": "AAAAAAGTWjGLORzUtr0="
+								},
+								{
+									"$ref": "AAAAAAGTWjL+Ahzw88E="
+								},
+								{
+									"$ref": "AAAAAAGTWjM6Uh0HbEM="
+								},
+								{
+									"$ref": "AAAAAAGTWjOpwx0yq5Y="
+								},
+								{
+									"$ref": "AAAAAAGTWjYkbx1gy3U="
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 336,
+							"top": 856,
+							"width": 1272,
+							"height": 392,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWiInaRu+CNY="
+							}
+						},
+						{
+							"_type": "BPMNEventView",
+							"_id": "AAAAAAGTWiJfpxvG6Fw=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWiJfpxvE0AE="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWiJfpxvHHD8=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiJfpxvG6Fw="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWiJfpxvE0AE="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 384.182861328125,
+									"top": 933.5,
+									"width": 119.63427734375,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "Задвання отримано"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWiInaRu9sd4="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 416,
+							"top": 880,
+							"width": 56,
+							"height": 48,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWiJfpxvHHD8="
+							}
+						},
+						{
+							"_type": "BPMNMessageFlowView",
+							"_id": "AAAAAAGTWiK4+BvUyUc=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWiK4+BvSpYE="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWiK4+BvVvCc=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiK4+BvUyUc="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWiK4+BvSpYE="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 831,
+									"top": 841,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWiK4+BvUyUc="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWiJfpxvG6Fw="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWg6pdhnO1KQ="
+							},
+							"lineStyle": 2,
+							"points": "1224:688;1224:832;440:832;440:880",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWiK4+BvVvCc="
+							}
+						},
+						{
+							"_type": "BPMNTaskView",
+							"_id": "AAAAAAGTWiMaCRvg41Y=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWiMaCRveEW0="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWiMaCRvhSsA=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiMaCRvg41Y="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 552,
+									"top": 897,
+									"width": 192,
+									"height": 13,
+									"text": "Додати завдання в чергу",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWiInaRu9sd4="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 552,
+							"top": 888,
+							"width": 192,
+							"height": 32,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWiMaCRvhSsA="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWiOKyRvwqys=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWiOKyRvu028="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWiOKyRvxH9Q=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiOKyRvwqys="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWiOKyRvu028="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 512,
+									"top": 883,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWiOKyRvwqys="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWiMaCRvg41Y="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWiJfpxvG6Fw="
+							},
+							"lineStyle": 2,
+							"points": "472:904;552:904",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWiOKyRvxH9Q="
+							}
+						},
+						{
+							"_type": "BPMNDataStoreView",
+							"_id": "AAAAAAGTWiPoPRv92j0=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWiPoPBv7pio="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWiPoPRv+8Zk=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiPoPRv92j0="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 392,
+									"top": 1008,
+									"width": 136,
+									"height": 39,
+									"text": "Черга завдань, що очікують звільнення процесора",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWiInaRu9sd4="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 392,
+							"top": 984,
+							"width": 136,
+							"height": 88,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWiPoPRv+8Zk="
+							}
+						},
+						{
+							"_type": "BPMNGatewayView",
+							"_id": "AAAAAAGTWiRPexwGXCs=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWiRPexwEONY="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWiRPexwHul0=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiRPexwGXCs="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWiRPexwEONY="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 600.5009765625,
+									"top": 1045.5,
+									"width": 150.998046875,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "Чи є вільний процесор?"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWiInaRu9sd4="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 640,
+							"top": 984,
+							"width": 72,
+							"height": 64,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWiRPexwHul0="
+							}
+						},
+						{
+							"_type": "BPMNDataAssociationView",
+							"_id": "AAAAAAGTWiVPJxwhAug=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWiVPJxwf5ZI="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWgsp9xl2WMU="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWhnunBrtq2g="
+							},
+							"lineStyle": 1,
+							"points": "831:544;713:613"
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWiW5PhwztHM=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWiW5Phwx66I="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWiW5Phw0GoI=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiW5PhwztHM="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWiW5Phwx66I="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 1084,
+									"top": 635,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWiW5PhwztHM="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWg6pdhnO1KQ="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWhiJzhq8Txw="
+							},
+							"lineStyle": 2,
+							"points": "1056:656;1112:656",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWiW5Phw0GoI="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWiYlORxGQt0=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWiYlORxEBS8="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWiYlORxHui4=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiYlORxGQt0="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWiYlORxEBS8="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 1336,
+									"top": 651,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWiYlORxGQt0="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWg569BnCDSI="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWg6pdhnO1KQ="
+							},
+							"lineStyle": 2,
+							"points": "1280:672;1392:672",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWiYlORxHui4="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWiessxxm4iM=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWiesshxkbwA="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWiessxxn4FU=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiessxxm4iM="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWiesshxkbwA="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 686,
+									"top": 945,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWiessxxm4iM="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWiRPexwGXCs="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWiMaCRvg41Y="
+							},
+							"lineStyle": 2,
+							"points": "672:920;672:984",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWiessxxn4FU="
+							}
+						},
+						{
+							"_type": "BPMNDataAssociationView",
+							"_id": "AAAAAAGTWihX6xx1VWI=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWihX6xxzAos="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWiPoPRv92j0="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWiMaCRvg41Y="
+							},
+							"lineStyle": 1,
+							"points": "622:921;528:983"
+						},
+						{
+							"_type": "BPMNDataAssociationView",
+							"_id": "AAAAAAGTWiiHehx6nFI=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWiiHehx42UE="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWiRPexwGXCs="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWiPoPRv92j0="
+							},
+							"lineStyle": 1,
+							"points": "529:1024;639:1018"
+						},
+						{
+							"_type": "BPMNDataStoreView",
+							"_id": "AAAAAAGTWii33Bx/zAw=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWii33Bx9TIE="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWii33ByAMCw=",
+									"_parent": {
+										"$ref": "AAAAAAGTWii33Bx/zAw="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 816,
+									"top": 905,
+									"width": 112,
+									"height": 13,
+									"text": "Вільні процесори",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWiInaRu9sd4="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 816,
+							"top": 880,
+							"width": 112,
+							"height": 64,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWii33ByAMCw="
+							}
+						},
+						{
+							"_type": "BPMNEventView",
+							"_id": "AAAAAAGTWilzUhyObr8=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWilzUhyM+nE="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWilzUhyPBJ0=",
+									"_parent": {
+										"$ref": "AAAAAAGTWilzUhyObr8="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWilzUhyM+nE="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 572.415771484375,
+									"top": 1145.5,
+									"width": 207.16845703125,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "Назад до перевірки черги завдань"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWiInaRu9sd4="
+							},
+							"lineColor": "#FFFFFF",
+							"fillColor": "#000000",
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 648,
+							"top": 1088,
+							"width": 56,
+							"height": 56,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWilzUhyPBJ0="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWioGnRyfnr4=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWioGnRydF/s="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWioGnhygpxQ=",
+									"_parent": {
+										"$ref": "AAAAAAGTWioGnRyfnr4="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWioGnRydF/s="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 661,
+									"top": 1061,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWioGnRyfnr4="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWiRPexwGXCs="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWilzUhyObr8="
+							},
+							"lineStyle": 2,
+							"points": "676:1088;676:1048",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWioGnhygpxQ="
+							}
+						},
+						{
+							"_type": "BPMNTaskView",
+							"_id": "AAAAAAGTWisxdhyycz0=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWisxdhywC9E="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWisxdhyzgz8=",
+									"_parent": {
+										"$ref": "AAAAAAGTWisxdhyycz0="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 832,
+									"top": 1023,
+									"width": 168,
+									"height": 26,
+									"text": "Виділити процесор для завдання",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWiInaRu9sd4="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 832,
+							"top": 1000,
+							"width": 168,
+							"height": 72,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWisxdhyzgz8="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWituLRy77iI=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWituLRy57Tk="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWituLRy8KEY=",
+									"_parent": {
+										"$ref": "AAAAAAGTWituLRy77iI="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWituLRy57Tk="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 762,
+									"top": 995,
+									"width": 20.2744140625,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWituLRy77iI="
+									},
+									"edgePosition": 1,
+									"text": "Так"
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWisxdhyycz0="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWiRPexwGXCs="
+							},
+							"lineStyle": 2,
+							"points": "712:1016;832:1016",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWituLRy8KEY="
+							}
+						},
+						{
+							"_type": "BPMNDataAssociationView",
+							"_id": "AAAAAAGTWjFlPhzK5o8=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWjFlPhzIwP8="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWiRPexwGXCs="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWii33Bx/zAw="
+							},
+							"lineStyle": 1,
+							"points": "815:942;713:996"
+						},
+						{
+							"_type": "BPMNDataAssociationView",
+							"_id": "AAAAAAGTWjFuRRzPIvg=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWjFuRRzNT4s="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWisxdhyycz0="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWii33Bx/zAw="
+							},
+							"lineStyle": 1,
+							"points": "884:945;903:999"
+						},
+						{
+							"_type": "BPMNTaskView",
+							"_id": "AAAAAAGTWjGLORzUtr0=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWjGLORzS3EI="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWjGLORzVs68=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjGLORzUtr0="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 1024,
+									"top": 909,
+									"width": 144,
+									"height": 13,
+									"text": "Звільнити процесор",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWiInaRu9sd4="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 1024,
+							"top": 896,
+							"width": 144,
+							"height": 40,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWjGLORzVs68="
+							}
+						},
+						{
+							"_type": "BPMNDataAssociationView",
+							"_id": "AAAAAAGTWjLE0hzozqM=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWjLE0hzmMPE="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWii33Bx/zAw="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWjGLORzUtr0="
+							},
+							"lineStyle": 1,
+							"points": "1023:915;929:913"
+						},
+						{
+							"_type": "BPMNEventView",
+							"_id": "AAAAAAGTWjL+Ahzw88E=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWjL+AhzuQeY="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWjL+Ahzx998=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjL+Ahzw88E="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWjL+AhzuQeY="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 1231.25732421875,
+									"top": 949.5,
+									"width": 105.4853515625,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "BPMNStartEvent1"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWiInaRu9sd4="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 1256,
+							"top": 896,
+							"width": 56,
+							"height": 48,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWjL+Ahzx998="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWjMQARz8VCA=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWjMQABz6occ="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWjMQARz9ZAw=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjMQARz8VCA="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWjMQABz6occ="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 1211,
+									"top": 925,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWjMQARz8VCA="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWjGLORzUtr0="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWjL+Ahzw88E="
+							},
+							"lineStyle": 2,
+							"points": "1256:916;1168:916",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWjMQARz9ZAw="
+							}
+						},
+						{
+							"_type": "BPMNEventView",
+							"_id": "AAAAAAGTWjM6Uh0HbEM=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWjM6Uh0F6yg="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWjM6Uh0Inkc=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjM6Uh0HbEM="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWjM6Uh0F6yg="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 1340.415771484375,
+									"top": 1069.5,
+									"width": 207.16845703125,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "Назад до перевірки черги завдань"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWiInaRu9sd4="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 1416,
+							"top": 1016,
+							"width": 56,
+							"height": 48,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWjM6Uh0Inkc="
+							}
+						},
+						{
+							"_type": "BPMNEventView",
+							"_id": "AAAAAAGTWjOpwx0yq5Y=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWjOpwh0w1qY="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWjOpwx0z8Uk=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjOpwx0yq5Y="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWjOpwh0w1qY="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 812.415771484375,
+									"top": 1149.5,
+									"width": 207.16845703125,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "Назад до перевірки черги завдань"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWiInaRu9sd4="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 888,
+							"top": 1096,
+							"width": 56,
+							"height": 48,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWjOpwx0z8Uk="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWjO7mR0+P70=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWjO7mR08eys="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWjO7mR0/+50=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjO7mR0+P70="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWjO7mR08eys="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 792,
+									"top": 1056,
+									"width": 12.2763671875,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWjO7mR0+P70="
+									},
+									"edgePosition": 1,
+									"text": "Ні"
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWjOpwx0yq5Y="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWiRPexwGXCs="
+							},
+							"lineStyle": 2,
+							"points": "712:1016;784:1016;784:1110;888:1110",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWjO7mR0/+50="
+							}
+						},
+						{
+							"_type": "BPMNGatewayView",
+							"_id": "AAAAAAGTWjYkbx1gy3U=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWjYkbx1ecI0="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWjYkbx1hB7E=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjYkbx1gy3U="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWjYkbx1ecI0="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 1094.27734375,
+									"top": 1053.5,
+									"width": 139.4453125,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "BPMNParallelGateway1"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWiInaRu9sd4="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 1136,
+							"top": 1000,
+							"width": 56,
+							"height": 48,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWjYkbx1hB7E="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWjZKsB1rIGk=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWjZKsB1p5ic="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWjZKsB1stvk=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjZKsB1rIGk="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWjZKsB1p5ic="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 1068,
+									"top": 1011,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWjZKsB1rIGk="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWjYkbx1gy3U="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWisxdhyycz0="
+							},
+							"lineStyle": 2,
+							"points": "1000:1032;1136:1032",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWjZKsB1stvk="
 							}
 						}
 					]
@@ -328,6 +2600,29 @@
 								"$ref": "AAAAAAGTWRjhSr19m8g="
 							},
 							"name": "BPMNCollaboration3"
+						},
+						{
+							"_type": "BPMNTask",
+							"_id": "AAAAAAGTWTL6Fb3xKNk=",
+							"_parent": {
+								"$ref": "AAAAAAGTWRjhSr19m8g="
+							},
+							"name": "Призначити кількість сторінок процесора заданню",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWUKORRWqwzM=",
+									"_parent": {
+										"$ref": "AAAAAAGTWTL6Fb3xKNk="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWTL6Fb3xKNk="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWUJUZhWh9+o="
+									}
+								}
+							]
 						},
 						{
 							"_type": "BPMNStartEvent",
@@ -377,12 +2672,40 @@
 							]
 						},
 						{
-							"_type": "BPMNTask",
-							"_id": "AAAAAAGTWTL6Fb3xKNk=",
+							"_type": "BPMNSendTask",
+							"_id": "AAAAAAGTWUJUZhWh9+o=",
 							"_parent": {
 								"$ref": "AAAAAAGTWRjhSr19m8g="
 							},
-							"name": "Призначити кількість сторінок процесора заданню"
+							"name": "Надіслати завдання до оперативної пам'яті",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWZhVRxg0yoc=",
+									"_parent": {
+										"$ref": "AAAAAAGTWUJUZhWh9+o="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWUJUZhWh9+o="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWZfCiBghKEA="
+									}
+								},
+								{
+									"_type": "BPMNMessageFlow",
+									"_id": "AAAAAAGTWZh8BhhBNZ0=",
+									"_parent": {
+										"$ref": "AAAAAAGTWUJUZhWh9+o="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWUJUZhWh9+o="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWZfCiBghKEA="
+									}
+								}
+							]
 						}
 					]
 				},
@@ -419,12 +2742,1119 @@
 					"text": "розподіл Пуассона з математичним сподіванням 5 с"
 				},
 				{
-					"_type": "BPMNParticipant",
-					"_id": "AAAAAAGTWT3fnBU7RQc=",
+					"_type": "BPMNSendTask",
+					"_id": "AAAAAAGTWUHfERWQ4Is=",
 					"_parent": {
 						"$ref": "AAAAAAGTWPCHz71RlOk="
 					},
-					"name": "BPMNParticipant1"
+					"name": "BPMNSendTask1"
+				},
+				{
+					"_type": "BPMNMessage",
+					"_id": "AAAAAAGTWU1fBRYauo8=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNMessage1"
+				},
+				{
+					"_type": "BPMNChoreographyTask",
+					"_id": "AAAAAAGTWU4hghZEV1I=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNChoreographyTask1"
+				},
+				{
+					"_type": "BPMNInclusiveGateway",
+					"_id": "AAAAAAGTWYLA4Bc9ijA=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNInclusiveGateway1",
+					"gatewayDirection": "unspecified"
+				},
+				{
+					"_type": "BPMNEventBasedGateway",
+					"_id": "AAAAAAGTWYL1FxdLtUA=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNEventBasedGateway1",
+					"gatewayDirection": "unspecified"
+				},
+				{
+					"_type": "BPMNStartEvent",
+					"_id": "AAAAAAGTWUlEdRXpRSE=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": " Повідомлення про звільнення процесора отримано",
+					"eventDefinitions": [
+						{
+							"_type": "BPMNMessageEventDefinition",
+							"_id": "AAAAAAGTWUqQXxYQyJ4=",
+							"_parent": {
+								"$ref": "AAAAAAGTWUlEdRXpRSE="
+							},
+							"name": "BPMNMessageEventDefinition1"
+						}
+					]
+				},
+				{
+					"_type": "BPMNParticipant",
+					"_id": "AAAAAAGTWZAmShfgEAg=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "Оперативна пам'ять",
+					"ownedElements": [
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWZCOSRgFiVs=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Початок"
+						},
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWZfCiBghKEA=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Завдання отримано",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWagYpxhhFBc=",
+									"_parent": {
+										"$ref": "AAAAAAGTWZfCiBghKEA="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWZfCiBghKEA="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWaei8BhVzbk="
+									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWcU/tRjHA6I=",
+									"_parent": {
+										"$ref": "AAAAAAGTWZfCiBghKEA="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWZfCiBghKEA="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWZAmShfgEAg="
+									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWglPuhlimFA=",
+									"_parent": {
+										"$ref": "AAAAAAGTWZfCiBghKEA="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWZfCiBghKEA="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWcQCmRikcFY="
+									}
+								}
+							],
+							"eventDefinitions": [
+								{
+									"_type": "BPMNMessageEventDefinition",
+									"_id": "AAAAAAGTWZfIJRgqkNM=",
+									"_parent": {
+										"$ref": "AAAAAAGTWZfCiBghKEA="
+									},
+									"name": "BPMNMessageEventDefinition1"
+								}
+							]
+						},
+						{
+							"_type": "BPMNExclusiveGateway",
+							"_id": "AAAAAAGTWaei8BhVzbk=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Чи вистачає сторінок для завдання?",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWarjkhh2HZk=",
+									"_parent": {
+										"$ref": "AAAAAAGTWaei8BhVzbk="
+									},
+									"name": "Так",
+									"source": {
+										"$ref": "AAAAAAGTWaei8BhVzbk="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWaqJixht3L4="
+									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWcWa9hjnqDM=",
+									"_parent": {
+										"$ref": "AAAAAAGTWaei8BhVzbk="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWaei8BhVzbk="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWcWC1hjec2M="
+									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWcZ9FxkGv+8=",
+									"_parent": {
+										"$ref": "AAAAAAGTWaei8BhVzbk="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWaei8BhVzbk="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWcScBBiz3oQ="
+									}
+								}
+							],
+							"gatewayDirection": "unspecified"
+						},
+						{
+							"_type": "BPMNSendTask",
+							"_id": "AAAAAAGTWaqJixht3L4=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Надіслати завдання процесорам"
+						},
+						{
+							"_type": "BPMNTask",
+							"_id": "AAAAAAGTWcQCmRikcFY=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Додати завдання в чергу",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWccJwhkenjU=",
+									"_parent": {
+										"$ref": "AAAAAAGTWcQCmRikcFY="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWcQCmRikcFY="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWcScBBiz3oQ="
+									}
+								},
+								{
+									"_type": "BPMNDataAssociation",
+									"_id": "AAAAAAGTWgsOMBlvnrs=",
+									"_parent": {
+										"$ref": "AAAAAAGTWcQCmRikcFY="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWcQCmRikcFY="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWgj8UxlPZ8I="
+									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWgvVuBmE7E4=",
+									"_parent": {
+										"$ref": "AAAAAAGTWcQCmRikcFY="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWcQCmRikcFY="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWgsp9xl0Wzs="
+									}
+								}
+							]
+						},
+						{
+							"_type": "BPMNTask",
+							"_id": "AAAAAAGTWcScBBiz3oQ=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Переглянути найперше завдання в черзі",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWcVwJRjVcZY=",
+									"_parent": {
+										"$ref": "AAAAAAGTWcScBBiz3oQ="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWcScBBiz3oQ="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWaei8BhVzbk="
+									}
+								}
+							]
+						},
+						{
+							"_type": "BPMNTask",
+							"_id": "AAAAAAGTWcWC1hjec2M=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "BPMNTask1"
+						},
+						{
+							"_type": "BPMNDataStore",
+							"_id": "AAAAAAGTWgj8UxlPZ8I=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Черга завдань, що очікують виділення пам'яті",
+							"ownedElements": [
+								{
+									"_type": "BPMNDataAssociation",
+									"_id": "AAAAAAGTWgwIQRmP6UU=",
+									"_parent": {
+										"$ref": "AAAAAAGTWgj8UxlPZ8I="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWgj8UxlPZ8I="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWgsp9xl0Wzs="
+									}
+								}
+							]
+						},
+						{
+							"_type": "BPMNExclusiveGateway",
+							"_id": "AAAAAAGTWgsp9xl0Wzs=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Чи є достатньо сторінок для завдання?",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWg+xbBnVr2c=",
+									"_parent": {
+										"$ref": "AAAAAAGTWgsp9xl0Wzs="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWgsp9xl0Wzs="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWZAmShfgEAg="
+									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWhHi0Rn9Qe0=",
+									"_parent": {
+										"$ref": "AAAAAAGTWgsp9xl0Wzs="
+									},
+									"name": "Ні",
+									"source": {
+										"$ref": "AAAAAAGTWgsp9xl0Wzs="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWg5fjhm3Ge0="
+									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWhLlWxoMGs0=",
+									"_parent": {
+										"$ref": "AAAAAAGTWgsp9xl0Wzs="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWgsp9xl0Wzs="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWg6pdhnMvgk="
+									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWhjRfhrEiCY=",
+									"_parent": {
+										"$ref": "AAAAAAGTWgsp9xl0Wzs="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWZAmShfgEAg="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWhiJzRq61h0="
+									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWhknVhrUars=",
+									"_parent": {
+										"$ref": "AAAAAAGTWgsp9xl0Wzs="
+									},
+									"name": "Так",
+									"source": {
+										"$ref": "AAAAAAGTWgsp9xl0Wzs="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWhiJzRq61h0="
+									}
+								}
+							],
+							"gatewayDirection": "unspecified"
+						},
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWg0mxRmdZgU=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Назад до перевірки черги завдань",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWg2jpBmt8UY=",
+									"_parent": {
+										"$ref": "AAAAAAGTWg0mxRmdZgU="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWg0mxRmdZgU="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWgsp9xl0Wzs="
+									}
+								}
+							],
+							"eventDefinitions": [
+								{
+									"_type": "BPMNLinkEventDefinition",
+									"_id": "AAAAAAGTWg0v2xmm7EY=",
+									"_parent": {
+										"$ref": "AAAAAAGTWg0mxRmdZgU="
+									},
+									"name": "BPMNLinkEventDefinition1"
+								}
+							]
+						},
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWg5fjhm3Ge0=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Назад до перевірки черги завдань",
+							"eventDefinitions": [
+								{
+									"_type": "BPMNLinkEventDefinition",
+									"_id": "AAAAAAGTWhAM6Rnm8tw=",
+									"_parent": {
+										"$ref": "AAAAAAGTWg5fjhm3Ge0="
+									},
+									"name": "BPMNLinkEventDefinition1"
+								}
+							]
+						},
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWg569BnA/rI=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Назад до перевірки черги завдань",
+							"eventDefinitions": [
+								{
+									"_type": "BPMNLinkEventDefinition",
+									"_id": "AAAAAAGTWhAT6RnpmBk=",
+									"_parent": {
+										"$ref": "AAAAAAGTWg569BnA/rI="
+									},
+									"name": "BPMNLinkEventDefinition1"
+								}
+							]
+						},
+						{
+							"_type": "BPMNSendTask",
+							"_id": "AAAAAAGTWg6pdhnMvgk=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Надіслати завдання процесорам",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWhPN0holCpc=",
+									"_parent": {
+										"$ref": "AAAAAAGTWg6pdhnMvgk="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWg6pdhnMvgk="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWg569BnA/rI="
+									}
+								},
+								{
+									"_type": "BPMNMessageFlow",
+									"_id": "AAAAAAGTWiK4+BvSpYE=",
+									"_parent": {
+										"$ref": "AAAAAAGTWg6pdhnMvgk="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWg6pdhnMvgk="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWiJfpxvE0AE="
+									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWiYlORxEBS8=",
+									"_parent": {
+										"$ref": "AAAAAAGTWg6pdhnMvgk="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWg6pdhnMvgk="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWg569BnA/rI="
+									}
+								}
+							]
+						},
+						{
+							"_type": "BPMNTask",
+							"_id": "AAAAAAGTWhdjRxpRr7Q=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "BPMNTask2"
+						},
+						{
+							"_type": "BPMNTask",
+							"_id": "AAAAAAGTWhiJzRq61h0=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Виділити сторінки для завдання",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWh3tqhtesMo=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhiJzRq61h0="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWhiJzRq61h0="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWg6pdhnMvgk="
+									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWiW5Phwx66I=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhiJzRq61h0="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWhiJzRq61h0="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWg6pdhnMvgk="
+									}
+								}
+							]
+						},
+						{
+							"_type": "BPMNDataStore",
+							"_id": "AAAAAAGTWhnunBrr9Tc=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Вільні сторінки пам'яті",
+							"ownedElements": [
+								{
+									"_type": "BPMNDataAssociation",
+									"_id": "AAAAAAGTWh16KRtKGuY=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhnunBrr9Tc="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWhnunBrr9Tc="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWhiJzRq61h0="
+									}
+								},
+								{
+									"_type": "BPMNDataAssociation",
+									"_id": "AAAAAAGTWiVPJxwf5ZI=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhnunBrr9Tc="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWhnunBrr9Tc="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWgsp9xl0Wzs="
+									}
+								}
+							]
+						},
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWhtXihr94R4=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Сторінки звільнено",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWh0DyRss6A8=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhtXihr94R4="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWhtXihr94R4="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWhu+ixsMmAM="
+									}
+								}
+							],
+							"eventDefinitions": [
+								{
+									"_type": "BPMNMessageEventDefinition",
+									"_id": "AAAAAAGTWhtegRsGjSA=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhtXihr94R4="
+									},
+									"name": "BPMNMessageEventDefinition1"
+								}
+							]
+						},
+						{
+							"_type": "BPMNTask",
+							"_id": "AAAAAAGTWhu+ixsMmAM=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZAmShfgEAg="
+							},
+							"name": "Звільнити сторінки пам'яті",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWh0Y2Bs1fdE=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhu+ixsMmAM="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWhu+ixsMmAM="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWZAmShfgEAg="
+									}
+								},
+								{
+									"_type": "BPMNDataAssociation",
+									"_id": "AAAAAAGTWh2GARtPiag=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhu+ixsMmAM="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWhu+ixsMmAM="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWhnunBrr9Tc="
+									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWh9FYRt96vc=",
+									"_parent": {
+										"$ref": "AAAAAAGTWhu+ixsMmAM="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWhu+ixsMmAM="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWg569BnA/rI="
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"_type": "BPMNStartEvent",
+					"_id": "AAAAAAGTWZBcYhfpJdA=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNStartEvent1",
+					"eventDefinitions": [
+						{
+							"_type": "BPMNCompensateEventDefinition",
+							"_id": "AAAAAAGTWZBdjhfyLpg=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZBcYhfpJdA="
+							},
+							"name": "BPMNCompensateEventDefinition1"
+						},
+						{
+							"_type": "BPMNTerminateEventDefinition",
+							"_id": "AAAAAAGTWZByHhf1KsE=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZBcYhfpJdA="
+							},
+							"name": "BPMNTerminateEventDefinition1"
+						},
+						{
+							"_type": "BPMNTerminateEventDefinition",
+							"_id": "AAAAAAGTWZB0lhf4MG0=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZBcYhfpJdA="
+							},
+							"name": "BPMNTerminateEventDefinition2"
+						},
+						{
+							"_type": "BPMNTerminateEventDefinition",
+							"_id": "AAAAAAGTWZB2JRf7D3Q=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZBcYhfpJdA="
+							},
+							"name": "BPMNTerminateEventDefinition3"
+						},
+						{
+							"_type": "BPMNTimerEventDefinition",
+							"_id": "AAAAAAGTWZB5thf+6hI=",
+							"_parent": {
+								"$ref": "AAAAAAGTWZBcYhfpJdA="
+							},
+							"name": "BPMNTimerEventDefinition1"
+						}
+					]
+				},
+				{
+					"_type": "BPMNTask",
+					"_id": "AAAAAAGTWiIIyBuvxew=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNTask1"
+				},
+				{
+					"_type": "BPMNParticipant",
+					"_id": "AAAAAAGTWiInaRu7poM=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNParticipant1",
+					"ownedElements": [
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWiJfpxvE0AE=",
+							"_parent": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"name": "Задвання отримано",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWiOKyRvu028=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiJfpxvE0AE="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWiJfpxvE0AE="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWiMaCRveEW0="
+									}
+								}
+							],
+							"eventDefinitions": [
+								{
+									"_type": "BPMNMessageEventDefinition",
+									"_id": "AAAAAAGTWiKPfhvPKxs=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiJfpxvE0AE="
+									},
+									"name": "BPMNMessageEventDefinition1"
+								}
+							]
+						},
+						{
+							"_type": "BPMNTask",
+							"_id": "AAAAAAGTWiMaCRveEW0=",
+							"_parent": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"name": "Додати завдання в чергу",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWiesshxkbwA=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiMaCRveEW0="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWiMaCRveEW0="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWiRPexwEONY="
+									}
+								},
+								{
+									"_type": "BPMNDataAssociation",
+									"_id": "AAAAAAGTWihX6xxzAos=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiMaCRveEW0="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWiMaCRveEW0="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWiPoPBv7pio="
+									}
+								}
+							]
+						},
+						{
+							"_type": "BPMNDataStore",
+							"_id": "AAAAAAGTWiPoPBv7pio=",
+							"_parent": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"name": "Черга завдань, що очікують звільнення процесора",
+							"ownedElements": [
+								{
+									"_type": "BPMNDataAssociation",
+									"_id": "AAAAAAGTWiiHehx42UE=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiPoPBv7pio="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWiPoPBv7pio="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWiRPexwEONY="
+									}
+								}
+							]
+						},
+						{
+							"_type": "BPMNExclusiveGateway",
+							"_id": "AAAAAAGTWiRPexwEONY=",
+							"_parent": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"name": "Чи є вільний процесор?",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWituLRy57Tk=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiRPexwEONY="
+									},
+									"name": "Так",
+									"source": {
+										"$ref": "AAAAAAGTWiRPexwEONY="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWisxdhywC9E="
+									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWjO7mR08eys=",
+									"_parent": {
+										"$ref": "AAAAAAGTWiRPexwEONY="
+									},
+									"name": "Ні",
+									"source": {
+										"$ref": "AAAAAAGTWiRPexwEONY="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWjOpwh0w1qY="
+									}
+								}
+							],
+							"gatewayDirection": "unspecified"
+						},
+						{
+							"_type": "BPMNDataStore",
+							"_id": "AAAAAAGTWii33Bx9TIE=",
+							"_parent": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"name": "Вільні процесори",
+							"ownedElements": [
+								{
+									"_type": "BPMNDataAssociation",
+									"_id": "AAAAAAGTWjFlPhzIwP8=",
+									"_parent": {
+										"$ref": "AAAAAAGTWii33Bx9TIE="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWii33Bx9TIE="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWiRPexwEONY="
+									}
+								},
+								{
+									"_type": "BPMNDataAssociation",
+									"_id": "AAAAAAGTWjFuRRzNT4s=",
+									"_parent": {
+										"$ref": "AAAAAAGTWii33Bx9TIE="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWii33Bx9TIE="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWisxdhywC9E="
+									}
+								}
+							]
+						},
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWilzUhyM+nE=",
+							"_parent": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"name": "Назад до перевірки черги завдань",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWioGnRydF/s=",
+									"_parent": {
+										"$ref": "AAAAAAGTWilzUhyM+nE="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWilzUhyM+nE="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWiRPexwEONY="
+									}
+								}
+							],
+							"eventDefinitions": [
+								{
+									"_type": "BPMNLinkEventDefinition",
+									"_id": "AAAAAAGTWil53xyV8ug=",
+									"_parent": {
+										"$ref": "AAAAAAGTWilzUhyM+nE="
+									},
+									"name": "BPMNLinkEventDefinition1"
+								}
+							]
+						},
+						{
+							"_type": "BPMNTask",
+							"_id": "AAAAAAGTWisxdhywC9E=",
+							"_parent": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"name": "Виділити процесор для завдання",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWjZKsB1p5ic=",
+									"_parent": {
+										"$ref": "AAAAAAGTWisxdhywC9E="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWisxdhywC9E="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWjYkbx1ecI0="
+									}
+								}
+							]
+						},
+						{
+							"_type": "BPMNTask",
+							"_id": "AAAAAAGTWjGLORzS3EI=",
+							"_parent": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"name": "Звільнити процесор",
+							"ownedElements": [
+								{
+									"_type": "BPMNDataAssociation",
+									"_id": "AAAAAAGTWjLE0hzmMPE=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjGLORzS3EI="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWjGLORzS3EI="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWii33Bx9TIE="
+									}
+								}
+							]
+						},
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWjL+AhzuQeY=",
+							"_parent": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"name": "BPMNStartEvent1",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWjMQABz6occ=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjL+AhzuQeY="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWjL+AhzuQeY="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWjGLORzS3EI="
+									}
+								}
+							],
+							"eventDefinitions": [
+								{
+									"_type": "BPMNMessageEventDefinition",
+									"_id": "AAAAAAGTWjMDhRz3Xo8=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjL+AhzuQeY="
+									},
+									"name": "BPMNMessageEventDefinition1"
+								}
+							]
+						},
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWjM6Uh0F6yg=",
+							"_parent": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"name": "Назад до перевірки черги завдань",
+							"eventDefinitions": [
+								{
+									"_type": "BPMNLinkEventDefinition",
+									"_id": "AAAAAAGTWjNCTB0OuDk=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjM6Uh0F6yg="
+									},
+									"name": "BPMNLinkEventDefinition1"
+								}
+							]
+						},
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWjN74R0RGIo=",
+							"_parent": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"name": "BPMNStartEvent3",
+							"eventDefinitions": [
+								{
+									"_type": "BPMNErrorEventDefinition",
+									"_id": "AAAAAAGTWjN9JR0aVjI=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjN74R0RGIo="
+									},
+									"name": "BPMNErrorEventDefinition1"
+								},
+								{
+									"_type": "BPMNMessageEventDefinition",
+									"_id": "AAAAAAGTWjOBxB0dZw4=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjN74R0RGIo="
+									},
+									"name": "BPMNMessageEventDefinition1"
+								},
+								{
+									"_type": "BPMNLinkEventDefinition",
+									"_id": "AAAAAAGTWjOFJB0gCB4=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjN74R0RGIo="
+									},
+									"name": "BPMNLinkEventDefinition1"
+								},
+								{
+									"_type": "BPMNLinkEventDefinition",
+									"_id": "AAAAAAGTWjOI5B0j6AA=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjN74R0RGIo="
+									},
+									"name": "BPMNLinkEventDefinition2"
+								},
+								{
+									"_type": "BPMNLinkEventDefinition",
+									"_id": "AAAAAAGTWjOJlR0m6K0=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjN74R0RGIo="
+									},
+									"name": "BPMNLinkEventDefinition3"
+								},
+								{
+									"_type": "BPMNLinkEventDefinition",
+									"_id": "AAAAAAGTWjOPpB0pblY=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjN74R0RGIo="
+									},
+									"name": "BPMNLinkEventDefinition4"
+								}
+							]
+						},
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWjOpwh0w1qY=",
+							"_parent": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"name": "Назад до перевірки черги завдань",
+							"eventDefinitions": [
+								{
+									"_type": "BPMNLinkEventDefinition",
+									"_id": "AAAAAAGTWjOtZB05XYs=",
+									"_parent": {
+										"$ref": "AAAAAAGTWjOpwh0w1qY="
+									},
+									"name": "BPMNLinkEventDefinition1"
+								}
+							]
+						},
+						{
+							"_type": "BPMNSendTask",
+							"_id": "AAAAAAGTWjRi5x1QI0s=",
+							"_parent": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"name": "BPMNSendTask1"
+						},
+						{
+							"_type": "BPMNParallelGateway",
+							"_id": "AAAAAAGTWjYkbx1ecI0=",
+							"_parent": {
+								"$ref": "AAAAAAGTWiInaRu7poM="
+							},
+							"name": "BPMNParallelGateway1",
+							"gatewayDirection": "unspecified"
+						}
+					]
 				}
 			]
 		}
