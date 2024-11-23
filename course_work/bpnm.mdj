@@ -1,0 +1,432 @@
+{
+	"_type": "Project",
+	"_id": "AAAAAAFF+h6SjaM2Hec=",
+	"name": "Untitled",
+	"ownedElements": [
+		{
+			"_type": "UMLModel",
+			"_id": "AAAAAAFF+qBWK6M3Z8Y=",
+			"_parent": {
+				"$ref": "AAAAAAFF+h6SjaM2Hec="
+			},
+			"name": "Model",
+			"ownedElements": [
+				{
+					"_type": "UMLClassDiagram",
+					"_id": "AAAAAAFF+qBtyKM79qY=",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "Main",
+					"defaultDiagram": true
+				}
+			]
+		},
+		{
+			"_type": "BPMNProcess",
+			"_id": "AAAAAAGTWPCHz71RlOk=",
+			"_parent": {
+				"$ref": "AAAAAAFF+h6SjaM2Hec="
+			},
+			"name": "BPMNProcess1",
+			"ownedElements": [
+				{
+					"_type": "BPMNDiagram",
+					"_id": "AAAAAAGTWPCHz71SH2w=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNDiagram1",
+					"ownedViews": [
+						{
+							"_type": "BPMNPoolView",
+							"_id": "AAAAAAGTWRjhSr1/pNw=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWRjhSr19m8g="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWRjhSr2ASAY=",
+									"_parent": {
+										"$ref": "AAAAAAGTWRjhSr1/pNw="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 221,
+									"top": 256,
+									"width": 13,
+									"height": 144,
+									"text": "Генератор завдань",
+									"verticalAlignment": 3
+								}
+							],
+							"containedViews": [
+								{
+									"$ref": "AAAAAAGTWTEv373cFVw="
+								},
+								{
+									"$ref": "AAAAAAGTWTL6Fr3zMu4="
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 216,
+							"top": 256,
+							"width": 440,
+							"height": 144,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWRjhSr2ASAY="
+							}
+						},
+						{
+							"_type": "BPMNEventView",
+							"_id": "AAAAAAGTWTEv373cFVw=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWTEv373aPSA="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWTEv4L3dDtM=",
+									"_parent": {
+										"$ref": "AAAAAAGTWTEv373cFVw="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWTEv373aPSA="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 351.0361328125,
+									"top": 357.5,
+									"width": 113.927734375,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "створити завдання"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWRjhSr1/pNw="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 384,
+							"top": 304,
+							"width": 48,
+							"height": 48,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWTEv4L3dDtM="
+							}
+						},
+						{
+							"_type": "BPMNTaskView",
+							"_id": "AAAAAAGTWTL6Fr3zMu4=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWTL6Fb3xKNk="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWTL6Fr30n1Q=",
+									"_parent": {
+										"$ref": "AAAAAAGTWTL6Fr3zMu4="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 496,
+									"top": 308,
+									"width": 144,
+									"height": 39,
+									"text": "Призначити кількість сторінок процесора заданню",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWRjhSr1/pNw="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 496,
+							"top": 280,
+							"width": 144,
+							"height": 96,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWTL6Fr30n1Q="
+							}
+						},
+						{
+							"_type": "BPMNTextAnnotationView",
+							"_id": "AAAAAAGTWTx22BUNidM=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWTx21xULTFA="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"left": 256,
+							"top": 280,
+							"width": 98.1689453125,
+							"height": 90
+						},
+						{
+							"_type": "BPMNAssociationView",
+							"_id": "AAAAAAGTWTx25xUSfA8=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWTx25xUQtZ0="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWTEv373cFVw="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWTx22BUNidM="
+							},
+							"lineStyle": 1,
+							"points": "355:326;383:327"
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWTzVLxUlQZU=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWTzVLxUj778="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWTzVLxUmVas=",
+									"_parent": {
+										"$ref": "AAAAAAGTWTzVLxUlQZU="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWTzVLxUj778="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 464,
+									"top": 307,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWTzVLxUlQZU="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWTL6Fr3zMu4="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWTEv373cFVw="
+							},
+							"lineStyle": 2,
+							"points": "432:328;496:328",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWTzVLxUmVas="
+							}
+						},
+						{
+							"_type": "BPMNPoolView",
+							"_id": "AAAAAAGTWT3fnRU963g=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWT3fnBU7RQc="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWT3fnRU+Fm0=",
+									"_parent": {
+										"$ref": "AAAAAAGTWT3fnRU963g="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 213,
+									"top": 560,
+									"width": 13,
+									"height": 160,
+									"text": "BPMNParticipant1",
+									"verticalAlignment": 3
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 208,
+							"top": 560,
+							"width": 448,
+							"height": 160,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWT3fnRU+Fm0="
+							}
+						}
+					]
+				},
+				{
+					"_type": "BPMNCallActivity",
+					"_id": "AAAAAAGTWRiGZL1W9/k=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNCallActivity1"
+				},
+				{
+					"_type": "BPMNParticipant",
+					"_id": "AAAAAAGTWRjhSr19m8g=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "Генератор завдань",
+					"ownedElements": [
+						{
+							"_type": "BPMNCollaboration",
+							"_id": "AAAAAAGTWRlXsb2G7rg=",
+							"_parent": {
+								"$ref": "AAAAAAGTWRjhSr19m8g="
+							},
+							"name": "BPMNCollaboration1"
+						},
+						{
+							"_type": "BPMNCollaboration",
+							"_id": "AAAAAAGTWRqRP72fGvQ=",
+							"_parent": {
+								"$ref": "AAAAAAGTWRjhSr19m8g="
+							},
+							"name": "BPMNCollaboration2"
+						},
+						{
+							"_type": "BPMNCollaboration",
+							"_id": "AAAAAAGTWRr4Pr2iszw=",
+							"_parent": {
+								"$ref": "AAAAAAGTWRjhSr19m8g="
+							},
+							"name": "BPMNCollaboration3"
+						},
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWTEv373aPSA=",
+							"_parent": {
+								"$ref": "AAAAAAGTWRjhSr19m8g="
+							},
+							"name": "створити завдання",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWTw3UhUBg8o=",
+									"_parent": {
+										"$ref": "AAAAAAGTWTEv373aPSA="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWRjhSr19m8g="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWTL6Fb3xKNk="
+									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWTzVLxUj778=",
+									"_parent": {
+										"$ref": "AAAAAAGTWTEv373aPSA="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWTEv373aPSA="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWTL6Fb3xKNk="
+									}
+								}
+							],
+							"documentation": "розподіл Пуассона з математичним сподіванням 5 с",
+							"eventDefinitions": [
+								{
+									"_type": "BPMNTimerEventDefinition",
+									"_id": "AAAAAAGTWTFilr3lhL8=",
+									"_parent": {
+										"$ref": "AAAAAAGTWTEv373aPSA="
+									},
+									"name": "BPMNTimerEventDefinition1"
+								}
+							]
+						},
+						{
+							"_type": "BPMNTask",
+							"_id": "AAAAAAGTWTL6Fb3xKNk=",
+							"_parent": {
+								"$ref": "AAAAAAGTWRjhSr19m8g="
+							},
+							"name": "Призначити кількість сторінок процесора заданню"
+						}
+					]
+				},
+				{
+					"_type": "BPMNSubProcess",
+					"_id": "AAAAAAGTWRmz0r2KenA=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNSubProcess1"
+				},
+				{
+					"_type": "BPMNTextAnnotation",
+					"_id": "AAAAAAGTWTx21xULTFA=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNTextAnnotation1",
+					"ownedElements": [
+						{
+							"_type": "BPMNAssociation",
+							"_id": "AAAAAAGTWTx25xUQtZ0=",
+							"_parent": {
+								"$ref": "AAAAAAGTWTx21xULTFA="
+							},
+							"source": {
+								"$ref": "AAAAAAGTWTx21xULTFA="
+							},
+							"target": {
+								"$ref": "AAAAAAGTWTEv373aPSA="
+							}
+						}
+					],
+					"text": "розподіл Пуассона з математичним сподіванням 5 с"
+				},
+				{
+					"_type": "BPMNParticipant",
+					"_id": "AAAAAAGTWT3fnBU7RQc=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNParticipant1"
+				}
+			]
+		}
+	]
+}
