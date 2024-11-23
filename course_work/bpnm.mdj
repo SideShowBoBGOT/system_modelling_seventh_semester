@@ -77,136 +77,6 @@
 							}
 						},
 						{
-							"_type": "BPMNTextAnnotationView",
-							"_id": "AAAAAAGTWTx22BUNidM=",
-							"_parent": {
-								"$ref": "AAAAAAGTWPCHz71SH2w="
-							},
-							"model": {
-								"$ref": "AAAAAAGTWTx21xULTFA="
-							},
-							"font": "Arial;13;0",
-							"parentStyle": false,
-							"left": 296,
-							"top": 296,
-							"width": 98.1689453125,
-							"height": 90
-						},
-						{
-							"_type": "BPMNAssociationView",
-							"_id": "AAAAAAGTWTx25xUSfA8=",
-							"_parent": {
-								"$ref": "AAAAAAGTWPCHz71SH2w="
-							},
-							"model": {
-								"$ref": "AAAAAAGTWTx25xUQtZ0="
-							},
-							"font": "Arial;13;0",
-							"parentStyle": false,
-							"head": {
-								"$ref": "AAAAAAGTWTEv373cFVw="
-							},
-							"tail": {
-								"$ref": "AAAAAAGTWTx22BUNidM="
-							},
-							"lineStyle": 1,
-							"points": "395:364;431:381"
-						},
-						{
-							"_type": "BPMNSequenceFlowView",
-							"_id": "AAAAAAGTWTzVLxUlQZU=",
-							"_parent": {
-								"$ref": "AAAAAAGTWPCHz71SH2w="
-							},
-							"model": {
-								"$ref": "AAAAAAGTWTzVLxUj778="
-							},
-							"subViews": [
-								{
-									"_type": "EdgeLabelView",
-									"_id": "AAAAAAGTWTzVLxUmVas=",
-									"_parent": {
-										"$ref": "AAAAAAGTWTzVLxUlQZU="
-									},
-									"model": {
-										"$ref": "AAAAAAGTWTzVLxUj778="
-									},
-									"visible": false,
-									"font": "Arial;13;0",
-									"parentStyle": false,
-									"left": 456,
-									"top": 339,
-									"height": 13,
-									"alpha": 1.5707963267948966,
-									"distance": 15,
-									"hostEdge": {
-										"$ref": "AAAAAAGTWTzVLxUlQZU="
-									},
-									"edgePosition": 1
-								}
-							],
-							"font": "Arial;13;0",
-							"parentStyle": false,
-							"head": {
-								"$ref": "AAAAAAGTWTL6Fr3zMu4="
-							},
-							"tail": {
-								"$ref": "AAAAAAGTWTEv373cFVw="
-							},
-							"lineStyle": 2,
-							"points": "456:368;456:360;552:360",
-							"nameLabel": {
-								"$ref": "AAAAAAGTWTzVLxUmVas="
-							}
-						},
-						{
-							"_type": "BPMNSequenceFlowView",
-							"_id": "AAAAAAGTWUKORRWsquA=",
-							"_parent": {
-								"$ref": "AAAAAAGTWPCHz71SH2w="
-							},
-							"model": {
-								"$ref": "AAAAAAGTWUKORRWqwzM="
-							},
-							"subViews": [
-								{
-									"_type": "EdgeLabelView",
-									"_id": "AAAAAAGTWUKORRWtZpQ=",
-									"_parent": {
-										"$ref": "AAAAAAGTWUKORRWsquA="
-									},
-									"model": {
-										"$ref": "AAAAAAGTWUKORRWqwzM="
-									},
-									"visible": false,
-									"font": "Arial;13;0",
-									"parentStyle": false,
-									"left": 712,
-									"top": 387,
-									"height": 13,
-									"alpha": 1.5707963267948966,
-									"distance": 15,
-									"hostEdge": {
-										"$ref": "AAAAAAGTWUKORRWsquA="
-									},
-									"edgePosition": 1
-								}
-							],
-							"font": "Arial;13;0",
-							"parentStyle": false,
-							"head": {
-								"$ref": "AAAAAAGTWUJUZhWjcqc="
-							},
-							"tail": {
-								"$ref": "AAAAAAGTWTL6Fr3zMu4="
-							},
-							"lineStyle": 2,
-							"points": "696:408;728:408",
-							"nameLabel": {
-								"$ref": "AAAAAAGTWUKORRWtZpQ="
-							}
-						},
-						{
 							"_type": "BPMNPoolView",
 							"_id": "AAAAAAGTWZAmShfikQk=",
 							"_parent": {
@@ -323,53 +193,6 @@
 							"height": 56,
 							"nameLabel": {
 								"$ref": "AAAAAAGTWZfCiRgkQ4M="
-							}
-						},
-						{
-							"_type": "BPMNMessageFlowView",
-							"_id": "AAAAAAGTWZh8BhhDLD4=",
-							"_parent": {
-								"$ref": "AAAAAAGTWPCHz71SH2w="
-							},
-							"model": {
-								"$ref": "AAAAAAGTWZh8BhhBNZ0="
-							},
-							"subViews": [
-								{
-									"_type": "EdgeLabelView",
-									"_id": "AAAAAAGTWZh8BhhESf4=",
-									"_parent": {
-										"$ref": "AAAAAAGTWZh8BhhDLD4="
-									},
-									"model": {
-										"$ref": "AAAAAAGTWZh8BhhBNZ0="
-									},
-									"visible": false,
-									"font": "Arial;13;0",
-									"parentStyle": false,
-									"left": 597,
-									"top": 497,
-									"height": 13,
-									"alpha": 1.5707963267948966,
-									"distance": 15,
-									"hostEdge": {
-										"$ref": "AAAAAAGTWZh8BhhDLD4="
-									},
-									"edgePosition": 1
-								}
-							],
-							"font": "Arial;13;0",
-							"parentStyle": false,
-							"head": {
-								"$ref": "AAAAAAGTWZfCiRgjuvc="
-							},
-							"tail": {
-								"$ref": "AAAAAAGTWUJUZhWjcqc="
-							},
-							"lineStyle": 2,
-							"points": "816:432;816:488;380:488;380:544",
-							"nameLabel": {
-								"$ref": "AAAAAAGTWZh8BhhESf4="
 							}
 						},
 						{
@@ -3016,7 +2839,7 @@
 									"$ref": "AAAAAAGTWo/sXB9lhMw="
 								},
 								{
-									"$ref": "AAAAAAGTWpnoTB944WY="
+									"$ref": "AAAAAAGTWxjNIiBYp6M="
 								}
 							],
 							"font": "Arial;13;0",
@@ -3338,6 +3161,7 @@
 									"model": {
 										"$ref": "AAAAAAGTWlidFRzZ9Ng="
 									},
+									"visible": false,
 									"font": "Arial;13;0",
 									"parentStyle": false,
 									"left": 1186.27734375,
@@ -3345,8 +3169,7 @@
 									"width": 139.4453125,
 									"height": 13,
 									"alpha": -1.5707963267948966,
-									"distance": 36,
-									"text": "BPMNParallelGateway1"
+									"distance": 36
 								}
 							],
 							"containerView": {
@@ -3657,157 +3480,33 @@
 									"font": "Arial;13;0",
 									"parentStyle": true,
 									"left": 277,
-									"top": 296,
+									"top": 360,
 									"width": 13,
-									"height": 216,
-									"text": "BPMNParticipant1",
+									"height": 152,
+									"text": "Генератор завдань",
 									"verticalAlignment": 3
 								}
 							],
 							"containedViews": [
 								{
-									"$ref": "AAAAAAGTWTEv373cFVw="
+									"$ref": "AAAAAAGTWxvZiiE1uco="
 								},
 								{
-									"$ref": "AAAAAAGTWTL6Fr3zMu4="
+									"$ref": "AAAAAAGTWxwE2SFCSe4="
 								},
 								{
-									"$ref": "AAAAAAGTWUJUZhWjcqc="
+									"$ref": "AAAAAAGTWxw2IiFLvKg="
 								}
 							],
 							"font": "Arial;13;0",
 							"parentStyle": false,
 							"containerChangeable": true,
 							"left": 272,
-							"top": 296,
+							"top": 360,
 							"width": 648,
-							"height": 216,
+							"height": 152,
 							"nameLabel": {
 								"$ref": "AAAAAAGTWl2f3x1hnII="
-							}
-						},
-						{
-							"_type": "BPMNEventView",
-							"_id": "AAAAAAGTWTEv373cFVw=",
-							"_parent": {
-								"$ref": "AAAAAAGTWPCHz71SH2w="
-							},
-							"model": {
-								"$ref": "AAAAAAGTWTEv373aPSA="
-							},
-							"subViews": [
-								{
-									"_type": "NodeLabelView",
-									"_id": "AAAAAAGTWTEv4L3dDtM=",
-									"_parent": {
-										"$ref": "AAAAAAGTWTEv373cFVw="
-									},
-									"model": {
-										"$ref": "AAAAAAGTWTEv373aPSA="
-									},
-									"font": "Arial;13;0",
-									"parentStyle": false,
-									"left": 399.0361328125,
-									"top": 421.5,
-									"width": 113.927734375,
-									"height": 13,
-									"alpha": -1.5707963267948966,
-									"distance": 36,
-									"text": "створити завдання"
-								}
-							],
-							"containerView": {
-								"$ref": "AAAAAAGTWl2f3x1gCac="
-							},
-							"font": "Arial;13;0",
-							"parentStyle": false,
-							"containerChangeable": true,
-							"left": 432,
-							"top": 368,
-							"width": 48,
-							"height": 48,
-							"nameLabel": {
-								"$ref": "AAAAAAGTWTEv4L3dDtM="
-							}
-						},
-						{
-							"_type": "BPMNTaskView",
-							"_id": "AAAAAAGTWTL6Fr3zMu4=",
-							"_parent": {
-								"$ref": "AAAAAAGTWPCHz71SH2w="
-							},
-							"model": {
-								"$ref": "AAAAAAGTWTL6Fb3xKNk="
-							},
-							"subViews": [
-								{
-									"_type": "LabelView",
-									"_id": "AAAAAAGTWTL6Fr30n1Q=",
-									"_parent": {
-										"$ref": "AAAAAAGTWTL6Fr3zMu4="
-									},
-									"font": "Arial;13;0",
-									"parentStyle": true,
-									"left": 552,
-									"top": 388,
-									"width": 144,
-									"height": 39,
-									"text": "Призначити кількість сторінок процесора заданню",
-									"wordWrap": true
-								}
-							],
-							"containerView": {
-								"$ref": "AAAAAAGTWl2f3x1gCac="
-							},
-							"font": "Arial;13;0",
-							"parentStyle": false,
-							"containerChangeable": true,
-							"left": 552,
-							"top": 360,
-							"width": 144,
-							"height": 96,
-							"nameLabel": {
-								"$ref": "AAAAAAGTWTL6Fr30n1Q="
-							}
-						},
-						{
-							"_type": "BPMNTaskView",
-							"_id": "AAAAAAGTWUJUZhWjcqc=",
-							"_parent": {
-								"$ref": "AAAAAAGTWPCHz71SH2w="
-							},
-							"model": {
-								"$ref": "AAAAAAGTWUJUZhWh9+o="
-							},
-							"subViews": [
-								{
-									"_type": "LabelView",
-									"_id": "AAAAAAGTWUJUZhWkuXQ=",
-									"_parent": {
-										"$ref": "AAAAAAGTWUJUZhWjcqc="
-									},
-									"font": "Arial;13;0",
-									"parentStyle": true,
-									"left": 728,
-									"top": 379,
-									"width": 176,
-									"height": 26,
-									"text": "Надіслати завдання до оперативної пам'яті",
-									"wordWrap": true
-								}
-							],
-							"containerView": {
-								"$ref": "AAAAAAGTWl2f3x1gCac="
-							},
-							"font": "Arial;13;0",
-							"parentStyle": false,
-							"containerChangeable": true,
-							"left": 728,
-							"top": 352,
-							"width": 176,
-							"height": 80,
-							"nameLabel": {
-								"$ref": "AAAAAAGTWUJUZhWkuXQ="
 							}
 						},
 						{
@@ -4108,7 +3807,7 @@
 									},
 									"font": "Arial;13;0",
 									"parentStyle": false,
-									"left": 296.784423828125,
+									"left": 328.784423828125,
 									"top": 1725.5,
 									"width": 158.43115234375,
 									"height": 13,
@@ -4125,7 +3824,7 @@
 							"font": "Arial;13;0",
 							"parentStyle": false,
 							"containerChangeable": true,
-							"left": 344,
+							"left": 376,
 							"top": 1664,
 							"width": 64,
 							"height": 64,
@@ -4267,7 +3966,7 @@
 								"$ref": "AAAAAAGTWneTgx4P3Sg="
 							},
 							"lineStyle": 2,
-							"points": "408:1696;496:1696;496:1664",
+							"points": "440:1696;496:1696;496:1664",
 							"nameLabel": {
 								"$ref": "AAAAAAGTWnjOQR5WE24="
 							}
@@ -4991,97 +4690,6 @@
 							}
 						},
 						{
-							"_type": "BPMNEventView",
-							"_id": "AAAAAAGTWpnoTB944WY=",
-							"_parent": {
-								"$ref": "AAAAAAGTWPCHz71SH2w="
-							},
-							"model": {
-								"$ref": "AAAAAAGTWpnoSx92Z0c="
-							},
-							"subViews": [
-								{
-									"_type": "NodeLabelView",
-									"_id": "AAAAAAGTWpnoTB95sZ4=",
-									"_parent": {
-										"$ref": "AAAAAAGTWpnoTB944WY="
-									},
-									"model": {
-										"$ref": "AAAAAAGTWpnoSx92Z0c="
-									},
-									"font": "Arial;13;0",
-									"parentStyle": false,
-									"left": 1069.418701171875,
-									"top": 1717.5,
-									"width": 101.16259765625,
-									"height": 13,
-									"alpha": -1.5707963267948966,
-									"distance": 36,
-									"text": "Кінець"
-								}
-							],
-							"containerView": {
-								"$ref": "AAAAAAGTWkaxqR6WF+w="
-							},
-							"font": "Arial;13;0",
-							"parentStyle": false,
-							"containerChangeable": true,
-							"left": 1096,
-							"top": 1664,
-							"width": 48,
-							"height": 48,
-							"nameLabel": {
-								"$ref": "AAAAAAGTWpnoTB95sZ4="
-							}
-						},
-						{
-							"_type": "BPMNSequenceFlowView",
-							"_id": "AAAAAAGTWpoN8R+DAy4=",
-							"_parent": {
-								"$ref": "AAAAAAGTWPCHz71SH2w="
-							},
-							"model": {
-								"$ref": "AAAAAAGTWpoN8B+BlJM="
-							},
-							"subViews": [
-								{
-									"_type": "EdgeLabelView",
-									"_id": "AAAAAAGTWpoN8R+Ex68=",
-									"_parent": {
-										"$ref": "AAAAAAGTWpoN8R+DAy4="
-									},
-									"model": {
-										"$ref": "AAAAAAGTWpoN8B+BlJM="
-									},
-									"visible": false,
-									"font": "Arial;13;0",
-									"parentStyle": false,
-									"left": 1068,
-									"top": 1667,
-									"height": 13,
-									"alpha": 1.5707963267948966,
-									"distance": 15,
-									"hostEdge": {
-										"$ref": "AAAAAAGTWpoN8R+DAy4="
-									},
-									"edgePosition": 1
-								}
-							],
-							"font": "Arial;13;0",
-							"parentStyle": false,
-							"head": {
-								"$ref": "AAAAAAGTWpnoTB944WY="
-							},
-							"tail": {
-								"$ref": "AAAAAAGTWo/sXB9lhMw="
-							},
-							"lineStyle": 2,
-							"points": "1040:1688;1096:1688",
-							"nameLabel": {
-								"$ref": "AAAAAAGTWpoN8R+Ex68="
-							}
-						},
-						{
 							"_type": "UMLTextView",
 							"_id": "AAAAAAGTWpyWEx+ymes=",
 							"_parent": {
@@ -5139,6 +4747,454 @@
 							"points": "536:1664;582:1664;582:1720",
 							"nameLabel": {
 								"$ref": "AAAAAAGTWp0xIR/BLjU="
+							}
+						},
+						{
+							"_type": "BPMNTextAnnotationView",
+							"_id": "AAAAAAGTWwD6uyBDrUc=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWwD6uyBBZWU="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"left": 808,
+							"top": 1568,
+							"width": 312,
+							"height": 64
+						},
+						{
+							"_type": "BPMNAssociationView",
+							"_id": "AAAAAAGTWwGmriBMNM0=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWwGmriBKsHA="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWo/sXB9lhMw="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWwD6uyBDrUc="
+							},
+							"lineStyle": 1,
+							"points": "970:1633;975:1663"
+						},
+						{
+							"_type": "BPMNEventView",
+							"_id": "AAAAAAGTWxjNIiBYp6M=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWxjNIiBWD50="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWxjNIiBZuR0=",
+									"_parent": {
+										"$ref": "AAAAAAGTWxjNIiBYp6M="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWxjNIiBWD50="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 1008.784423828125,
+									"top": 1725.5,
+									"width": 158.43115234375,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "Назад до перевірки дисків"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWkaxqR6WF+w="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 1064,
+							"top": 1672,
+							"width": 48,
+							"height": 48,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWxjNIiBZuR0="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWxkmPCByxfU=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWxkmPCBw2C4="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWxkmPCBzzR4=",
+									"_parent": {
+										"$ref": "AAAAAAGTWxkmPCByxfU="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWxkmPCBw2C4="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 1052,
+									"top": 1675,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWxkmPCByxfU="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWxjNIiBYp6M="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWo/sXB9lhMw="
+							},
+							"lineStyle": 2,
+							"points": "1040:1696;1064:1696",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWxkmPCBzzR4="
+							}
+						},
+						{
+							"_type": "BPMNAssociationView",
+							"_id": "AAAAAAGTWxoP+iCLsgA=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWxoP+iCJRTM="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWo/sXB9lhMw="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWwD6uyBDrUc="
+							},
+							"lineStyle": 1,
+							"points": "970:1633;975:1663"
+						},
+						{
+							"_type": "BPMNEventView",
+							"_id": "AAAAAAGTWxvZiiE1uco=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWxvZiiEzkEs="
+							},
+							"subViews": [
+								{
+									"_type": "NodeLabelView",
+									"_id": "AAAAAAGTWxvZiiE2dZ0=",
+									"_parent": {
+										"$ref": "AAAAAAGTWxvZiiE1uco="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWxvZiiEzkEs="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 397.592041015625,
+									"top": 469.5,
+									"width": 116.81591796875,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 36,
+									"text": "Створити завдання"
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWl2f3x1gCac="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 432,
+							"top": 416,
+							"width": 48,
+							"height": 48,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWxvZiiE2dZ0="
+							}
+						},
+						{
+							"_type": "BPMNTaskView",
+							"_id": "AAAAAAGTWxwE2SFCSe4=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWxwE2SFAS+Y="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWxwE2SFDm1I=",
+									"_parent": {
+										"$ref": "AAAAAAGTWxwE2SFCSe4="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 544,
+									"top": 416,
+									"width": 144,
+									"height": 39,
+									"text": "Призначити кількість сторінок процесора заданню",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWl2f3x1gCac="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 544,
+							"top": 392,
+							"width": 144,
+							"height": 88,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWxwE2SFDm1I="
+							}
+						},
+						{
+							"_type": "BPMNTaskView",
+							"_id": "AAAAAAGTWxw2IiFLvKg=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWxw2IiFJ7Q8="
+							},
+							"subViews": [
+								{
+									"_type": "LabelView",
+									"_id": "AAAAAAGTWxw2IiFM0oY=",
+									"_parent": {
+										"$ref": "AAAAAAGTWxw2IiFLvKg="
+									},
+									"font": "Arial;13;0",
+									"parentStyle": true,
+									"left": 728,
+									"top": 420,
+									"width": 136,
+									"height": 39,
+									"text": "Надіслати завдання до оперативної пам'яті",
+									"wordWrap": true
+								}
+							],
+							"containerView": {
+								"$ref": "AAAAAAGTWl2f3x1gCac="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"containerChangeable": true,
+							"left": 728,
+							"top": 400,
+							"width": 136,
+							"height": 80,
+							"nameLabel": {
+								"$ref": "AAAAAAGTWxw2IiFM0oY="
+							}
+						},
+						{
+							"_type": "BPMNTextAnnotationView",
+							"_id": "AAAAAAGTWxyG5SFWy48=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWxyG5SFUoe0="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"left": 312,
+							"top": 384,
+							"width": 98.1689453125,
+							"height": 90
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWxzudCFrGAM=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWxzudCFpJ0A="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWxzudCFsS/s=",
+									"_parent": {
+										"$ref": "AAAAAAGTWxzudCFrGAM="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWxzudCFpJ0A="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 512,
+									"top": 419,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWxzudCFrGAM="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWxwE2SFCSe4="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWxvZiiE1uco="
+							},
+							"lineStyle": 2,
+							"points": "480:440;544:440",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWxzudCFsS/s="
+							}
+						},
+						{
+							"_type": "BPMNSequenceFlowView",
+							"_id": "AAAAAAGTWxz5xSF0zvo=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWxz5xCFy3MA="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWxz5xSF15Ow=",
+									"_parent": {
+										"$ref": "AAAAAAGTWxz5xSF0zvo="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWxz5xCFy3MA="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 708,
+									"top": 411,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWxz5xSF0zvo="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWxw2IiFLvKg="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWxwE2SFCSe4="
+							},
+							"lineStyle": 2,
+							"points": "688:432;728:432",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWxz5xSF15Ow="
+							}
+						},
+						{
+							"_type": "BPMNAssociationView",
+							"_id": "AAAAAAGTWx0n9SF+E24=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWx0n9SF8a/o="
+							},
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWxvZiiE1uco="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWxyG5SFWy48="
+							},
+							"lineStyle": 1,
+							"points": "411:435;431:437"
+						},
+						{
+							"_type": "BPMNMessageFlowView",
+							"_id": "AAAAAAGTWx1nTyGHvqs=",
+							"_parent": {
+								"$ref": "AAAAAAGTWPCHz71SH2w="
+							},
+							"model": {
+								"$ref": "AAAAAAGTWx1nTyGFlMM="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAGTWx1nTyGIcX0=",
+									"_parent": {
+										"$ref": "AAAAAAGTWx1nTyGHvqs="
+									},
+									"model": {
+										"$ref": "AAAAAAGTWx1nTyGFlMM="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"parentStyle": false,
+									"left": 599,
+									"top": 505,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAGTWx1nTyGHvqs="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"parentStyle": false,
+							"head": {
+								"$ref": "AAAAAAGTWZfCiRgjuvc="
+							},
+							"tail": {
+								"$ref": "AAAAAAGTWxw2IiFLvKg="
+							},
+							"lineStyle": 2,
+							"points": "800:480;800:496;400:496;400:544",
+							"nameLabel": {
+								"$ref": "AAAAAAGTWx1nTyGIcX0="
 							}
 						}
 					]
@@ -5214,8 +5270,7 @@
 								"$ref": "AAAAAAGTWTEv373aPSA="
 							}
 						}
-					],
-					"text": "розподіл Пуассона з математичним сподіванням 5 с"
+					]
 				},
 				{
 					"_type": "BPMNSendTask",
@@ -6503,7 +6558,6 @@
 							"_parent": {
 								"$ref": "AAAAAAGTWiInaRu7poM="
 							},
-							"name": "BPMNParallelGateway1",
 							"ownedElements": [
 								{
 									"_type": "BPMNSequenceFlow",
@@ -7210,6 +7264,19 @@
 									"target": {
 										"$ref": "AAAAAAGTWpnoSx92Z0c="
 									}
+								},
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWxkmPCBw2C4=",
+									"_parent": {
+										"$ref": "AAAAAAGTWo/sXB9jfs4="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWo/sXB9jfs4="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWxjNIiBWD50="
+									}
 								}
 							]
 						},
@@ -7220,6 +7287,24 @@
 								"$ref": "AAAAAAGTWkaxqR6UKC8="
 							},
 							"name": "Кінець"
+						},
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWxjNIiBWD50=",
+							"_parent": {
+								"$ref": "AAAAAAGTWkaxqR6UKC8="
+							},
+							"name": "Назад до перевірки дисків",
+							"eventDefinitions": [
+								{
+									"_type": "BPMNLinkEventDefinition",
+									"_id": "AAAAAAGTWxjTIyBfdbU=",
+									"_parent": {
+										"$ref": "AAAAAAGTWxjNIiBWD50="
+									},
+									"name": "BPMNLinkEventDefinition1"
+								}
+							]
 						}
 					]
 				},
@@ -7229,7 +7314,7 @@
 					"_parent": {
 						"$ref": "AAAAAAGTWPCHz71RlOk="
 					},
-					"name": "BPMNParticipant1",
+					"name": "Генератор завдань",
 					"ownedElements": [
 						{
 							"_type": "BPMNStartEvent",
@@ -7336,8 +7421,172 @@
 									}
 								}
 							]
+						},
+						{
+							"_type": "BPMNStartEvent",
+							"_id": "AAAAAAGTWxvZiiEzkEs=",
+							"_parent": {
+								"$ref": "AAAAAAGTWl2f3x1eemQ="
+							},
+							"name": "Створити завдання",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWxzudCFpJ0A=",
+									"_parent": {
+										"$ref": "AAAAAAGTWxvZiiEzkEs="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWxvZiiEzkEs="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWxwE2SFAS+Y="
+									}
+								}
+							],
+							"eventDefinitions": [
+								{
+									"_type": "BPMNTimerEventDefinition",
+									"_id": "AAAAAAGTWxveOiE8riM=",
+									"_parent": {
+										"$ref": "AAAAAAGTWxvZiiEzkEs="
+									},
+									"name": "BPMNTimerEventDefinition1"
+								}
+							]
+						},
+						{
+							"_type": "BPMNTask",
+							"_id": "AAAAAAGTWxwE2SFAS+Y=",
+							"_parent": {
+								"$ref": "AAAAAAGTWl2f3x1eemQ="
+							},
+							"name": "Призначити кількість сторінок процесора заданню",
+							"ownedElements": [
+								{
+									"_type": "BPMNSequenceFlow",
+									"_id": "AAAAAAGTWxz5xCFy3MA=",
+									"_parent": {
+										"$ref": "AAAAAAGTWxwE2SFAS+Y="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWxwE2SFAS+Y="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWxw2IiFJ7Q8="
+									}
+								}
+							]
+						},
+						{
+							"_type": "BPMNSendTask",
+							"_id": "AAAAAAGTWxw2IiFJ7Q8=",
+							"_parent": {
+								"$ref": "AAAAAAGTWl2f3x1eemQ="
+							},
+							"name": "Надіслати завдання до оперативної пам'яті",
+							"ownedElements": [
+								{
+									"_type": "BPMNMessageFlow",
+									"_id": "AAAAAAGTWx1nTyGFlMM=",
+									"_parent": {
+										"$ref": "AAAAAAGTWxw2IiFJ7Q8="
+									},
+									"source": {
+										"$ref": "AAAAAAGTWxw2IiFJ7Q8="
+									},
+									"target": {
+										"$ref": "AAAAAAGTWZfCiBghKEA="
+									}
+								}
+							]
 						}
 					]
+				},
+				{
+					"_type": "BPMNTextAnnotation",
+					"_id": "AAAAAAGTWwD6uyBBZWU=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNTextAnnotation3",
+					"ownedElements": [
+						{
+							"_type": "BPMNAssociation",
+							"_id": "AAAAAAGTWwGmriBKsHA=",
+							"_parent": {
+								"$ref": "AAAAAAGTWwD6uyBBZWU="
+							},
+							"source": {
+								"$ref": "AAAAAAGTWwD6uyBBZWU="
+							},
+							"target": {
+								"$ref": "AAAAAAGTWo/sXB9jfs4="
+							}
+						},
+						{
+							"_type": "BPMNAssociation",
+							"_id": "AAAAAAGTWxoP+iCJRTM=",
+							"_parent": {
+								"$ref": "AAAAAAGTWwD6uyBBZWU="
+							},
+							"source": {
+								"$ref": "AAAAAAGTWwD6uyBBZWU="
+							},
+							"target": {
+								"$ref": "AAAAAAGTWo/sXB9jfs4="
+							}
+						}
+					],
+					"text": "Позиціонування диска розподілено рівномірно на інтервалі від 0,0 до 0,075 секунд. Час обміну дорівнює 0,001×(2,5+h), де h - рівномірно розподілена на інтервалі від 0 до 25 величина."
+				},
+				{
+					"_type": "BPMNTextAnnotation",
+					"_id": "AAAAAAGTWxoGcSCE3q8=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNTextAnnotation4",
+					"ownedElements": [
+						{
+							"_type": "BPMNAssociation",
+							"_id": "AAAAAAGTWxokMiCO4ho=",
+							"_parent": {
+								"$ref": "AAAAAAGTWxoGcSCE3q8="
+							},
+							"source": {
+								"$ref": "AAAAAAGTWxoGcSCE3q8="
+							},
+							"target": {
+								"$ref": "AAAAAAGTWTEv373aPSA="
+							}
+						}
+					],
+					"text": "Розподіл Пуассона з математичним сподіванням 5 с"
+				},
+				{
+					"_type": "BPMNTextAnnotation",
+					"_id": "AAAAAAGTWxyG5SFUoe0=",
+					"_parent": {
+						"$ref": "AAAAAAGTWPCHz71RlOk="
+					},
+					"name": "BPMNTextAnnotation5",
+					"ownedElements": [
+						{
+							"_type": "BPMNAssociation",
+							"_id": "AAAAAAGTWx0n9SF8a/o=",
+							"_parent": {
+								"$ref": "AAAAAAGTWxyG5SFUoe0="
+							},
+							"source": {
+								"$ref": "AAAAAAGTWxyG5SFUoe0="
+							},
+							"target": {
+								"$ref": "AAAAAAGTWxvZiiEzkEs="
+							}
+						}
+					],
+					"text": "Розподіл Пуассона з математичним сподіванням 5 с"
 				}
 			]
 		}
