@@ -35,7 +35,7 @@ pub mod delay_gen {
     use rand::thread_rng;
     use rand_distr::{Exp, Normal, Uniform};
 
-    #[derive(Clone, Copy, Debug)]
+    #[derive(Replacate)]
     pub enum DelayGen {
         Normal(Normal<f64>),
         Uniform(Uniform<f64>),
