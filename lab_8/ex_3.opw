@@ -1,0 +1,61 @@
+[RESOURCES]
+[VARIABLES]
+is_device_1_busy
+Device 5 Submodel.NumberOut
+Device 4 Submodel.NumberOut
+Device 3 Submodel.NumberOut
+Device 2 Submodel.NumberOut
+Device 1 Submodel.NumberOut
+Device 5 Submodel.NumberIn
+Device 4 Submodel.NumberIn
+Device 3 Submodel.NumberIn
+Device 2 Submodel.NumberIn
+Device 1 Submodel.NumberIn
+is_device_3_busy
+Process 30.NumberOut
+Process 18.NumberOut
+device 5.NumberIn
+device 4.NumberIn
+device 3.NumberIn
+device 2.NumberIn
+device 1.NumberIn
+is device 3 free?.NumberOut True
+is device 5 free?.NumberOut True
+is device 1 free?.NumberOut True
+device 5.NumberOut
+device 4.NumberOut
+device 3.NumberOut
+device 2.NumberOut
+device 1.NumberOut
+Despose 2.NumberOut
+is_device_2_busy
+Transition 5.NumberIn
+Transition 4.NumberIn
+Transition 3.NumberIn
+Transition 2.NumberIn
+is_device_4_busy
+Process 22.NumberOut
+Process 26.NumberIn
+Process 22.NumberIn
+is device 4 free.NumberOut True
+Is device 2 free.NumberOut True
+is device 4 free.NumberOut False
+Is device 2 free.NumberOut False
+is device 3 free?.NumberOut False
+is device 5 free?.NumberOut False
+is device 1 free?.NumberOut False
+is_device_5_busy
+Create detail.NumberOut
+Dispose 1.NumberOut
+Despose 4.NumberOut
+Process 26.NumberOut
+Despose 5.NumberOut
+Cancel.NumberIn
+Cancel.NumberOut
+Process 30.NumberIn
+Despose 3.NumberOut
+Transition 5.NumberOut
+Transition 4.NumberOut
+Transition 3.NumberOut
+Transition 2.NumberOut
+Process 18.NumberIn

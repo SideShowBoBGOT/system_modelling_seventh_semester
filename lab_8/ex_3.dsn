@@ -1,0 +1,17 @@
+[ODBC]
+SQLite3 ODBC Driver
+JDConv = 0
+BigInt = 0
+LoadExt =
+OEMCP = 0
+JournalMode =
+FKSupport = 1
+NoWCHAR = 0
+NoCreat = 0
+LongNames = 1
+ShortNames = 1
+Timeout = 10000
+NoTXN = 0
+SyncPragma = NORMAL
+StepAPI = 0
+Database=C:\Users\yguky\university\system_modelling_seventh_semester\lab_8\ex_3.db
