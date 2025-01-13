@@ -1,3 +1,0 @@
-from my_system_modelling_exam.element import Element
-from my_system_modelling_exam.customer import Customer
-

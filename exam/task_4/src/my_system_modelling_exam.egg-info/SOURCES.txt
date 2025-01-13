@@ -1,5 +1,0 @@
-setup.py
-src/my_system_modelling_exam.egg-info/PKG-INFO
-src/my_system_modelling_exam.egg-info/SOURCES.txt
-src/my_system_modelling_exam.egg-info/dependency_links.txt
-src/my_system_modelling_exam.egg-info/top_level.txt
